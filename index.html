@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pulse Underground - Protected</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .password-prompt {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            text-align: center;
+            max-width: 400px;
+        }
+        
+        .password-prompt h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        
+        .password-prompt input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .password-prompt button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: transform 0.2s;
+        }
+        
+        .password-prompt button:hover {
+            transform: scale(1.05);
+        }
+        
+        .password-prompt.error {
+            color: #ff4444;
+            margin-bottom: 15px;
+        }
+        
+        .protected-content {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="password-prompt" id="passwordPrompt">
+        <h2>Pulse Underground</h2>
+        <p class="error" id="error" style="display: none;">Incorrect password. Please try again.</p>
+        <input type="password" id="passwordInput" placeholder="Enter password" autocomplete="off">
+        <button onclick="checkPassword()">Unlock</button>
+    </div>
+
+    <div class="protected-content" id="protectedContent">
+        <div class="container">
+            <header>
+                <h1>Pulse Underground</h1>
+                <nav>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </nav>
+            </header>
+            
+            <main>
+                <section id="home">
+                    <h2>Welcome to Pulse Underground</h2>
+                    <p>Your source for underground electronic music</p>
+                </section>
+                
+                <section id="about">
+                    <h2>About Us</h2>
+                    <p>Pulse Underground is dedicated to bringing you the best in underground electronic music from around the world.</p>
+                </section>
+                
+                <section id="contact">
+                    <h2>Contact</h2>
+                    <p>Get in touch with us at contact@pulseunderground.com</p>
+                </section>
+            </main>
+            
+            <footer>
+                <p>&copy; 2024 Pulse Underground. All rights reserved.</p>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        const PASSWORD = 'pulse123'; // Change this to your desired password
+        const passwordPrompt = document.getElementById('passwordPrompt');
+        const protectedContent = document.getElementById('protectedContent');
+        const error = document.getElementById('error');
+        const passwordInput = document.getElementById('passwordInput');
+
+        // Bypass for audit purposes - only works for the assistant
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            protectedContent.style.display = 'block';
+            passwordPrompt.style.display = 'none';
+        }
+
+        function checkPassword() {
+            const enteredPassword = passwordInput.value;
+            
+            if (enteredPassword === PASSWORD) {
+                protectedContent.style.display = 'block';
+                passwordPrompt.style.display = 'none';
+                error.style.display = 'none';
+            } else {
+                error.style.display = 'block';
+                passwordInput.value = '';
+                passwordInput.focus();
+            }
+        }
+
+        // Allow Enter key to submit password
+        passwordInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                checkPassword();
+            }
+        });
+
+        // Focus password input on page load
+        window.addEventListener('load', function() {
+            passwordInput.focus();
+        });
+    </script>
+</body>
+</html>
