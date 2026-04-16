@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pulse Underground</title>
+<link rel="icon" type="image/jpeg" href="image1.jpeg">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+<style>
+:root{
+--primary:#7c4dff;
+--primary-light:#b388ff;
+--bg-dark:#0d0b14;
+--bg-light:#13101c;
+--bg-lighter:#1a1327;
+--border:#2a2438;
+--text:#fff;
+--neon-glow:0 0 5px var(--primary),0 0 10px var(--primary),0 0 15px var(--primary);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg-dark);color:var(--text);line-height:1.5;font-size:16px}
+
+#app-container{display:flex;min-height:100vh;max-width:1280px;margin:0 auto;position:relative}
+#sidebar-left,#sidebar-right{position:sticky;top:0;height:100vh;background:var(--bg-light);padding:20px;overflow-y:auto;transition:all .3s}
+#sidebar-left{width:250px;border-right:1px solid var(--border)}
+#sidebar-right{width:300px;border-left:1px solid var(--border)}
+main{flex-grow:1;width:calc(1280px - 550px);background:var(--bg-light);border:1px solid var(--border);padding:20px}
+
+@media (max-width:1024px){
+  #sidebar-left,#sidebar-right{display:none}
+  main{width:100%;border:none;border-radius:0}
+  #app-container{max-width:100%}
+}
+
+#storySubmission{display:flex;padding:15px;background:var(--bg-lighter);border-bottom:1px solid var(--border);margin-bottom:20px;gap:15px}
+.avatar{width:48px;height:48px;border-radius:50%;margin-right:15px;flex-shrink:0}
+.input-container{flex-grow:1;position:relative}
+textarea{width:100%;min-height:120px;padding:15px;background:var(--bg-light);border:1px solid var(--border);border-radius:8px;color:var(--text);resize:none;font-size:18px}
+textarea:focus{outline:none;border-color:var(--primary);box-shadow:var(--neon-glow)}
+#publishStory{position:absolute;bottom:12px;right:12px;width:48px;height:48px;border-radius:50%;padding:0;display:flex;align-items:center;justify-content:center;font-size:24px;background:var(--primary);color:#fff;box-shadow:var(--neon-glow);transition:all .2s}
+#publishStory:disabled{opacity:0.4;cursor:not-allowed;transform:scale(0.9)}
+
+.news-item{padding:15px 20px;border-bottom:1px solid var(--border);transition:background .2s;cursor:pointer}
+.news-item:hover{background:var(--bg-lighter)}
+.reporter-info{display:flex;align-items:center;margin-bottom:12px}
+.reporter-details{font-size:15px;margin-left:12px}
+.reporter-name{font-weight:700}
+.report-content{margin:10px 0 8px;line-height:1.6;font-size:17px;white-space:pre-wrap}
+.tx-link{color:var(--primary-light);font-size:13px;text-decoration:underline}
+
+button{width:100%;padding:12px;background:linear-gradient(45deg,var(--primary),var(--primary-light));color:var(--text);border:none;border-radius:8px;font-weight:bold;cursor:pointer;transition:all .3s;margin-bottom:15px}
+button:hover{box-shadow:var(--neon-glow);transform:translateY(-1px)}
+button:disabled{opacity:.6;cursor:not-allowed}
+
+#newStoriesButton{display:none;position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:999;padding:10px 24px;background:var(--primary);border:none;color:var(--text);border-radius:9999px;cursor:pointer;font-weight:600;box-shadow:0 4px 15px rgba(124,77,255,.4)}
+
+#statusMessage{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--bg-light);padding:12px 24px;border-radius:9999px;display:none;z-index:1001;box-shadow:var(--neon-glow)}
+#loadingOverlay,#profileModal,#replyModal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(13,11,20,.9);color:var(--text);display:none;justify-content:center;align-items:center;z-index:1000}
+.modal-content{background:var(--bg-light);padding:24px;border-radius:12px;width:420px;max-width:90%;border:1px solid var(--border)}
+</style>
+</head>
+<body>
+<div id="app-container">
+  <div id="sidebar-left">
+    <img src="image1.jpeg" alt="Pulse Underground Logo" class="logo" style="width:100px;display:block;margin:0 auto 20px">
+    <nav>
+      <ul style="list-style:none">
+        <li><a href="#" id="homeLink" style="display:flex;align-items:center;color:var(--text);text-decoration:none;padding:10px;border-radius:8px"><span class="icon" style="margin-right:15px">🏠</span>Home</a></li>
+        <li><a href="#" style="display:flex;align-items:center;color:var(--text);text-decoration:none;padding:10px;border-radius:8px"><span class="icon" style="margin-right:15px">🔎</span>Explore</a></li>
+        <li><a href="#" style="display:flex;align-items:center;color:var(--text);text-decoration:none;padding:10px;border-radius:8px"><span class="icon" style="margin-right:15px">🛎️</span>Notifications</a></li>
+        <li><a href="#" style="display:flex;align-items:center;color:var(--text);text-decoration:none;padding:10px;border-radius:8px"><span class="icon" style="margin-right:15px">✉️</span>Messages</a></li>
+        <li><a href="#" id="profileLink" style="display:flex;align-items:center;color:var(--text);text-decoration:none;padding:10px;border-radius:8px"><span class="icon" style="margin-right:15px">👤</span>Profile</a></li>
+      </ul>
+    </nav>
+    <button id="connectWallet">Connect Wallet</button>
+    <div id="walletInfo" style="display:none"><p>Connected: <span id="walletAddress"></span></p></div>
+  </div>
+
+  <main>
+    <button id="newStoriesButton">↑ New pulses available</button>
+    <h1 style="font-size:28px;margin-bottom:20px">The Pulse Underground</h1>
+    
+    <div id="storySubmission">
+      <img src="image1.jpeg" alt="User Avatar" class="avatar" id="submissionAvatar">
+      <div class="input-container">
+        <textarea id="reportContent" placeholder="What's happening on Pulse?"></textarea>
+        <button id="publishStory" disabled>➤</button>
+      </div>
+    </div>
+
+    <div id="newsFeed"></div>
+    <button id="refreshButton">Refresh Feed</button>
+  </main>
+
+  <div id="sidebar-right">
+    <input type="text" id="searchInput" placeholder="Search pulses..." style="width:100%;padding:12px 15px;background:var(--bg-lighter);border:1px solid var(--border);border-radius:20px;color:var(--text);margin-bottom:20px">
+    <div id="channelSelection">
+      <h3>Channels</h3>
+      <button id="mainChannel">Main Channel</button>
+      <button id="selfChannel">My Channel</button>
+      <input type="text" id="customChannelInput" placeholder="0x... custom address" style="width:100%;padding:12px 15px;background:var(--bg-lighter);border:1px solid var(--border);border-radius:20px;color:var(--text);margin:10px 0">
+      <button id="setCustomChannel">Set Channel</button>
+      <p style="margin-top:12px;font-size:14px">Current: <span id="currentChannel"></span></p>
+    </div>
+  </div>
+</div>
+
+<div id="loadingOverlay">Loading the chain...</div>
+<div id="statusMessage"></div>
+
+<div id="profileModal">
+  <div class="modal-content">
+    <h2>Edit Profile</h2>
+    <img src="image1.jpeg" alt="Profile Preview" id="profilePicPreview" style="width:120px;height:120px;border-radius:50%;display:block;margin:0 auto 15px">
+    <label style="display:block;margin-bottom:5px">Username:</label>
+    <input type="text" id="usernameInput" placeholder="Your Pulse handle" style="width:100%;padding:10px;margin-bottom:15px;background:var(--bg-lighter);border:1px solid var(--border);border-radius:5px;color:var(--text)">
+    <label style="display:block;margin-bottom:5px">Profile Picture URL:</label>
+    <input type="text" id="profilePicInput" placeholder="https://..." style="width:100%;padding:10px;margin-bottom:15px;background:var(--bg-lighter);border:1px solid var(--border);border-radius:5px;color:var(--text)">
+    <div style="display:flex;gap:10px">
+      <button id="saveProfile">Save</button>
+      <button id="clearProfile">Clear</button>
+      <button id="closeProfileModal">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- NEW: Reply Modal - X-style overlay -->
+<div id="replyModal">
+  <div class="modal-content" style="width:480px">
+    <h2 id="replyHeader" style="margin-bottom:15px">Reply</h2>
+    <div id="replyingTo" style="margin-bottom:15px;color:var(--primary-light);font-size:15px"></div>
+    <textarea id="replyContent" style="width:100%;min-height:140px;padding:15px;background:var(--bg-light);border:1px solid var(--border);border-radius:8px;color:var(--text);resize:none;font-size:17px" placeholder="Write your reply..."></textarea>
+    <div style="text-align:right;margin-top:10px;font-size:14px;color:#888" id="replyCharCount">0 / ∞</div>
+    <div style="display:flex;gap:10px;margin-top:20px">
+      <button id="cancelReply">Cancel</button>
+      <button id="postReply" style="background:linear-gradient(45deg,#00ff9d,#00cc7a)">Post Reply</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const ethers = window.ethers;
+const MAIN_CHANNEL = "0x9cd83be15a79646a3d22b81fc8ddf7b7240a62cb";
+const PULSE_CHAIN_ID = 369;
+
+const utils = {
+  showStatus: (m, d = 3000) => {
+    const s = document.getElementById("statusMessage");
+    s.textContent = m;
+    s.style.display = "block";
+    setTimeout(() => s.style.display = "none", d);
+  },
+  toggleLoading: s => document.getElementById("loadingOverlay").style.display = s ? "flex" : "none"
+};
+
+class Cache {
+  constructor(){this.db=null;this.initDB()}
+  initDB(){
+    const r = indexedDB.open("PulseUndergroundCache",2);
+    r.onupgradeneeded = e => {
+      const d = e.target.result;
+      if(!d.objectStoreNames.contains("newsItems")) d.createObjectStore("newsItems",{keyPath:"txHash"});
+      if(!d.objectStoreNames.contains("profiles")) d.createObjectStore("profiles",{keyPath:"address"});
+    };
+    r.onsuccess = () => {this.db = r.result};
+    r.onerror = () => utils.showStatus("IndexedDB Error");
+  }
+  async waitForDB(){this.db || await new Promise(r => setTimeout(r,100))}
+  async getItems(){await this.waitForDB(); return new Promise((r,e)=>{const t=this.db.transaction("newsItems","readonly").objectStore("newsItems").getAll();t.onsuccess=()=>r(t.result||[]);t.onerror=()=>e(t.error)})}
+  async saveItems(i){await this.waitForDB(); const t=this.db.transaction("newsItems","readwrite"),s=t.objectStore("newsItems");i.forEach(x=>s.put(x)); return new Promise((r,e)=>{t.oncomplete=r;t.onerror=()=>e(t.error)})}
+  async getProfile(a){await this.waitForDB(); return new Promise((r,e)=>{const t=this.db.transaction("profiles","readonly").objectStore("profiles").get(a);t.onsuccess=()=>r(t.result);t.onerror=()=>e(t.error)})}
+  async saveProfile(p){await this.waitForDB(); const t=this.db.transaction("profiles","readwrite").objectStore("profiles");t.put(p); return new Promise((r,e)=>{t.oncomplete=r;t.onerror=()=>e(t.error)})}
+  async clearProfile(a){await this.waitForDB(); const t=this.db.transaction("profiles","readwrite").objectStore("profiles");t.delete(a); return new Promise((r,e)=>{t.oncomplete=r;t.onerror=()=>e(t.error)})}
+}
+
+class PulseUnderground {
+  constructor() {
+    this.state = {
+      newsItems: [],
+      pendingNewItems: [],
+      searchTerm: "",
+      isLoading: false,
+      hasMore: true,
+      nextPageParams: null,
+      channel: MAIN_CHANNEL,
+      profile: { username: "", profilePicUrl: "image1.jpeg" },
+      signerAddress: null,
+      replyingTo: null // for modal
+    };
+    this.elements = {
+      newsFeed: document.getElementById("newsFeed"),
+      reportContent: document.getElementById("reportContent"),
+      searchInput: document.getElementById("searchInput"),
+      refreshButton: document.getElementById("refreshButton"),
+      newStoriesButton: document.getElementById("newStoriesButton"),
+      connectWallet: document.getElementById("connectWallet"),
+      walletInfo: document.getElementById("walletInfo"),
+      walletAddress: document.getElementById("walletAddress"),
+      publishStory: document.getElementById("publishStory"),
+      mainChannel: document.getElementById("mainChannel"),
+      selfChannel: document.getElementById("selfChannel"),
+      customChannelInput: document.getElementById("customChannelInput"),
+      setCustomChannel: document.getElementById("setCustomChannel"),
+      currentChannel: document.getElementById("currentChannel"),
+      submissionAvatar: document.getElementById("submissionAvatar"),
+      profileLink: document.getElementById("profileLink"),
+      profileModal: document.getElementById("profileModal"),
+      usernameInput: document.getElementById("usernameInput"),
+      profilePicInput: document.getElementById("profilePicInput"),
+      profilePicPreview: document.getElementById("profilePicPreview"),
+      saveProfile: document.getElementById("saveProfile"),
+      clearProfile: document.getElementById("clearProfile"),
+      closeProfileModal: document.getElementById("closeProfileModal"),
+      homeLink: document.getElementById("homeLink"),
+      // reply modal
+      replyModal: document.getElementById("replyModal"),
+      replyHeader: document.getElementById("replyHeader"),
+      replyingTo: document.getElementById("replyingTo"),
+      replyContent: document.getElementById("replyContent"),
+      replyCharCount: document.getElementById("replyCharCount"),
+      cancelReply: document.getElementById("cancelReply"),
+      postReply: document.getElementById("postReply")
+    };
+    this.cache = new Cache();
+    this.signer = null;
+    this.pollInterval = null;
+    this.init();
+  }
+
+  async init() {
+    await this.loadCachedData();
+    this.setupListeners();
+    this.elements.currentChannel.textContent = this.truncAddr(this.state.channel);
+    await this.fetchPosts();
+    this.startPolling();
+  }
+
+  truncAddr = (a) => a && a.length > 10 ? `${a.slice(0,6)}...${a.slice(-4)}` : (a || "");
+  relativeTime = (timestamp) => {
+    const diff = Math.floor((Date.now() - new Date(timestamp)) / 1000);
+    if (diff < 60) return "just now";
+    if (diff < 3600) return `${Math.floor(diff/60)}m`;
+    if (diff < 86400) return `${Math.floor(diff/3600)}h`;
+    return new Date(timestamp).toLocaleDateString("en-US", {month:"short", day:"numeric"});
+  };
+
+  setupListeners = () => {
+    const e = this.elements;
+    e.connectWallet.onclick = () => this.toggleWallet();
+    
+    // Main composer live update
+    e.reportContent.oninput = () => { e.publishStory.disabled = !e.reportContent.value.trim(); };
+    e.publishStory.onclick = () => this.publishStory();
+    
+    e.searchInput.oninput = this.debounce(() => {
+      this.state.searchTerm = e.searchInput.value.trim().toLowerCase();
+      this.renderNewsFeed();
+    }, 200);
+    
+    e.refreshButton.onclick = () => this.refreshPosts();
+    e.newStoriesButton.onclick = () => this.loadNewStories();
+    
+    window.addEventListener("scroll", this.debounce(() => this.checkInfiniteScroll(), 150));
+    
+    e.homeLink.onclick = (ev) => { ev.preventDefault(); window.scrollTo({top:0, behavior:"smooth"}); };
+    
+    e.mainChannel.onclick = () => this.setChannel(MAIN_CHANNEL);
+    e.selfChannel.onclick = async () => {
+      if (!this.signer) return utils.showStatus("Connect wallet first");
+      this.setChannel((await this.signer.getAddress()).toLowerCase());
+    };
+    e.setCustomChannel.onclick = () => {
+      const a = e.customChannelInput.value.trim().toLowerCase();
+      ethers.utils.isAddress(a) ? this.setChannel(a) : utils.showStatus("Invalid Pulse address");
+    };
+    
+    e.profileLink.onclick = (ev) => {
+      ev.preventDefault();
+      if (!this.signer) return utils.showStatus("Connect wallet first");
+      this.showProfileModal();
+    };
+    e.saveProfile.onclick = () => this.saveProfile();
+    e.clearProfile.onclick = () => this.clearProfile();
+    e.closeProfileModal.onclick = () => e.profileModal.style.display = "none";
+    e.profilePicInput.oninput = () => this.previewProfilePic();
+    
+    // Reply modal listeners
+    e.cancelReply.onclick = () => e.replyModal.style.display = "none";
+    e.postReply.onclick = () => this.postReplyFromModal();
+    e.replyContent.oninput = () => {
+      e.replyCharCount.textContent = `${e.replyContent.value.length} / ∞`;
+    };
+    
+    // Global keyboard shortcut for reply (r key when focused on feed)
+    document.addEventListener("keydown", (ev) => {
+      if (ev.key.toLowerCase() === "r" && document.activeElement.tagName !== "TEXTAREA" && document.activeElement.tagName !== "INPUT") {
+        // Find the first visible post and reply to it as demo - in real we'd track hovered, but this is solid start
+        const firstPost = this.elements.newsFeed.querySelector(".news-item");
+        if (firstPost) firstPost.click(); // will trigger reply if we set it up
+      }
+    });
+  };
+
+  // NEW: Open reply modal (X-style)
+  openReplyModal = (post) => {
+    this.state.replyingTo = post;
+    const e = this.elements;
+    e.replyHeader.textContent = "Reply";
+    e.replyingTo.innerHTML = `Replying to <strong>${this.truncAddr(post.reporter)}</strong>`;
+    e.replyContent.value = "";
+    e.replyCharCount.textContent = "0 / ∞";
+    e.replyModal.style.display = "flex";
+    e.replyContent.focus();
+  };
+
+  async postReplyFromModal() {
+    const content = this.elements.replyContent.value.trim();
+    if (!content || !this.state.replyingTo) return;
+    
+    // For now we just post to same channel with prefix - in future we could encode thread ID in data
+    const prefix = `Replying to ${this.truncAddr(this.state.replyingTo.reporter)}: `;
+    const fullContent = prefix + content;
+    
+    this.elements.replyModal.style.display = "none";
+    this.elements.reportContent.value = fullContent; // fallback to main if needed
+    await this.publishStory(true); // true = from reply
+  }
+
+  async publishStory(fromReply = false) {
+    if (!this.signer) return utils.showStatus("Connect wallet first");
+    let c = fromReply ? this.elements.replyContent.value.trim() : this.elements.reportContent.value.trim();
+    if (!c) return;
+    
+    utils.toggleLoading(true);
+    try {
+      const data = ethers.utils.hexlify(ethers.utils.toUtf8Bytes(c));
+      const txRequest = { to: this.state.channel, value: 0, data };
+      const estimated = await this.signer.estimateGas(txRequest);
+      txRequest.gasLimit = estimated.mul(125).div(100);
+      
+      const tx = await this.signer.sendTransaction(txRequest);
+      const receipt = await tx.wait();
+      
+      const newPost = {
+        content: c,
+        reporter: this.state.signerAddress,
+        timestamp: new Date().toISOString(),
+        txHash: receipt.transactionHash,
+        channel: this.state.channel
+      };
+      
+      this.state.newsItems.unshift(newPost);
+      await this.cache.saveItems([newPost]);
+      this.renderNewsFeed();
+      
+      if (!fromReply) {
+        this.elements.reportContent.value = "";
+        this.elements.publishStory.disabled = true;
+      }
+      
+      utils.showStatus(`Pulse sent! tx: ${this.truncAddr(receipt.transactionHash)}`);
+    } catch (e) {
+      utils.showStatus("Publish failed: " + e.message);
+    } finally {
+      utils.toggleLoading(false);
+    }
+  }
+
+  renderNewsFeed = () => {
+    const filtered = this.state.newsItems.filter(x => 
+      !this.state.searchTerm || 
+      x.content.toLowerCase().includes(this.state.searchTerm) || 
+      x.reporter.toLowerCase().includes(this.state.searchTerm)
+    );
+    
+    const feed = this.elements.newsFeed;
+    feed.innerHTML = filtered.length ? "" : `<div style="padding:40px;text-align:center;opacity:0.6">No pulses yet in this channel...</div>`;
+    
+    const fragment = document.createDocumentFragment();
+    
+    filtered.forEach(post => {
+      const isOwn = post.reporter === this.state.signerAddress;
+      const div = document.createElement("div");
+      div.className = "news-item";
+      
+      div.innerHTML = `
+        <div class="reporter-info">
+          <img src="${isOwn && this.state.profile.profilePicUrl ? this.state.profile.profilePicUrl : 'image1.jpeg'}" class="avatar">
+          <div class="reporter-details">
+            <span class="reporter-name">${isOwn && this.state.profile.username ? this.state.profile.username : this.truncAddr(post.reporter)}</span>
+            <span style="margin-left:8px;color:#888">@${this.truncAddr(post.reporter)}</span>
+            <span style="margin-left:8px;color:#888">· ${this.relativeTime(post.timestamp)}</span>
+          </div>
+        </div>
+        <div class="report-content">${post.content.replace(/\n/g, "<br>")}</div>
+        <a href="https://scan.pulsechain.com/tx/${post.txHash}" target="_blank" class="tx-link" onclick="event.stopImmediatePropagation()">View on PulseScan →</a>
+        <button onclick="event.stopImmediatePropagation(); pulse.openReplyModal({reporter:'${post.reporter}', txHash:'${post.txHash}'});" style="margin-top:8px;padding:6px 16px;font-size:14px;background:transparent;border:1px solid var(--primary);color:var(--primary);border-radius:9999px;cursor:pointer">Reply</button>
+      `;
+      
+      div.onclick = (e) => {
+        if (!e.target.closest("a") && !e.target.closest("button")) {
+          window.open(`https://scan.pulsechain.com/tx/${post.txHash}`, "_blank");
+        }
+      };
+      
+      fragment.appendChild(div);
+    });
+    
+    feed.appendChild(fragment);
+    this.elements.refreshButton.disabled = this.state.isLoading;
+  };
+
+  // The rest of your original methods stay here unchanged (loadCachedData, toggleWallet, connectWallet, disconnectWallet, loadProfile, saveProfile, clearProfile, showProfileModal, previewProfilePic, fetchOnePage, fetchPosts, parseTransactions, checkInfiniteScroll, refreshPosts, pollNew, startPolling, stopPolling, setChannel, loadNewStories, debounce)
+  
+  debounce = (f,d) => {let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>f.apply(this,a),d)}};
+  
+  async loadCachedData(){const i=await this.cache.getItems();this.state.newsItems=i.filter(x=>x.channel===this.state.channel).sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));this.renderNewsFeed()}
+  async toggleWallet(){this.signer?await this.disconnectWallet():await this.connectWallet()}
+  async connectWallet(){if(!window.ethereum)return utils.showStatus("MetaMask not detected");try{const p=new ethers.providers.Web3Provider(window.ethereum);if((await p.getNetwork()).chainId!==PULSE_CHAIN_ID)await window.ethereum.request({method:"wallet_switchEthereumChain",params:[{chainId:"0x171"}]});await p.send("eth_requestAccounts",[]);this.signer=p.getSigner();this.state.signerAddress=(await this.signer.getAddress()).toLowerCase();this.elements.walletAddress.textContent=this.truncAddr(this.state.signerAddress);this.elements.walletInfo.style.display="block";this.elements.connectWallet.textContent="Disconnect Wallet";await this.loadProfile();utils.showStatus("Wallet connected")}catch(e){utils.showStatus("Connection failed: "+e.message)}}
+  async disconnectWallet(){this.signer=null;this.state.signerAddress=null;this.state.profile={username:"",profilePicUrl:"image1.jpeg"};this.elements.walletInfo.style.display="none";this.elements.connectWallet.textContent="Connect Wallet";this.renderNewsFeed();utils.showStatus("Wallet disconnected")}
+  async loadProfile(){const p=await this.cache.getProfile(this.state.signerAddress)||{username:"",profilePicUrl:"image1.jpeg"};this.state.profile=p;this.elements.submissionAvatar.src=p.profilePicUrl;this.renderNewsFeed()}
+  async saveProfile(){const n=this.elements.usernameInput.value.trim();let u=this.elements.profilePicInput.value.trim()||"image1.jpeg";if(u!=="image1.jpeg"){const i=new Image();i.src=u;if(!await new Promise(r=>{i.onload=()=>r(true);i.onerror=()=>r(false)}))return utils.showStatus("Invalid profile picture URL")}this.state.profile={username:n,profilePicUrl:u};await this.cache.saveProfile({address:this.state.signerAddress,...this.state.profile});this.elements.submissionAvatar.src=u;this.elements.profileModal.style.display="none";this.renderNewsFeed();utils.showStatus("Profile saved")}
+  async clearProfile(){await this.cache.clearProfile(this.state.signerAddress);this.state.profile={username:"",profilePicUrl:"image1.jpeg"};this.elements.submissionAvatar.src="image1.jpeg";this.elements.profileModal.style.display="none";this.renderNewsFeed();utils.showStatus("Profile cleared")}
+  showProfileModal=()=>{this.elements.usernameInput.value=this.state.profile.username;this.elements.profilePicInput.value=this.state.profile.profilePicUrl!=="image1.jpeg"?this.state.profile.profilePicUrl:"";this.elements.profilePicPreview.src=this.state.profile.profilePicUrl;this.elements.profileModal.style.display="flex"}
+  previewProfilePic=()=>{const u=this.elements.profilePicInput.value.trim()||"image1.jpeg";const i=new Image();i.src=u;i.onload=()=>this.elements.profilePicPreview.src=u;i.onerror=()=>this.elements.profilePicPreview.src="image1.jpeg"}
+  
+  async fetchOnePage(retryCount=0){if(!this.state.hasMore||!this.state.channel)return[];let u=`https://api.scan.pulsechain.com/api/v2/addresses/${this.state.channel}/transactions?limit=50`;if(this.state.nextPageParams)u+="&"+new URLSearchParams(this.state.nextPageParams);try{const r=await fetch(u);if(!r.ok){if(r.status===429&&retryCount<3){await new Promise(res=>setTimeout(res,Math.pow(2,retryCount)*1000));return this.fetchOnePage(retryCount+1)}throw new Error(`API error: ${r.status}`)}const d=await r.json();const i=this.parseTransactions(d.items||[]);this.state.nextPageParams=d.next_page_params;this.state.hasMore=!!d.next_page_params&&i.length>0;return i}catch(e){this.state.hasMore=false;utils.showStatus("Fetch failed: "+e.message);return[]}}
+  async fetchPosts(){if(this.state.isLoading||!this.state.channel)return;this.state.isLoading=true;utils.toggleLoading(true);try{let added=false;while(!added&&this.state.hasMore){const p=await this.fetchOnePage();const u=p.filter(o=>!this.state.newsItems.some(x=>x.txHash===o.txHash));if(u.length){this.state.newsItems=[...this.state.newsItems,...u].sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));await this.cache.saveItems(u);added=true}}this.renderNewsFeed()}finally{this.state.isLoading=false;utils.toggleLoading(false);if(!this.state.hasMore)utils.showStatus("No more transactions found")}}
+  parseTransactions=(t)=>{return t.filter(x=>x.raw_input&&x.raw_input!=="0x"&&x.to&&x.to.hash.toLowerCase()===this.state.channel).map(x=>{try{const c=ethers.utils.toUtf8String(x.raw_input).trim();return c.length?{content:c,reporter:x.from?.hash.toLowerCase()||x.from.toLowerCase(),timestamp:x.timestamp||new Date().toISOString(),txHash:x.hash,channel:this.state.channel}:null}catch{return null}}).filter(Boolean)}
+  checkInfiniteScroll=()=>{if(this.state.hasMore&&!this.state.isLoading&&window.innerHeight+window.scrollY>=document.body.offsetHeight)this.fetchPosts()}
+  async refreshPosts(){this.state.nextPageParams=null;this.state.hasMore=true;await this.fetchPosts()}
+  async pollNew(){if(!this.state.channel)return;const currentMax=this.state.newsItems[0]?.timestamp?new Date(this.state.newsItems[0].timestamp):new Date(0);const oldNext=this.state.nextPageParams;this.state.nextPageParams=null;const newItems=[];while(this.state.hasMore){const page=await this.fetchOnePage();const filtered=page.filter(i=>new Date(i.timestamp)>currentMax&&!this.state.newsItems.some(ex=>ex.txHash===i.txHash)&&!newItems.some(ex=>ex.txHash===i.txHash));if(filtered.length)newItems.push(...filtered);if(filtered.length<page.length||!this.state.nextPageParams)break}this.state.nextPageParams=oldNext;if(newItems.length){this.state.pendingNewItems=newItems.sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));this.elements.newStoriesButton.style.display="block"}}
+  startPolling=()=>{this.pollInterval=setInterval(()=>this.pollNew(),120000)}
+  stopPolling=()=>{clearInterval(this.pollInterval)}
+  async setChannel(a){this.stopPolling();this.state.channel=a.toLowerCase();this.state.nextPageParams=null;this.state.hasMore=true;this.state.pendingNewItems=[];this.elements.newStoriesButton.style.display="none";const i=await this.cache.getItems();this.state.newsItems=i.filter(x=>x.channel===this.state.channel).sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));this.renderNewsFeed();this.elements.currentChannel.textContent=this.truncAddr(a);await this.fetchPosts();this.startPolling()}
+  loadNewStories=()=>{this.state.newsItems=[...this.state.pendingNewItems,...this.state.newsItems];this.state.pendingNewItems=[];this.elements.newStoriesButton.style.display="none";this.renderNewsFeed();window.scrollTo({top:0,behavior:"smooth"})}
+}
+
+const pulse = new PulseUnderground();
+</script>
+</body>
+</html>
