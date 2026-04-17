@@ -42,11 +42,10 @@ textarea:focus{outline:none;border-color:var(--primary);box-shadow:var(--neon-gl
 #statusMessage{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--bg-light);padding:10px 20px;border-radius:5px;display:none;z-index:1001;box-shadow:var(--neon-glow)}
 .modal-content{background:var(--bg-light);padding:20px;border-radius:8px;width:400px;max-width:90%;border:1px solid var(--border)}
 .thread-modal-content{background:var(--bg-light);padding:24px;border-radius:12px;width:90%;max-width:620px;max-height:90vh;overflow-y:auto;border:1px solid var(--border)}
-/* Profile header style */
-#profileHeader {background:var(--bg-lighter);padding:20px;border-radius:12px;margin-bottom:20px;text-align:center;}
-#profileHeader .avatar {width:120px;height:120px;border-radius:50%;margin:0 auto 15px;display:block;}
-#profileHeader h2 {margin:10px 0 5px;font-size:24px;}
-#profileHeader .bio {font-size:15px;color:#bbb;max-width:600px;margin:0 auto;}
+#profileHeader{background:var(--bg-lighter);padding:20px;border-radius:12px;margin-bottom:20px;text-align:center;}
+#profileHeader .avatar{width:120px;height:120px;border-radius:50%;margin:0 auto 15px;display:block;}
+#profileHeader h2{margin:10px 0 5px;font-size:24px;}
+#profileHeader .bio{font-size:15px;color:#bbb;max-width:600px;margin:0 auto;}
 </style>
 </head>
 <body>
@@ -75,7 +74,6 @@ textarea:focus{outline:none;border-color:var(--primary);box-shadow:var(--neon-gl
         <button id="publishStory">➤</button>
       </div>
     </div>
-    <!-- Profile Header (hidden by default, shown in profile view) -->
     <div id="profileHeader" style="display:none">
       <img id="profileHeaderAvatar" src="image1.jpeg" class="avatar">
       <h2 id="profileHeaderName">Username</h2>
@@ -157,13 +155,14 @@ const PROFILE_PREFIX = "PROFILE_DATA:";
 const utils = {
   showStatus: (m, d = 3000) => {
     const s = document.getElementById("statusMessage");
-    s.textContent = m; s.style.display = "block";
+    s.textContent = m;
+    s.style.display = "block";
     setTimeout(() => s.style.display = "none", d);
   },
   toggleLoading: s => document.getElementById("loadingOverlay").style.display = s ? "flex" : "none"
 };
 
-class Cache { /* exact original */ 
+class Cache {
   constructor(){this.db=null;this.initDB()}
   initDB(){const r=indexedDB.open("PulseUndergroundCache",2);r.onupgradeneeded=e=>{const d=e.target.result;d.objectStoreNames.contains("newsItems")||d.createObjectStore("newsItems",{keyPath:"txHash"});d.objectStoreNames.contains("profiles")||d.createObjectStore("profiles",{keyPath:"address"})};r.onsuccess=()=>{this.db=r.result};r.onerror=()=>utils.showStatus("IndexedDB Error")}
   async waitForDB(){this.db||await new Promise(r=>setTimeout(r,100))}
@@ -177,22 +176,50 @@ class Cache { /* exact original */
 class PulseUnderground {
   constructor() {
     this.state = {newsItems:[], pendingNewItems:[], searchTerm:"", isLoading:false, hasMore:true, nextPageParams:null, channel:MAIN_CHANNEL, profile:{username:"", profilePicUrl:"image1.jpeg", bio:""}, signerAddress:null, replyingTo:null, currentThreadPost:null, isProfileView:false};
-    this.elements = { /* original + new */ 
-      newsFeed:document.getElementById("newsFeed"), reportContent:document.getElementById("reportContent"), searchInput:document.getElementById("searchInput"),
-      refreshButton:document.getElementById("refreshButton"), newStoriesButton:document.getElementById("newStoriesButton"), connectWallet:document.getElementById("connectWallet"),
-      walletInfo:document.getElementById("walletInfo"), walletAddress:document.getElementById("walletAddress"), publishStory:document.getElementById("publishStory"),
-      mainChannel:document.getElementById("mainChannel"), selfChannel:document.getElementById("selfChannel"), customChannelInput:document.getElementById("customChannelInput"),
-      setCustomChannel:document.getElementById("setCustomChannel"), currentChannel:document.getElementById("currentChannel"), submissionAvatar:document.getElementById("submissionAvatar"),
-      profileLink:document.getElementById("profileLink"), profileModal:document.getElementById("profileModal"), usernameInput:document.getElementById("usernameInput"),
-      profilePicInput:document.getElementById("profilePicInput"), profilePicPreview:document.getElementById("profilePicPreview"), saveProfile:document.getElementById("saveProfile"),
-      clearProfile:document.getElementById("clearProfile"), closeProfileModal:document.getElementById("closeProfileModal"), homeLink:document.getElementById("homeLink"),
-      replyModal:document.getElementById("replyModal"), replyHeader:document.getElementById("replyHeader"), replyingTo:document.getElementById("replyingTo"),
-      replyContent:document.getElementById("replyContent"), replyCharCount:document.getElementById("replyCharCount"), cancelReply:document.getElementById("cancelReply"),
-      postReply:document.getElementById("postReply"), threadModal:document.getElementById("threadModal"), threadOriginal:document.getElementById("threadOriginal"),
-      threadReplies:document.getElementById("threadReplies"), threadReplyContent:document.getElementById("threadReplyContent"), postThreadReply:document.getElementById("postThreadReply"),
-      closeThreadModal:document.getElementById("closeThreadModal"), profileHeader:document.getElementById("profileHeader"),
-      profileHeaderAvatar:document.getElementById("profileHeaderAvatar"), profileHeaderName:document.getElementById("profileHeaderName"),
-      profileHeaderBio:document.getElementById("profileHeaderBio"), bioInput:document.getElementById("bioInput"), mainTitle:document.getElementById("mainTitle")
+    this.elements = {
+      newsFeed:document.getElementById("newsFeed"),
+      reportContent:document.getElementById("reportContent"),
+      searchInput:document.getElementById("searchInput"),
+      refreshButton:document.getElementById("refreshButton"),
+      newStoriesButton:document.getElementById("newStoriesButton"),
+      connectWallet:document.getElementById("connectWallet"),
+      walletInfo:document.getElementById("walletInfo"),
+      walletAddress:document.getElementById("walletAddress"),
+      publishStory:document.getElementById("publishStory"),
+      mainChannel:document.getElementById("mainChannel"),
+      selfChannel:document.getElementById("selfChannel"),
+      customChannelInput:document.getElementById("customChannelInput"),
+      setCustomChannel:document.getElementById("setCustomChannel"),
+      currentChannel:document.getElementById("currentChannel"),
+      submissionAvatar:document.getElementById("submissionAvatar"),
+      profileLink:document.getElementById("profileLink"),
+      profileModal:document.getElementById("profileModal"),
+      usernameInput:document.getElementById("usernameInput"),
+      profilePicInput:document.getElementById("profilePicInput"),
+      profilePicPreview:document.getElementById("profilePicPreview"),
+      saveProfile:document.getElementById("saveProfile"),
+      clearProfile:document.getElementById("clearProfile"),
+      closeProfileModal:document.getElementById("closeProfileModal"),
+      homeLink:document.getElementById("homeLink"),
+      replyModal:document.getElementById("replyModal"),
+      replyHeader:document.getElementById("replyHeader"),
+      replyingTo:document.getElementById("replyingTo"),
+      replyContent:document.getElementById("replyContent"),
+      replyCharCount:document.getElementById("replyCharCount"),
+      cancelReply:document.getElementById("cancelReply"),
+      postReply:document.getElementById("postReply"),
+      threadModal:document.getElementById("threadModal"),
+      threadOriginal:document.getElementById("threadOriginal"),
+      threadReplies:document.getElementById("threadReplies"),
+      threadReplyContent:document.getElementById("threadReplyContent"),
+      postThreadReply:document.getElementById("postThreadReply"),
+      closeThreadModal:document.getElementById("closeThreadModal"),
+      profileHeader:document.getElementById("profileHeader"),
+      profileHeaderAvatar:document.getElementById("profileHeaderAvatar"),
+      profileHeaderName:document.getElementById("profileHeaderName"),
+      profileHeaderBio:document.getElementById("profileHeaderBio"),
+      bioInput:document.getElementById("bioInput"),
+      mainTitle:document.getElementById("mainTitle")
     };
     this.cache = new Cache();
     this.signer = null;
@@ -210,13 +237,32 @@ class PulseUnderground {
   }
 
   truncAddr = (a) => a && a.length > 10 ? `${a.slice(0,6)}...${a.slice(-4)}` : a;
-  relativeTime = (timestamp) => {const diff=Math.floor((Date.now()-new Date(timestamp))/1000);if(diff<60)return"just now";if(diff<3600)return`${Math.floor(diff/60)}m`;if(diff<86400)return`${Math.floor(diff/3600)}h`;return new Date(timestamp).toLocaleDateString("en-US",{month:"short",day:"numeric"});};
+  relativeTime = (timestamp) => {
+    const diff = Math.floor((Date.now() - new Date(timestamp)) / 1000);
+    if (diff < 60) return "just now";
+    if (diff < 3600) return `${Math.floor(diff/60)}m`;
+    if (diff < 86400) return `${Math.floor(diff/3600)}h`;
+    return new Date(timestamp).toLocaleDateString("en-US", {month:"short", day:"numeric"});
+  };
 
-  getPostHTML = (post, isThreadHeader = false) => { /* same as before */ 
+  getPostHTML = (post, isThreadHeader = false) => {
     const isOwn = post.reporter === this.state.signerAddress;
     const displayContent = post.displayContent || post.content || "";
     const parentIndicator = post.parentTx ? `<div style="color:var(--primary-light);font-size:14px;margin-bottom:8px">↳ Replying to ${this.truncAddr(post.parentTx)}</div>` : "";
-    return `<div class="reporter-info"><img src="${isOwn&&this.state.profile.profilePicUrl?this.state.profile.profilePicUrl:"image1.jpeg"}" class="avatar"><div class="reporter-details"><span class="reporter-name">${isOwn&&this.state.profile.username?this.state.profile.username:this.truncAddr(post.reporter)}</span><span style="margin-left:8px;color:#888">@${this.truncAddr(post.reporter)}</span><span style="margin-left:8px;color:#888">· ${this.relativeTime(post.timestamp)}</span></div></div>${parentIndicator}<div class="report-content" style="${isThreadHeader?"font-size:19px;line-height:1.7":""}">${displayContent.replace(/\n/g,"<br>")}</div><a href="https://scan.pulsechain.com/tx/${post.txHash}" target="_blank" class="tx-link" onclick="event.stopImmediatePropagation()">View on PulseScan →</a>${!isThreadHeader?`<button onclick="event.stopImmediatePropagation(); pulse.openReplyModal({reporter:'${post.reporter}', txHash:'${post.txHash}', parentTx:'${post.parentTx||''}'});" style="margin-top:8px;padding:6px 16px;font-size:14px;background:transparent;border:1px solid var(--primary);color:var(--primary);border-radius:9999px;cursor:pointer">Reply</button>`:""}`;
+    return `
+      <div class="reporter-info">
+        <img src="${isOwn && this.state.profile.profilePicUrl ? this.state.profile.profilePicUrl : "image1.jpeg"}" class="avatar">
+        <div class="reporter-details">
+          <span class="reporter-name">${isOwn && this.state.profile.username ? this.state.profile.username : this.truncAddr(post.reporter)}</span>
+          <span style="margin-left:8px;color:#888">@${this.truncAddr(post.reporter)}</span>
+          <span style="margin-left:8px;color:#888">· ${this.relativeTime(post.timestamp)}</span>
+        </div>
+      </div>
+      ${parentIndicator}
+      <div class="report-content" style="${isThreadHeader ? "font-size:19px;line-height:1.7" : ""}">${displayContent.replace(/\n/g, "<br>")}</div>
+      <a href="https://scan.pulsechain.com/tx/${post.txHash}" target="_blank" class="tx-link" onclick="event.stopImmediatePropagation()">View on PulseScan →</a>
+      ${!isThreadHeader ? `<button onclick="event.stopImmediatePropagation(); pulse.openReplyModal({reporter:'${post.reporter}', txHash:'${post.txHash}', parentTx:'${post.parentTx||''}'});" style="margin-top:8px;padding:6px 16px;font-size:14px;background:transparent;border:1px solid var(--primary);color:var(--primary);border-radius:9999px;cursor:pointer">Reply</button>` : ""}
+    `;
   };
 
   setupListeners = () => {
@@ -243,14 +289,53 @@ class PulseUnderground {
     e.postThreadReply.onclick = () => this.postThreadReply();
   };
 
-  /* Wallet auto-reconnect (unchanged) */
-  async tryAutoReconnectWallet() {if(!window.ethereum) return;try{const p=new ethers.providers.Web3Provider(window.ethereum);const accounts=await p.listAccounts();if(accounts.length>0&&localStorage.getItem("pulseWalletConnected")==="true"){this.signer=p.getSigner();this.state.signerAddress=(await this.signer.getAddress()).toLowerCase();this.elements.walletAddress.textContent=this.truncAddr(this.state.signerAddress);this.elements.walletInfo.style.display="block";this.elements.connectWallet.textContent="Disconnect Wallet";await this.loadProfile()}}catch(e){}}
+  async tryAutoReconnectWallet() {
+    if (!window.ethereum) return;
+    try {
+      const p = new ethers.providers.Web3Provider(window.ethereum);
+      const accounts = await p.listAccounts();
+      if (accounts.length > 0 && localStorage.getItem("pulseWalletConnected") === "true") {
+        this.signer = p.getSigner();
+        this.state.signerAddress = (await this.signer.getAddress()).toLowerCase();
+        this.elements.walletAddress.textContent = this.truncAddr(this.state.signerAddress);
+        this.elements.walletInfo.style.display = "block";
+        this.elements.connectWallet.textContent = "Disconnect Wallet";
+        await this.loadProfile();
+      }
+    } catch(e) {}
+  }
 
-  async toggleWallet() {this.signer?await this.disconnectWallet():await this.connectWallet();}
-  async connectWallet() {/* original connect logic unchanged */ if(!window.ethereum)return utils.showStatus("MetaMask not detected");try{const p=new ethers.providers.Web3Provider(window.ethereum);if((await p.getNetwork()).chainId!==PULSE_CHAIN_ID)await window.ethereum.request({method:"wallet_switchEthereumChain",params:[{chainId:"0x171"}]});await p.send("eth_requestAccounts",[]);this.signer=p.getSigner();this.state.signerAddress=(await this.signer.getAddress()).toLowerCase();this.elements.walletAddress.textContent=this.truncAddr(this.state.signerAddress);this.elements.walletInfo.style.display="block";this.elements.connectWallet.textContent="Disconnect Wallet";localStorage.setItem("pulseWalletConnected","true");await this.loadProfile();utils.showStatus("Wallet connected")}catch(e){utils.showStatus("Connection failed: "+e.message);}}
-  async disconnectWallet() {this.signer=null;this.state.signerAddress=null;this.state.profile={username:"",profilePicUrl:"image1.jpeg"};this.elements.walletInfo.style.display="none";this.elements.connectWallet.textContent="Connect Wallet";localStorage.removeItem("pulseWalletConnected");this.renderNewsFeed();utils.showStatus("Wallet disconnected");}
+  async toggleWallet() { this.signer ? await this.disconnectWallet() : await this.connectWallet(); }
 
-  /* Self / Custom Channel = only TO the address */
+  async connectWallet() {
+    if(!window.ethereum) return utils.showStatus("MetaMask not detected");
+    try {
+      const p = new ethers.providers.Web3Provider(window.ethereum);
+      if((await p.getNetwork()).chainId !== PULSE_CHAIN_ID) await window.ethereum.request({method:"wallet_switchEthereumChain",params:[{chainId:"0x171"}]});
+      await p.send("eth_requestAccounts",[]);
+      this.signer = p.getSigner();
+      this.state.signerAddress = (await this.signer.getAddress()).toLowerCase();
+      this.elements.walletAddress.textContent = this.truncAddr(this.state.signerAddress);
+      this.elements.walletInfo.style.display = "block";
+      this.elements.connectWallet.textContent = "Disconnect Wallet";
+      localStorage.setItem("pulseWalletConnected", "true");
+      await this.loadProfile();
+      utils.showStatus("Wallet connected");
+    } catch(e) { utils.showStatus("Connection failed: " + e.message); }
+  }
+
+  async disconnectWallet() {
+    this.signer = null;
+    this.state.signerAddress = null;
+    this.state.profile = {username:"", profilePicUrl:"image1.jpeg", bio:""};
+    this.elements.walletInfo.style.display = "none";
+    this.elements.connectWallet.textContent = "Connect Wallet";
+    localStorage.removeItem("pulseWalletConnected");
+    this.renderNewsFeed();
+    utils.showStatus("Wallet disconnected");
+  }
+
+  /* Self / Custom = only TO the address (private inbox) */
   async setChannel(a) {
     this.state.isProfileView = false;
     this.stopPolling();
@@ -266,11 +351,11 @@ class PulseUnderground {
     this.state.newsItems = i.filter(x => x.channel === this.state.channel).sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
     this.renderNewsFeed();
     this.elements.currentChannel.textContent = this.truncAddr(a);
-    await this.fetchPosts(); // TO-only
+    await this.fetchPosts(); // TO only
     this.startPolling();
   }
 
-  /* Profile View = your outgoing + special profile data */
+  /* Profile = outgoing + on-chain profile header */
   async setProfileView() {
     if (!this.signer) return utils.showStatus("Connect wallet first");
     this.state.isProfileView = true;
@@ -280,14 +365,14 @@ class PulseUnderground {
     this.state.hasMore = true;
     this.state.pendingNewItems = [];
     this.elements.newStoriesButton.style.display = "none";
-    this.elements.storySubmission.style.display = "none"; // hide composer
+    this.elements.storySubmission.style.display = "none";
     this.elements.mainTitle.style.display = "none";
     this.elements.profileHeader.style.display = "block";
     const i = await this.cache.getItems();
     this.state.newsItems = i.filter(x => x.reporter === this.state.signerAddress).sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
     await this.loadOnChainProfile();
     this.renderNewsFeed();
-    await this.fetchProfilePosts(); // your outgoing only
+    await this.fetchProfilePosts();
     this.startPolling();
   }
 
@@ -309,7 +394,6 @@ class PulseUnderground {
           const jsonStr = raw.substring(PROFILE_PREFIX.length).trim();
           const data = JSON.parse(jsonStr);
           this.state.profile = {...this.state.profile, ...data};
-          // save to cache
           await this.cache.saveProfile({address:this.state.signerAddress, ...this.state.profile});
         }
       }
@@ -343,7 +427,6 @@ class PulseUnderground {
     } catch(e) {}
   }
 
-  /* Save profile on-chain to your own address */
   async saveProfile() {
     const n = this.elements.usernameInput.value.trim();
     let u = this.elements.profilePicInput.value.trim() || "image1.jpeg";
@@ -357,7 +440,11 @@ class PulseUnderground {
     if (this.signer) {
       const profileData = JSON.stringify({username:n, profilePicUrl:u, bio});
       const finalContent = `${PROFILE_PREFIX}${profileData}`;
-      await this.doPublish(finalContent); // sent to your own address
+      // Send to your own address
+      const oldChannel = this.state.channel;
+      this.state.channel = this.state.signerAddress;
+      await this.doPublish(finalContent);
+      this.state.channel = oldChannel;
     }
     this.elements.profileModal.style.display = "none";
     this.updateProfileHeader();
@@ -365,7 +452,6 @@ class PulseUnderground {
     utils.showStatus("Profile saved on-chain");
   }
 
-  /* Rest of methods (doPublish, publishStory, thread/reply, renderNewsFeed, fetchPosts for normal channels = TO only, etc.) */
   async doPublish(userContent, parentTx = null) {
     if(!this.signer) return utils.showStatus("Connect wallet first");
     if(!userContent) return;
@@ -422,6 +508,10 @@ class PulseUnderground {
   startPolling=()=>{this.pollInterval=setInterval(()=>this.pollNew(),120000)}
   stopPolling=()=>{clearInterval(this.pollInterval)}
   loadNewStories=()=>{this.state.newsItems=[...this.state.pendingNewItems,...this.state.newsItems];this.state.pendingNewItems=[];this.elements.newStoriesButton.style.display="none";this.renderNewsFeed();window.scrollTo({top:0,behavior:"smooth"})}
+
+  /* Original loadCachedData and loadProfile */
+  async loadCachedData() {const i=await this.cache.getItems();this.state.newsItems=i.filter(x=>x.channel===this.state.channel).sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));this.renderNewsFeed();}
+  async loadProfile() {const p=await this.cache.getProfile(this.state.signerAddress)||{username:"",profilePicUrl:"image1.jpeg",bio:""};this.state.profile=p;this.elements.submissionAvatar.src=p.profilePicUrl;this.renderNewsFeed();}
 }
 
 const pulse = new PulseUnderground();
