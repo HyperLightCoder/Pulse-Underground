@@ -46,7 +46,7 @@ textarea:focus{outline:none;border-color:var(--primary);box-shadow:var(--neon-gl
 #profileHeader .avatar{width:120px;height:120px;border-radius:50%;margin:0 auto 15px;display:block;}
 #profileHeader h2{margin:10px 0 5px;font-size:24px;}
 #profileHeader .bio{font-size:15px;color:#bbb;max-width:600px;margin:0 auto;}
-#profileHeader .edit-btn{position:absolute;top:15px;right:15px;padding:5px 12px;font-size:13px;background:var(--primary);color:#fff;border:none;border-radius:9999px;cursor:pointer;}
+#profileHeader .edit-btn{position:absolute;top:15px;right:15px;padding:4px 10px;font-size:12px;background:var(--primary);color:#fff;border:none;border-radius:9999px;cursor:pointer;}
 </style>
 </head>
 <body>
@@ -445,8 +445,7 @@ class PulseUnderground {
     let u = this.elements.profilePicInput.value.trim() || "image1.jpeg";
     const bio = this.elements.bioInput.value.trim();
     if (u !== "image1.jpeg") {
-      const i = new Image();
-      i.src = u;
+      const i = new Image(); i.src = u;
       if (!await new Promise(r => {i.onload = () => r(true); i.onerror = () => r(false);})) {
         utils.showStatus("Invalid profile picture URL - using default");
         u = "image1.jpeg";
@@ -515,12 +514,77 @@ class PulseUnderground {
 
   debounce = (f, d) => {let t; return (...a) => {clearTimeout(t); t = setTimeout(() => f.apply(this, a), d);};};
 
-  async fetchOnePage(retryCount=0){if(!this.state.hasMore||!this.state.channel)return[];let u=`https://api.scan.pulsechain.com/api?module=account&action=txlist&address=${this.state.channel}&limit=50`;if(this.state.nextPageParams)u+="&"+new URLSearchParams(this.state.nextPageParams);try{const r=await fetch(u);if(!r.ok){if(r.status===429&&retryCount<3){await new Promise(res=>setTimeout(res,Math.pow(2,retryCount)*1000));return this.fetchOnePage(retryCount+1)}throw new Error(`API error: ${r.status}`)}const d=await r.json();const rawItems = d.status === "1" ? d.result : [];const i=this.parseTransactions(rawItems);this.state.nextPageParams=null;this.state.hasMore=false;return i}catch(e){this.state.hasMore=false;utils.showStatus("Fetch failed: "+e.message);return[]}}
-  async fetchPosts(){if(this.state.isLoading||!this.state.channel)return;this.state.isLoading=true;utils.toggleLoading(true);try{let added=false;while(!added&&this.state.hasMore){const p=await this.fetchOnePage();const u=p.filter(o=>!this.state.newsItems.some(x=>x.txHash===o.txHash));if(u.length){this.state.newsItems=[...this.state.newsItems,...u].sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));await this.cache.saveItems(u);added=true}}this.renderNewsFeed()}finally{this.state.isLoading=false;utils.toggleLoading(false);if(!this.state.hasMore)utils.showStatus("No more transactions found")}}
-  parseTransactions=(t)=>{return t.filter(x=>x.input&&x.input!=="0x"&&x.to&&x.to.toLowerCase()===this.state.channel).map(x=>{try{let fullContent=ethers.utils.toUtf8String(x.input).trim();let parentTx=null;let displayContent=fullContent;const match=fullContent.match(/^REPLY_TO:(0x[a-f0-9]{64})\n\n/i);if(match){parentTx=match[1].toLowerCase();displayContent=fullContent.substring(match[0].length).trim()}return displayContent.length?{content:fullContent,displayContent:displayContent,parentTx:parentTx,reporter:x.from.toLowerCase(),timestamp:x.timeStamp?new Date(x.timeStamp*1000).toISOString():new Date().toISOString(),txHash:x.hash,channel:this.state.channel}:null}catch{return null}}).filter(Boolean)}
-  checkInfiniteScroll=()=>{if(this.state.hasMore&&!this.state.isLoading&&window.innerHeight+window.scrollY>=document.body.offsetHeight)this.fetchPosts()}
-  async refreshPosts(){this.state.nextPageParams=null;this.state.hasMore=true;await this.fetchPosts()}
-  async pollNew(){if(!this.state.channel)return;const currentMax=this.state.newsItems[0]?.timestamp?new Date(this.state.newsItems[0].timestamp):new Date(0);const oldNext=this.state.nextPageParams;this.state.nextPageParams=null;const newItems=[];while(this.state.hasMore){const page=await this.fetchOnePage();const filtered=page.filter(i=>new Date(i.timestamp)>currentMax&&!this.state.newsItems.some(ex=>ex.txHash===i.txHash)&&!newItems.some(ex=>ex.txHash===i.txHash));if(filtered.length)newItems.push(...filtered);if(filtered.length<page.length||!this.state.nextPageParams)break}this.state.nextPageParams=oldNext;if(newItems.length){this.state.pendingNewItems=newItems.sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));this.elements.newStoriesButton.style.display="block"}}
+  /* Fixed pagination for v1 API - keeps fetching pages until empty */
+  async fetchOnePage(page = 1) {
+    if (!this.state.hasMore || !this.state.channel) return [];
+    let u = `https://api.scan.pulsechain.com/api?module=account&action=txlist&address=${this.state.channel}&limit=50&page=${page}`;
+    try {
+      const r = await fetch(u);
+      if (!r.ok) throw new Error(`API error: ${r.status}`);
+      const d = await r.json();
+      const rawItems = d.status === "1" ? d.result : [];
+      const i = this.parseTransactions(rawItems);
+      this.state.hasMore = rawItems.length === 50; // if we got a full page, there might be more
+      return i;
+    } catch(e) {
+      this.state.hasMore = false;
+      utils.showStatus("Fetch failed: " + e.message);
+      return [];
+    }
+  }
+
+  async fetchPosts() {
+    if (this.state.isLoading || !this.state.channel) return;
+    this.state.isLoading = true;
+    utils.toggleLoading(true);
+    try {
+      let added = false;
+      let page = 1;
+      while (!added && this.state.hasMore) {
+        const p = await this.fetchOnePage(page);
+        const u = p.filter(o => !this.state.newsItems.some(x => x.txHash === o.txHash));
+        if (u.length) {
+          this.state.newsItems = [...this.state.newsItems, ...u].sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+          await this.cache.saveItems(u);
+          added = true;
+        }
+        page++;
+      }
+      this.renderNewsFeed();
+    } finally {
+      this.state.isLoading = false;
+      utils.toggleLoading(false);
+      if (!this.state.hasMore) utils.showStatus("No more transactions found");
+    }
+  }
+
+  parseTransactions = (t) => {
+    return t.filter(x => x.input && x.input !== "0x" && x.to && x.to.toLowerCase() === this.state.channel).map(x => {
+      try {
+        let fullContent = ethers.utils.toUtf8String(x.input).trim();
+        let parentTx = null;
+        let displayContent = fullContent;
+        const match = fullContent.match(/^REPLY_TO:(0x[a-f0-9]{64})\n\n/i);
+        if (match) {
+          parentTx = match[1].toLowerCase();
+          displayContent = fullContent.substring(match[0].length).trim();
+        }
+        return displayContent.length ? {
+          content: fullContent,
+          displayContent: displayContent,
+          parentTx: parentTx,
+          reporter: x.from.toLowerCase(),
+          timestamp: x.timeStamp ? new Date(x.timeStamp * 1000).toISOString() : new Date().toISOString(),
+          txHash: x.hash,
+          channel: this.state.channel
+        } : null;
+      } catch { return null; }
+    }).filter(Boolean);
+  };
+
+  checkInfiniteScroll = () => {if(this.state.hasMore && !this.state.isLoading && window.innerHeight + window.scrollY >= document.body.offsetHeight) this.fetchPosts();}
+  async refreshPosts() {this.state.nextPageParams = null; this.state.hasMore = true; await this.fetchPosts();}
+  async pollNew() {if(!this.state.channel) return; const currentMax=this.state.newsItems[0]?.timestamp?new Date(this.state.newsItems[0].timestamp):new Date(0); const oldNext=this.state.nextPageParams; this.state.nextPageParams=null; const newItems=[]; while(this.state.hasMore){const page=await this.fetchOnePage(); const filtered=page.filter(i=>new Date(i.timestamp)>currentMax&&!this.state.newsItems.some(ex=>ex.txHash===i.txHash)&&!newItems.some(ex=>ex.txHash===i.txHash)); if(filtered.length)newItems.push(...filtered); if(filtered.length<50) break;} this.state.nextPageParams=oldNext; if(newItems.length){this.state.pendingNewItems=newItems.sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp)); this.elements.newStoriesButton.style.display="block";}}
   startPolling=()=>{this.pollInterval=setInterval(()=>this.pollNew(),120000)}
   stopPolling=()=>{clearInterval(this.pollInterval)}
   loadNewStories=()=>{this.state.newsItems=[...this.state.pendingNewItems,...this.state.newsItems];this.state.pendingNewItems=[];this.elements.newStoriesButton.style.display="none";this.renderNewsFeed();window.scrollTo({top:0,behavior:"smooth"})}
