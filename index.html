@@ -177,49 +177,50 @@ class PulseUnderground {
   constructor() {
     this.state = {newsItems:[], pendingNewItems:[], searchTerm:"", isLoading:false, hasMore:true, nextPageParams:null, channel:MAIN_CHANNEL, profile:{username:"", profilePicUrl:"image1.jpeg", bio:""}, signerAddress:null, replyingTo:null, currentThreadPost:null, isProfileView:false};
     this.elements = {
-      newsFeed:document.getElementById("newsFeed"),
-      reportContent:document.getElementById("reportContent"),
-      searchInput:document.getElementById("searchInput"),
-      refreshButton:document.getElementById("refreshButton"),
-      newStoriesButton:document.getElementById("newStoriesButton"),
-      connectWallet:document.getElementById("connectWallet"),
-      walletInfo:document.getElementById("walletInfo"),
-      walletAddress:document.getElementById("walletAddress"),
-      publishStory:document.getElementById("publishStory"),
-      mainChannel:document.getElementById("mainChannel"),
-      selfChannel:document.getElementById("selfChannel"),
-      customChannelInput:document.getElementById("customChannelInput"),
-      setCustomChannel:document.getElementById("setCustomChannel"),
-      currentChannel:document.getElementById("currentChannel"),
-      submissionAvatar:document.getElementById("submissionAvatar"),
-      profileLink:document.getElementById("profileLink"),
-      profileModal:document.getElementById("profileModal"),
-      usernameInput:document.getElementById("usernameInput"),
-      profilePicInput:document.getElementById("profilePicInput"),
-      profilePicPreview:document.getElementById("profilePicPreview"),
-      saveProfile:document.getElementById("saveProfile"),
-      clearProfile:document.getElementById("clearProfile"),
-      closeProfileModal:document.getElementById("closeProfileModal"),
-      homeLink:document.getElementById("homeLink"),
-      replyModal:document.getElementById("replyModal"),
-      replyHeader:document.getElementById("replyHeader"),
-      replyingTo:document.getElementById("replyingTo"),
-      replyContent:document.getElementById("replyContent"),
-      replyCharCount:document.getElementById("replyCharCount"),
-      cancelReply:document.getElementById("cancelReply"),
-      postReply:document.getElementById("postReply"),
-      threadModal:document.getElementById("threadModal"),
-      threadOriginal:document.getElementById("threadOriginal"),
-      threadReplies:document.getElementById("threadReplies"),
-      threadReplyContent:document.getElementById("threadReplyContent"),
-      postThreadReply:document.getElementById("postThreadReply"),
-      closeThreadModal:document.getElementById("closeThreadModal"),
-      profileHeader:document.getElementById("profileHeader"),
-      profileHeaderAvatar:document.getElementById("profileHeaderAvatar"),
-      profileHeaderName:document.getElementById("profileHeaderName"),
-      profileHeaderBio:document.getElementById("profileHeaderBio"),
-      bioInput:document.getElementById("bioInput"),
-      mainTitle:document.getElementById("mainTitle")
+      newsFeed: document.getElementById("newsFeed"),
+      reportContent: document.getElementById("reportContent"),
+      searchInput: document.getElementById("searchInput"),
+      refreshButton: document.getElementById("refreshButton"),
+      newStoriesButton: document.getElementById("newStoriesButton"),
+      connectWallet: document.getElementById("connectWallet"),
+      walletInfo: document.getElementById("walletInfo"),
+      walletAddress: document.getElementById("walletAddress"),
+      publishStory: document.getElementById("publishStory"),
+      mainChannel: document.getElementById("mainChannel"),
+      selfChannel: document.getElementById("selfChannel"),
+      customChannelInput: document.getElementById("customChannelInput"),
+      setCustomChannel: document.getElementById("setCustomChannel"),
+      currentChannel: document.getElementById("currentChannel"),
+      submissionAvatar: document.getElementById("submissionAvatar"),
+      profileLink: document.getElementById("profileLink"),
+      profileModal: document.getElementById("profileModal"),
+      usernameInput: document.getElementById("usernameInput"),
+      profilePicInput: document.getElementById("profilePicInput"),
+      profilePicPreview: document.getElementById("profilePicPreview"),
+      saveProfile: document.getElementById("saveProfile"),
+      clearProfile: document.getElementById("clearProfile"),
+      closeProfileModal: document.getElementById("closeProfileModal"),
+      homeLink: document.getElementById("homeLink"),
+      replyModal: document.getElementById("replyModal"),
+      replyHeader: document.getElementById("replyHeader"),
+      replyingTo: document.getElementById("replyingTo"),
+      replyContent: document.getElementById("replyContent"),
+      replyCharCount: document.getElementById("replyCharCount"),
+      cancelReply: document.getElementById("cancelReply"),
+      postReply: document.getElementById("postReply"),
+      threadModal: document.getElementById("threadModal"),
+      threadOriginal: document.getElementById("threadOriginal"),
+      threadReplies: document.getElementById("threadReplies"),
+      threadReplyContent: document.getElementById("threadReplyContent"),
+      postThreadReply: document.getElementById("postThreadReply"),
+      closeThreadModal: document.getElementById("closeThreadModal"),
+      profileHeader: document.getElementById("profileHeader"),
+      profileHeaderAvatar: document.getElementById("profileHeaderAvatar"),
+      profileHeaderName: document.getElementById("profileHeaderName"),
+      profileHeaderBio: document.getElementById("profileHeaderBio"),
+      bioInput: document.getElementById("bioInput"),
+      mainTitle: document.getElementById("mainTitle"),
+      storySubmission: document.getElementById("storySubmission")
     };
     this.cache = new Cache();
     this.signer = null;
@@ -335,7 +336,6 @@ class PulseUnderground {
     utils.showStatus("Wallet disconnected");
   }
 
-  /* Self / Custom = only TO the address (private inbox) */
   async setChannel(a) {
     this.state.isProfileView = false;
     this.stopPolling();
@@ -351,11 +351,10 @@ class PulseUnderground {
     this.state.newsItems = i.filter(x => x.channel === this.state.channel).sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
     this.renderNewsFeed();
     this.elements.currentChannel.textContent = this.truncAddr(a);
-    await this.fetchPosts(); // TO only
+    await this.fetchPosts(); // TO only for Self / Custom
     this.startPolling();
   }
 
-  /* Profile = outgoing + on-chain profile header */
   async setProfileView() {
     if (!this.signer) return utils.showStatus("Connect wallet first");
     this.state.isProfileView = true;
@@ -440,7 +439,6 @@ class PulseUnderground {
     if (this.signer) {
       const profileData = JSON.stringify({username:n, profilePicUrl:u, bio});
       const finalContent = `${PROFILE_PREFIX}${profileData}`;
-      // Send to your own address
       const oldChannel = this.state.channel;
       this.state.channel = this.state.signerAddress;
       await this.doPublish(finalContent);
@@ -509,7 +507,6 @@ class PulseUnderground {
   stopPolling=()=>{clearInterval(this.pollInterval)}
   loadNewStories=()=>{this.state.newsItems=[...this.state.pendingNewItems,...this.state.newsItems];this.state.pendingNewItems=[];this.elements.newStoriesButton.style.display="none";this.renderNewsFeed();window.scrollTo({top:0,behavior:"smooth"})}
 
-  /* Original loadCachedData and loadProfile */
   async loadCachedData() {const i=await this.cache.getItems();this.state.newsItems=i.filter(x=>x.channel===this.state.channel).sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));this.renderNewsFeed();}
   async loadProfile() {const p=await this.cache.getProfile(this.state.signerAddress)||{username:"",profilePicUrl:"image1.jpeg",bio:""};this.state.profile=p;this.elements.submissionAvatar.src=p.profilePicUrl;this.renderNewsFeed();}
 }
