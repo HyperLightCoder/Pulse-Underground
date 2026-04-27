@@ -645,12 +645,13 @@ class PulseUnderground {
 
       let added = false;
       let attempts = 0;
+      const maxAttempts = 300; // deep history support as requested
 
-      while (!added && this.state.hasMore && attempts < 200) {  // high limit as requested
+      while (!added && this.state.hasMore && attempts < maxAttempts) {
         const p = await this.fetchOnePage(this.state.nextPage);
         const uniqueNew = p.filter(o => !this.state.newsItems.some(x => x.txHash === o.txHash));
 
-        if (uniqueNew.length) {
+        if (uniqueNew.length > 0) {
           this.state.newsItems = [...this.state.newsItems, ...uniqueNew];
           await this.cache.saveItems(uniqueNew);
           added = true;
@@ -662,14 +663,14 @@ class PulseUnderground {
         attempts++;
 
         if (!added && this.state.hasMore) {
-          await this.sleep(300); // small polite pause between pages
+          await this.sleep(300); // polite pause between pages
         }
       }
 
       this.state.newsItems.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
       this.renderNewsFeed();
 
-      if (!added && !reset) utils.showStatus("Reached end of available history");
+      if (!added && !reset) utils.showStatus("Reached end of available history on this channel");
     } finally {
       this.state.isLoading = false;
       utils.toggleLoading(false);
