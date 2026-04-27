@@ -39,7 +39,9 @@ textarea:focus{outline:none;border-color:var(--primary);box-shadow:var(--neon-gl
 .report-content{margin:10px 0;line-height:1.6;word-break:break-word}
 .read-more{color:var(--primary-light);cursor:pointer;font-weight:500;margin-top:8px;display:inline-block;transition:color .2s}
 .read-more:hover{color:#fff;text-shadow:var(--neon-glow)}
-.tx-link{color:var(--primary-light);text-decoration:none;font-size:13px}
+.action-row{margin-top:10px;display:flex;gap:12px;align-items:center;font-size:13px}
+.tx-link{color:var(--primary-light);text-decoration:none;transition:color .2s}
+.tx-link:hover{color:#fff;text-shadow:var(--neon-glow)}
 #searchInput,#customChannelInput{width:100%;padding:12px 15px;background:var(--bg-lighter);border:1px solid var(--border);border-radius:20px;color:var(--text);margin-bottom:20px}
 #loadingOverlay,#profileModal,#replyModal,#threadModal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(13,11,20,.9);color:var(--text);display:none;justify-content:center;align-items:center;z-index:1000}
 #statusMessage{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--bg-light);padding:10px 20px;border-radius:5px;display:none;z-index:1001;box-shadow:var(--neon-glow)}
@@ -274,6 +276,8 @@ class PulseUnderground {
       readMoreHTML = `<div class="read-more" onclick="event.stopImmediatePropagation(); pulse.toggleExpand('${post.txHash}');">Read more</div>`;
     }
 
+    const otterLink = `https://otter.pulsechain.com/tx/${post.txHash}`;
+
     return `
       <div class="reporter-info">
         <img src="${isOwn && this.state.profile.profilePicUrl ? this.state.profile.profilePicUrl : "image1.jpeg"}" class="avatar">
@@ -286,8 +290,10 @@ class PulseUnderground {
       ${parentIndicator}
       <div class="report-content">${contentHTML}</div>
       ${readMoreHTML}
-      <a href="https://scan.pulsechain.com/tx/${post.txHash}" target="_blank" class="tx-link" onclick="event.stopImmediatePropagation()">View on PulseScan →</a>
-      <button onclick="event.stopImmediatePropagation(); pulse.openReplyModal({reporter:'${post.reporter}', txHash:'${post.txHash}', parentTx:'${post.parentTx||''}'});" style="margin-top:8px;padding:6px 16px;font-size:14px;background:transparent;border:1px solid var(--primary);color:var(--primary);border-radius:9999px;cursor:pointer">Reply</button>
+      <div class="action-row">
+        <a href="${otterLink}" target="_blank" class="tx-link" onclick="event.stopImmediatePropagation()">View on OtterScan →</a>
+        <button onclick="event.stopImmediatePropagation(); pulse.openReplyModal({reporter:'${post.reporter}', txHash:'${post.txHash}', parentTx:'${post.parentTx||''}'});" style="padding:6px 16px;font-size:14px;background:transparent;border:1px solid var(--primary);color:var(--primary);border-radius:9999px;cursor:pointer">Reply</button>
+      </div>
     `;
   };
 
