@@ -250,7 +250,8 @@ class PulseUnderground {
     await this.loadCachedData();
     this.setupListeners();
     this.elements.currentChannel.textContent = this.truncAddr(this.state.channel);
-    this.tryAutoReconnectWallet();
+    await this.tryAutoReconnectWallet();
+    // Ensure initial fetch runs after everything is ready
     await this.fetchPosts(true);
     this.startPolling();
   }
@@ -344,7 +345,7 @@ class PulseUnderground {
         this.elements.connectWallet.textContent = "Disconnect Wallet";
         await this.loadProfile();
       }
-    } catch(e) {}
+    } catch(e) { console.warn("Auto-reconnect failed", e); }
   }
 
   async toggleWallet() { this.signer ? await this.disconnectWallet() : await this.connectWallet(); }
@@ -363,6 +364,7 @@ class PulseUnderground {
       localStorage.setItem("pulseWalletConnected", "true");
       await this.loadProfile();
       utils.showStatus("Wallet connected");
+      await this.fetchPosts(true); // refresh feed after connect
     } catch(e) { utils.showStatus("Connection failed: " + e.message); }
   }
 
@@ -645,7 +647,7 @@ class PulseUnderground {
 
       let added = false;
       let attempts = 0;
-      const maxAttempts = 300; // deep history support as requested
+      const maxAttempts = 300;
 
       while (!added && this.state.hasMore && attempts < maxAttempts) {
         const p = await this.fetchOnePage(this.state.nextPage);
@@ -663,14 +665,20 @@ class PulseUnderground {
         attempts++;
 
         if (!added && this.state.hasMore) {
-          await this.sleep(300); // polite pause between pages
+          await this.sleep(300);
         }
       }
 
       this.state.newsItems.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
       this.renderNewsFeed();
 
-      if (!added && !reset) utils.showStatus("Reached end of available history on this channel");
+      if (!added && !reset) {
+        utils.showStatus("Reached end of available history");
+      } else if (reset && this.state.newsItems.length === 0) {
+        // Safety retry for initial load race condition
+        await this.sleep(800);
+        await this.fetchPosts(true);
+      }
     } finally {
       this.state.isLoading = false;
       utils.toggleLoading(false);
