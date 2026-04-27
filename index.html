@@ -42,6 +42,7 @@ textarea:focus{outline:none;border-color:var(--primary);box-shadow:var(--neon-gl
 .action-row{margin-top:10px;display:flex;gap:12px;align-items:center;font-size:13px}
 .tx-link{color:var(--primary-light);text-decoration:none;transition:color .2s}
 .tx-link:hover{color:#fff;text-shadow:var(--neon-glow)}
+#loadingMore{display:none;text-align:center;padding:15px;color:var(--primary-light);font-style:italic}
 #searchInput,#customChannelInput{width:100%;padding:12px 15px;background:var(--bg-lighter);border:1px solid var(--border);border-radius:20px;color:var(--text);margin-bottom:20px}
 #loadingOverlay,#profileModal,#replyModal,#threadModal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(13,11,20,.9);color:var(--text);display:none;justify-content:center;align-items:center;z-index:1000}
 #statusMessage{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--bg-light);padding:10px 20px;border-radius:5px;display:none;z-index:1001;box-shadow:var(--neon-glow)}
@@ -89,6 +90,7 @@ textarea:focus{outline:none;border-color:var(--primary);box-shadow:var(--neon-gl
       <button onclick="pulse.openProfileEditModal()" class="edit-btn">Edit</button>
     </div>
     <div id="newsFeed"></div>
+    <div id="loadingMore">Loading more posts...</div>
     <button id="refreshButton">Refresh Feed</button>
   </main>
   <div id="sidebar-right">
@@ -192,6 +194,7 @@ class PulseUnderground {
     };
     this.elements = {
       newsFeed: document.getElementById("newsFeed"),
+      loadingMore: document.getElementById("loadingMore"),
       reportContent: document.getElementById("reportContent"),
       mainCharCount: document.getElementById("mainCharCount"),
       searchInput: document.getElementById("searchInput"),
@@ -298,11 +301,8 @@ class PulseUnderground {
   };
 
   toggleExpand = (txHash) => {
-    if (this.state.expandedPosts.has(txHash)) {
-      this.state.expandedPosts.delete(txHash);
-    } else {
-      this.state.expandedPosts.add(txHash);
-    }
+    if (this.state.expandedPosts.has(txHash)) this.state.expandedPosts.delete(txHash);
+    else this.state.expandedPosts.add(txHash);
     this.renderNewsFeed();
   };
 
@@ -314,7 +314,7 @@ class PulseUnderground {
     e.searchInput.oninput = this.debounce(() => {this.state.searchTerm = e.searchInput.value.trim().toLowerCase(); this.renderNewsFeed();}, 300);
     e.refreshButton.onclick = () => this.refreshPosts();
     e.newStoriesButton.onclick = () => this.loadNewStories();
-    window.addEventListener("scroll", this.debounce(() => this.checkInfiniteScroll(), 150));
+    window.addEventListener("scroll", this.debounce(() => this.checkInfiniteScroll(), 100));
     e.homeLink.onclick = (ev) => {ev.preventDefault(); window.scrollTo({top:0, behavior:"smooth"});};
     e.mainChannel.onclick = () => this.setChannel(MAIN_CHANNEL);
     e.selfChannel.onclick = async () => {if(!this.signer) return utils.showStatus("Connect wallet first"); this.setChannel((await this.signer.getAddress()).toLowerCase());};
@@ -602,9 +602,7 @@ class PulseUnderground {
       d.innerHTML = this.getPostHTML(x);
       d.onclick = (e) => {
         if (e.target.classList.contains("read-more")) return;
-        if (!e.target.closest("a") && !e.target.closest("button")) {
-          this.openThread(x);
-        }
+        if (!e.target.closest("a") && !e.target.closest("button")) this.openThread(x);
       };
       f.appendChild(d);
     });
@@ -627,10 +625,15 @@ class PulseUnderground {
     }
   }
 
+  async sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
   async fetchPosts(reset = false) {
     if (this.state.isLoading || !this.state.channel) return;
     this.state.isLoading = true;
     utils.toggleLoading(true);
+    if (!reset) this.elements.loadingMore.style.display = "block";
 
     try {
       if (reset) {
@@ -640,22 +643,37 @@ class PulseUnderground {
         this.state.expandedPosts.clear();
       }
 
-      const p = await this.fetchOnePage(this.state.nextPage);
-      const uniqueNew = p.filter(o => !this.state.newsItems.some(x => x.txHash === o.txHash));
+      let added = false;
+      let attempts = 0;
 
-      if (uniqueNew.length) {
-        this.state.newsItems = [...this.state.newsItems, ...uniqueNew];
-        await this.cache.saveItems(uniqueNew);
+      while (!added && this.state.hasMore && attempts < 200) {  // high limit as requested
+        const p = await this.fetchOnePage(this.state.nextPage);
+        const uniqueNew = p.filter(o => !this.state.newsItems.some(x => x.txHash === o.txHash));
+
+        if (uniqueNew.length) {
+          this.state.newsItems = [...this.state.newsItems, ...uniqueNew];
+          await this.cache.saveItems(uniqueNew);
+          added = true;
+        }
+
+        this.state.nextPage += 1;
+        this.state.hasMore = p.length === 50;
+
+        attempts++;
+
+        if (!added && this.state.hasMore) {
+          await this.sleep(300); // small polite pause between pages
+        }
       }
-
-      this.state.nextPage += 1;
-      this.state.hasMore = p.length === 50;
 
       this.state.newsItems.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
       this.renderNewsFeed();
+
+      if (!added && !reset) utils.showStatus("Reached end of available history");
     } finally {
       this.state.isLoading = false;
       utils.toggleLoading(false);
+      this.elements.loadingMore.style.display = "none";
     }
   }
 
@@ -684,7 +702,8 @@ class PulseUnderground {
   };
 
   checkInfiniteScroll = () => {
-    if (this.state.hasMore && !this.state.isLoading && window.innerHeight + window.scrollY >= document.body.offsetHeight - 400) {
+    if (this.state.hasMore && !this.state.isLoading && 
+        window.innerHeight + window.scrollY >= document.body.offsetHeight - 300) {
       this.fetchPosts(false);
     }
   };
