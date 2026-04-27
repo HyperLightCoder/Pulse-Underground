@@ -31,12 +31,14 @@ button:disabled{opacity:.6;cursor:not-allowed}
 .input-container{flex-grow:1;position:relative}
 textarea{width:100%;min-height:100px;padding:15px;background:var(--bg-light);border:1px solid var(--border);border-radius:8px;color:var(--text);resize:none}
 textarea:focus{outline:none;border-color:var(--primary);box-shadow:var(--neon-glow)}
-.news-item{padding:15px;border-bottom:1px solid var(--border);transition:background .2s}
+.news-item{padding:15px;border-bottom:1px solid var(--border);transition:background .2s;cursor:pointer}
 .news-item:hover{background:var(--bg-lighter)}
 .reporter-info{display:flex;align-items:center;margin-bottom:10px}
 .reporter-details{font-size:14px;margin-left:10px}
 .reporter-name{font-weight:bold}
-.report-content{margin:10px 0;line-height:1.6}
+.report-content{margin:10px 0;line-height:1.6;word-break:break-word}
+.truncated::after{content:"... ";color:var(--primary-light);cursor:pointer}
+.tx-link{color:var(--primary-light);text-decoration:none;font-size:13px}
 #searchInput,#customChannelInput{width:100%;padding:12px 15px;background:var(--bg-lighter);border:1px solid var(--border);border-radius:20px;color:var(--text);margin-bottom:20px}
 #loadingOverlay,#profileModal,#replyModal,#threadModal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(13,11,20,.9);color:var(--text);display:none;justify-content:center;align-items:center;z-index:1000}
 #statusMessage{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--bg-light);padding:10px 20px;border-radius:5px;display:none;z-index:1001;box-shadow:var(--neon-glow)}
@@ -47,6 +49,7 @@ textarea:focus{outline:none;border-color:var(--primary);box-shadow:var(--neon-gl
 #profileHeader h2{margin:10px 0 5px;font-size:24px;}
 #profileHeader .bio{font-size:15px;color:#bbb;max-width:600px;margin:0 auto;}
 #profileHeader .edit-btn{position:absolute;top:15px;right:15px;padding:4px 10px;font-size:12px;background:var(--primary);color:#fff;border:none;border-radius:9999px;cursor:pointer;}
+.char-count{font-size:13px;color:#888;text-align:right;margin-top:5px}
 </style>
 </head>
 <body>
@@ -71,7 +74,8 @@ textarea:focus{outline:none;border-color:var(--primary);box-shadow:var(--neon-gl
     <div id="storySubmission">
       <img src="image1.jpeg" alt="User Avatar" class="avatar" id="submissionAvatar">
       <div class="input-container">
-        <textarea id="reportContent" placeholder="What's happening?"></textarea>
+        <textarea id="reportContent" placeholder="What's happening on Pulse?"></textarea>
+        <div class="char-count" id="mainCharCount">0 / ∞</div>
         <button id="publishStory">➤</button>
       </div>
     </div>
@@ -82,7 +86,7 @@ textarea:focus{outline:none;border-color:var(--primary);box-shadow:var(--neon-gl
       <button onclick="pulse.openProfileEditModal()" class="edit-btn">Edit</button>
     </div>
     <div id="newsFeed"></div>
-    <button id="refreshButton">Refresh</button>
+    <button id="refreshButton">Refresh Feed</button>
   </main>
   <div id="sidebar-right">
     <input type="text" id="searchInput" placeholder="Search The Pulse Underground">
@@ -100,6 +104,7 @@ textarea:focus{outline:none;border-color:var(--primary);box-shadow:var(--neon-gl
 <div id="loadingOverlay">Loading...</div>
 <div id="statusMessage"></div>
 
+<!-- Profile Modal -->
 <div id="profileModal">
   <div class="modal-content">
     <h2>Edit Profile</h2>
@@ -110,7 +115,7 @@ textarea:focus{outline:none;border-color:var(--primary);box-shadow:var(--neon-gl
     <input type="text" id="profilePicInput" placeholder="Enter image URL">
     <label for="bioInput">Bio:</label>
     <textarea id="bioInput" placeholder="Write a short bio..." style="width:100%;min-height:80px;padding:10px;background:var(--bg-lighter);border:1px solid var(--border);border-radius:5px;color:var(--text);resize:none"></textarea>
-    <div class="modal-buttons">
+    <div style="margin-top:15px;display:flex;gap:10px">
       <button id="saveProfile">Save Profile (on-chain)</button>
       <button id="clearProfile">Clear</button>
       <button id="closeProfileModal">Close</button>
@@ -118,12 +123,13 @@ textarea:focus{outline:none;border-color:var(--primary);box-shadow:var(--neon-gl
   </div>
 </div>
 
+<!-- Reply Modal -->
 <div id="replyModal">
   <div class="modal-content" style="width:480px">
     <h2 id="replyHeader" style="margin-bottom:15px">Reply</h2>
     <div id="replyingTo" style="margin-bottom:15px;color:var(--primary-light);font-size:15px"></div>
     <textarea id="replyContent" style="width:100%;min-height:140px;padding:15px;background:var(--bg-light);border:1px solid var(--border);border-radius:8px;color:var(--text);resize:none;font-size:17px" placeholder="Write your reply..."></textarea>
-    <div style="text-align:right;margin-top:10px;font-size:14px;color:#888" id="replyCharCount">0 / ∞</div>
+    <div class="char-count" id="replyCharCount">0 / ∞</div>
     <div style="display:flex;gap:10px;margin-top:20px">
       <button id="cancelReply">Cancel</button>
       <button id="postReply" style="background:linear-gradient(45deg,#00ff9d,#00cc7a)">Post Reply</button>
@@ -131,6 +137,7 @@ textarea:focus{outline:none;border-color:var(--primary);box-shadow:var(--neon-gl
   </div>
 </div>
 
+<!-- Thread Modal -->
 <div id="threadModal">
   <div class="thread-modal-content">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;border-bottom:1px solid var(--border);padding-bottom:15px">
@@ -153,6 +160,7 @@ const MAIN_CHANNEL = "0x9cd83be15a79646a3d22b81fc8ddf7b7240a62cb";
 const PULSE_CHAIN_ID = 369;
 const REPLY_PREFIX = "REPLY_TO:";
 const PROFILE_PREFIX = "PROFILE_DATA:";
+const MAX_PREVIEW_LENGTH = 500;
 
 const utils = {
   showStatus: (m, d = 3000) => {
@@ -177,52 +185,57 @@ class Cache {
 
 class PulseUnderground {
   constructor() {
-    this.state = {newsItems:[], pendingNewItems:[], searchTerm:"", isLoading:false, hasMore:true, nextPageParams:null, channel:MAIN_CHANNEL, profile:{username:"", profilePicUrl:"image1.jpeg", bio:""}, signerAddress:null, replyingTo:null, currentThreadPost:null, isProfileView:false};
+    this.state = {
+      newsItems: [], pendingNewItems: [], searchTerm: "", isLoading: false, hasMore: true,
+      channel: MAIN_CHANNEL, profile: {username:"", profilePicUrl:"image1.jpeg", bio:""},
+      signerAddress: null, replyingTo: null, currentThreadPost: null, isProfileView: false
+    };
     this.elements = {
-      newsFeed:document.getElementById("newsFeed"),
-      reportContent:document.getElementById("reportContent"),
-      searchInput:document.getElementById("searchInput"),
-      refreshButton:document.getElementById("refreshButton"),
-      newStoriesButton:document.getElementById("newStoriesButton"),
-      connectWallet:document.getElementById("connectWallet"),
-      walletInfo:document.getElementById("walletInfo"),
-      walletAddress:document.getElementById("walletAddress"),
-      publishStory:document.getElementById("publishStory"),
-      mainChannel:document.getElementById("mainChannel"),
-      selfChannel:document.getElementById("selfChannel"),
-      customChannelInput:document.getElementById("customChannelInput"),
-      setCustomChannel:document.getElementById("setCustomChannel"),
-      currentChannel:document.getElementById("currentChannel"),
-      submissionAvatar:document.getElementById("submissionAvatar"),
-      profileLink:document.getElementById("profileLink"),
-      profileModal:document.getElementById("profileModal"),
-      usernameInput:document.getElementById("usernameInput"),
-      profilePicInput:document.getElementById("profilePicInput"),
-      profilePicPreview:document.getElementById("profilePicPreview"),
-      saveProfile:document.getElementById("saveProfile"),
-      clearProfile:document.getElementById("clearProfile"),
-      closeProfileModal:document.getElementById("closeProfileModal"),
-      homeLink:document.getElementById("homeLink"),
-      replyModal:document.getElementById("replyModal"),
-      replyHeader:document.getElementById("replyHeader"),
-      replyingTo:document.getElementById("replyingTo"),
-      replyContent:document.getElementById("replyContent"),
-      replyCharCount:document.getElementById("replyCharCount"),
-      cancelReply:document.getElementById("cancelReply"),
-      postReply:document.getElementById("postReply"),
-      threadModal:document.getElementById("threadModal"),
-      threadOriginal:document.getElementById("threadOriginal"),
-      threadReplies:document.getElementById("threadReplies"),
-      threadReplyContent:document.getElementById("threadReplyContent"),
-      postThreadReply:document.getElementById("postThreadReply"),
-      closeThreadModal:document.getElementById("closeThreadModal"),
-      profileHeader:document.getElementById("profileHeader"),
-      profileHeaderAvatar:document.getElementById("profileHeaderAvatar"),
-      profileHeaderName:document.getElementById("profileHeaderName"),
-      profileHeaderBio:document.getElementById("profileHeaderBio"),
-      bioInput:document.getElementById("bioInput"),
-      mainTitle:document.getElementById("mainTitle"),
-      storySubmission:document.getElementById("storySubmission")
+      newsFeed: document.getElementById("newsFeed"),
+      reportContent: document.getElementById("reportContent"),
+      mainCharCount: document.getElementById("mainCharCount"),
+      searchInput: document.getElementById("searchInput"),
+      refreshButton: document.getElementById("refreshButton"),
+      newStoriesButton: document.getElementById("newStoriesButton"),
+      connectWallet: document.getElementById("connectWallet"),
+      walletInfo: document.getElementById("walletInfo"),
+      walletAddress: document.getElementById("walletAddress"),
+      publishStory: document.getElementById("publishStory"),
+      mainChannel: document.getElementById("mainChannel"),
+      selfChannel: document.getElementById("selfChannel"),
+      customChannelInput: document.getElementById("customChannelInput"),
+      setCustomChannel: document.getElementById("setCustomChannel"),
+      currentChannel: document.getElementById("currentChannel"),
+      submissionAvatar: document.getElementById("submissionAvatar"),
+      profileLink: document.getElementById("profileLink"),
+      profileModal: document.getElementById("profileModal"),
+      usernameInput: document.getElementById("usernameInput"),
+      profilePicInput: document.getElementById("profilePicInput"),
+      profilePicPreview: document.getElementById("profilePicPreview"),
+      saveProfile: document.getElementById("saveProfile"),
+      clearProfile: document.getElementById("clearProfile"),
+      closeProfileModal: document.getElementById("closeProfileModal"),
+      homeLink: document.getElementById("homeLink"),
+      replyModal: document.getElementById("replyModal"),
+      replyHeader: document.getElementById("replyHeader"),
+      replyingTo: document.getElementById("replyingTo"),
+      replyContent: document.getElementById("replyContent"),
+      replyCharCount: document.getElementById("replyCharCount"),
+      cancelReply: document.getElementById("cancelReply"),
+      postReply: document.getElementById("postReply"),
+      threadModal: document.getElementById("threadModal"),
+      threadOriginal: document.getElementById("threadOriginal"),
+      threadReplies: document.getElementById("threadReplies"),
+      threadReplyContent: document.getElementById("threadReplyContent"),
+      postThreadReply: document.getElementById("postThreadReply"),
+      closeThreadModal: document.getElementById("closeThreadModal"),
+      profileHeader: document.getElementById("profileHeader"),
+      profileHeaderAvatar: document.getElementById("profileHeaderAvatar"),
+      profileHeaderName: document.getElementById("profileHeaderName"),
+      profileHeaderBio: document.getElementById("profileHeaderBio"),
+      bioInput: document.getElementById("bioInput"),
+      mainTitle: document.getElementById("mainTitle"),
+      storySubmission: document.getElementById("storySubmission")
     };
     this.cache = new Cache();
     this.signer = null;
@@ -235,11 +248,12 @@ class PulseUnderground {
     this.setupListeners();
     this.elements.currentChannel.textContent = this.truncAddr(this.state.channel);
     this.tryAutoReconnectWallet();
-    await this.fetchPosts();
+    await this.fetchPosts();        // initial load
     this.startPolling();
   }
 
   truncAddr = (a) => a && a.length > 10 ? `${a.slice(0,6)}...${a.slice(-4)}` : a;
+
   relativeTime = (timestamp) => {
     const diff = Math.floor((Date.now() - new Date(timestamp)) / 1000);
     if (diff < 60) return "just now";
@@ -250,8 +264,16 @@ class PulseUnderground {
 
   getPostHTML = (post, isThreadHeader = false) => {
     const isOwn = post.reporter === this.state.signerAddress;
-    const displayContent = post.displayContent || post.content || "";
+    let displayContent = post.displayContent || post.content || "";
     const parentIndicator = post.parentTx ? `<div style="color:var(--primary-light);font-size:14px;margin-bottom:8px">↳ Replying to ${this.truncAddr(post.parentTx)}</div>` : "";
+
+    // Truncate for feed view only
+    let contentHTML = displayContent.replace(/\n/g, "<br>");
+    if (!isThreadHeader && displayContent.length > MAX_PREVIEW_LENGTH) {
+      contentHTML = displayContent.substring(0, MAX_PREVIEW_LENGTH).replace(/\n/g, "<br>") + 
+                    `<span class="truncated" onclick="event.stopImmediatePropagation(); pulse.openThreadFromPreview('${post.txHash}');">Read more</span>`;
+    }
+
     return `
       <div class="reporter-info">
         <img src="${isOwn && this.state.profile.profilePicUrl ? this.state.profile.profilePicUrl : "image1.jpeg"}" class="avatar">
@@ -262,7 +284,7 @@ class PulseUnderground {
         </div>
       </div>
       ${parentIndicator}
-      <div class="report-content" style="${isThreadHeader ? "font-size:19px;line-height:1.7" : ""}">${displayContent.replace(/\n/g, "<br>")}</div>
+      <div class="report-content">${contentHTML}</div>
       <a href="https://scan.pulsechain.com/tx/${post.txHash}" target="_blank" class="tx-link" onclick="event.stopImmediatePropagation()">View on PulseScan →</a>
       ${!isThreadHeader ? `<button onclick="event.stopImmediatePropagation(); pulse.openReplyModal({reporter:'${post.reporter}', txHash:'${post.txHash}', parentTx:'${post.parentTx||''}'});" style="margin-top:8px;padding:6px 16px;font-size:14px;background:transparent;border:1px solid var(--primary);color:var(--primary);border-radius:9999px;cursor:pointer">Reply</button>` : ""}
     `;
@@ -272,6 +294,7 @@ class PulseUnderground {
     const e = this.elements;
     e.connectWallet.onclick = () => this.toggleWallet();
     e.publishStory.onclick = () => this.publishStory();
+    e.reportContent.oninput = () => { e.mainCharCount.textContent = `${e.reportContent.value.length} / ∞`; };
     e.searchInput.oninput = this.debounce(() => {this.state.searchTerm = e.searchInput.value.trim().toLowerCase(); this.renderNewsFeed();}, 300);
     e.refreshButton.onclick = () => this.refreshPosts();
     e.newStoriesButton.onclick = () => this.loadNewStories();
@@ -342,7 +365,6 @@ class PulseUnderground {
     this.state.isProfileView = false;
     this.stopPolling();
     this.state.channel = a.toLowerCase();
-    this.state.nextPageParams = null;
     this.state.hasMore = true;
     this.state.pendingNewItems = [];
     this.elements.newStoriesButton.style.display = "none";
@@ -362,7 +384,6 @@ class PulseUnderground {
     this.state.isProfileView = true;
     this.stopPolling();
     this.state.channel = this.state.signerAddress;
-    this.state.nextPageParams = null;
     this.state.hasMore = true;
     this.state.pendingNewItems = [];
     this.elements.newStoriesButton.style.display = "none";
@@ -373,14 +394,14 @@ class PulseUnderground {
     this.state.newsItems = i.filter(x => x.reporter === this.state.signerAddress).sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
     await this.loadOnChainProfile();
     this.renderNewsFeed();
-    await this.fetchProfilePosts();
+    await this.fetchPosts();
     this.startPolling();
   }
 
   async loadOnChainProfile() {
     if (!this.state.signerAddress) return;
     try {
-      const url = `https://api.scan.pulsechain.com/api?module=account&action=txlist&address=${this.state.signerAddress}&limit=50`;
+      const url = `https://api.scan.pulsechain.com/api?module=account&action=txlist&address=${this.state.signerAddress}&limit=50&sort=desc`;
       const r = await fetch(url);
       if (r.ok) {
         const d = await r.json();
@@ -419,40 +440,28 @@ class PulseUnderground {
     this.elements.profileModal.style.display = "flex";
   };
 
-  async fetchProfilePosts() {
-    if (!this.state.signerAddress) return;
-    try {
-      const url = `https://api.scan.pulsechain.com/api?module=account&action=txlist&address=${this.state.signerAddress}&limit=50`;
-      const r = await fetch(url);
-      if (r.ok) {
-        const d = await r.json();
-        if (d.status === "1" && d.result) {
-          const parsed = this.parseTransactions(d.result);
-          const outgoing = parsed.filter(item => item.reporter === this.state.signerAddress);
-          const newOnes = outgoing.filter(o => !this.state.newsItems.some(x => x.txHash === o.txHash));
-          if (newOnes.length) {
-            this.state.newsItems = [...newOnes, ...this.state.newsItems].sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
-            await this.cache.saveItems(newOnes);
-          }
-        }
-      }
-      this.renderNewsFeed();
-    } catch(e) {}
+  async previewProfilePic() {
+    const url = this.elements.profilePicInput.value.trim();
+    if (url) this.elements.profilePicPreview.src = url;
   }
 
   async saveProfile() {
     const n = this.elements.usernameInput.value.trim();
     let u = this.elements.profilePicInput.value.trim() || "image1.jpeg";
     const bio = this.elements.bioInput.value.trim();
+
     if (u !== "image1.jpeg") {
-      const i = new Image(); i.src = u;
+      const i = new Image();
+      i.src = u;
       if (!await new Promise(r => {i.onload = () => r(true); i.onerror = () => r(false);})) {
         utils.showStatus("Invalid profile picture URL - using default");
         u = "image1.jpeg";
       }
     }
+
     this.state.profile = {username:n, profilePicUrl:u, bio};
     await this.cache.saveProfile({address:this.state.signerAddress, ...this.state.profile});
+
     if (this.signer) {
       const profileData = JSON.stringify({username:n, profilePicUrl:u, bio});
       const finalContent = `${PROFILE_PREFIX}${profileData}`;
@@ -461,6 +470,7 @@ class PulseUnderground {
       await this.doPublish(finalContent);
       this.state.channel = oldChannel;
     }
+
     this.elements.profileModal.style.display = "none";
     this.updateProfileHeader();
     this.renderNewsFeed();
@@ -469,63 +479,142 @@ class PulseUnderground {
 
   async doPublish(userContent, parentTx = null) {
     if(!this.signer) return utils.showStatus("Connect wallet first");
-    if(!userContent) return;
-    let finalContent = userContent;
-    if(parentTx) finalContent = `${REPLY_PREFIX}${parentTx}\n\n${userContent}`;
+    if(!userContent?.trim()) return utils.showStatus("Content cannot be empty");
+
+    let finalContent = userContent.trim();
+    if(parentTx) finalContent = `${REPLY_PREFIX}${parentTx}\n\n${finalContent}`;
+
     utils.toggleLoading(true);
     try {
-      const d = ethers.utils.hexlify(ethers.utils.toUtf8Bytes(finalContent));
-      const t = {to:this.state.channel, value:0, data:d};
-      t.gasLimit = await this.signer.estimateGas(t).then(g => g.mul(125).div(100));
-      const tx = await this.signer.sendTransaction(t);
-      const r = await tx.wait();
-      const n = {content:finalContent, displayContent:userContent, parentTx:parentTx||null, reporter:this.state.signerAddress, timestamp:new Date().toISOString(), txHash:r.transactionHash, channel:this.state.channel};
-      this.state.newsItems.unshift(n);
-      await this.cache.saveItems([n]);
+      const bytes = ethers.utils.toUtf8Bytes(finalContent);
+      const data = ethers.utils.hexlify(bytes);
+
+      const txRequest = { to: this.state.channel, value: "0", data };
+
+      let gasEstimate = await this.signer.estimateGas(txRequest);
+      gasEstimate = gasEstimate.mul(130).div(100);   // safe buffer for large posts
+
+      const tx = await this.signer.sendTransaction({ ...txRequest, gasLimit: gasEstimate });
+      const receipt = await tx.wait();
+
+      const newPost = {
+        content: finalContent,
+        displayContent: userContent.trim(),
+        parentTx: parentTx || null,
+        reporter: this.state.signerAddress,
+        timestamp: new Date().toISOString(),
+        txHash: receipt.transactionHash,
+        channel: this.state.channel
+      };
+
+      this.state.newsItems.unshift(newPost);
+      await this.cache.saveItems([newPost]);
       this.renderNewsFeed();
-      utils.showStatus("Story published: " + this.truncAddr(r.transactionHash));
-    } catch(e) {utils.showStatus("Publish failed: " + e.message);} finally {utils.toggleLoading(false);}
+      utils.showStatus(`Published ✓ ${this.truncAddr(receipt.transactionHash)}`);
+    } catch(e) {
+      console.error(e);
+      utils.showStatus("Publish failed: " + (e.message || e));
+    } finally {
+      utils.toggleLoading(false);
+    }
   }
 
-  async publishStory() {const c = this.elements.reportContent.value.trim(); if(!c) return utils.showStatus("Content cannot be empty"); await this.doPublish(c); this.elements.reportContent.value = ""; this.elements.publishStory.disabled = true;}
+  async publishStory() {
+    const c = this.elements.reportContent.value.trim();
+    if(!c) return utils.showStatus("Content cannot be empty");
+    await this.doPublish(c);
+    this.elements.reportContent.value = "";
+    this.elements.mainCharCount.textContent = "0 / ∞";
+  }
 
-  openReplyModal = (postData) => {this.state.replyingTo = postData; const e = this.elements; e.replyHeader.textContent = "Reply"; e.replyingTo.innerHTML = `Replying to <strong>${this.truncAddr(postData.reporter)}</strong>`; e.replyContent.value = ""; e.replyCharCount.textContent = "0 / ∞"; e.replyModal.style.display = "flex"; e.replyContent.focus();};
-  async postReplyFromModal() {const c = this.elements.replyContent.value.trim(); if(!c || !this.state.replyingTo) return; this.elements.replyModal.style.display = "none"; await this.doPublish(c, this.state.replyingTo.txHash); this.elements.replyContent.value = "";}
+  openReplyModal = (postData) => {
+    this.state.replyingTo = postData;
+    const e = this.elements;
+    e.replyHeader.textContent = "Reply";
+    e.replyingTo.innerHTML = `Replying to <strong>${this.truncAddr(postData.reporter)}</strong>`;
+    e.replyContent.value = "";
+    e.replyCharCount.textContent = "0 / ∞";
+    e.replyModal.style.display = "flex";
+    e.replyContent.focus();
+  };
 
-  openThread = (post) => {this.state.currentThreadPost = post; this.renderThread(); this.elements.threadModal.style.display = "flex";};
-  renderThread = () => {const post = this.state.currentThreadPost; if(!post) return; this.elements.threadOriginal.innerHTML = `<div class="news-item" style="border:none;background:transparent;cursor:default">${this.getPostHTML(post, true)}</div>`; const replies = this.state.newsItems.filter(r => r.parentTx === post.txHash).sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp)); let html = ""; replies.forEach(r => {html += `<div class="news-item" style="border:none;background:transparent;padding:15px 0">${this.getPostHTML(r, false)}</div>`;}); this.elements.threadReplies.innerHTML = replies.length ? html : `<p style="padding:20px;text-align:center;opacity:0.6">No replies yet in this thread. Be the first to reply above.</p>`;};
-  async postThreadReply() {const c = this.elements.threadReplyContent.value.trim(); if(!c || !this.state.currentThreadPost) return; await this.doPublish(c, this.state.currentThreadPost.txHash); this.elements.threadReplyContent.value = ""; this.renderThread();}
+  async postReplyFromModal() {
+    const c = this.elements.replyContent.value.trim();
+    if(!c || !this.state.replyingTo) return;
+    this.elements.replyModal.style.display = "none";
+    await this.doPublish(c, this.state.replyingTo.txHash);
+    this.elements.replyContent.value = "";
+  }
+
+  openThread = (post) => {
+    this.state.currentThreadPost = post;
+    this.renderThread();
+    this.elements.threadModal.style.display = "flex";
+  };
+
+  openThreadFromPreview = (txHash) => {
+    const post = this.state.newsItems.find(p => p.txHash === txHash);
+    if (post) this.openThread(post);
+  };
+
+  renderThread = () => {
+    const post = this.state.currentThreadPost;
+    if(!post) return;
+    this.elements.threadOriginal.innerHTML = `<div class="news-item" style="border:none;background:transparent;cursor:default">${this.getPostHTML(post, true)}</div>`;
+    const replies = this.state.newsItems.filter(r => r.parentTx === post.txHash).sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
+    let html = "";
+    replies.forEach(r => {
+      html += `<div class="news-item" style="border:none;background:transparent;padding:15px 0">${this.getPostHTML(r, false)}</div>`;
+    });
+    this.elements.threadReplies.innerHTML = replies.length ? html : `<p style="padding:20px;text-align:center;opacity:0.6">No replies yet. Be the first!</p>`;
+  };
+
+  async postThreadReply() {
+    const c = this.elements.threadReplyContent.value.trim();
+    if(!c || !this.state.currentThreadPost) return;
+    await this.doPublish(c, this.state.currentThreadPost.txHash);
+    this.elements.threadReplyContent.value = "";
+    this.renderThread();
+  }
 
   renderNewsFeed = () => {
-    const n = this.state.newsItems.filter(x => this.state.searchTerm ? (x.displayContent || x.content || "").toLowerCase().includes(this.state.searchTerm) || x.reporter.toLowerCase().includes(this.state.searchTerm) : true);
-    this.elements.newsFeed.innerHTML = n.length ? "" : "No news items available.";
+    const filtered = this.state.newsItems.filter(x => 
+      this.state.searchTerm ? 
+        (x.displayContent || x.content || "").toLowerCase().includes(this.state.searchTerm) || 
+        x.reporter.toLowerCase().includes(this.state.searchTerm) : true
+    );
+
+    this.elements.newsFeed.innerHTML = filtered.length ? "" : "<p style='padding:40px;text-align:center;opacity:0.6'>No posts found.</p>";
+
     const f = document.createDocumentFragment();
-    n.forEach(x => {
+    filtered.forEach(x => {
       const d = document.createElement("div");
       d.className = "news-item";
       d.innerHTML = this.getPostHTML(x, false);
-      d.onclick = (e) => {if(!e.target.closest("a") && !e.target.closest("button")) this.openThread(x);};
+      d.onclick = (e) => {
+        if(!e.target.closest("a") && !e.target.closest("button") && !e.target.classList.contains("truncated")) {
+          this.openThread(x);
+        }
+      };
       f.appendChild(d);
     });
     this.elements.newsFeed.appendChild(f);
-    this.elements.refreshButton.disabled = this.state.isLoading;
-    this.elements.refreshButton.textContent = this.state.isLoading ? "Loading..." : "Refresh";
   };
 
   debounce = (f, d) => {let t; return (...a) => {clearTimeout(t); t = setTimeout(() => f.apply(this, a), d);};};
 
-  /* Fixed pagination for v1 API - keeps fetching pages until empty */
+  // Improved fetch with sort=desc and proper pagination
   async fetchOnePage(page = 1) {
     if (!this.state.hasMore || !this.state.channel) return [];
-    let u = `https://api.scan.pulsechain.com/api?module=account&action=txlist&address=${this.state.channel}&limit=50&page=${page}`;
+    const u = `https://api.scan.pulsechain.com/api?module=account&action=txlist&address=${this.state.channel}&limit=50&page=${page}&sort=desc`;
     try {
       const r = await fetch(u);
       if (!r.ok) throw new Error(`API error: ${r.status}`);
       const d = await r.json();
       const rawItems = d.status === "1" ? d.result : [];
-      const i = this.parseTransactions(rawItems);
-      this.state.hasMore = rawItems.length === 50; // if we got a full page, there might be more
-      return i;
+      const parsed = this.parseTransactions(rawItems);
+      this.state.hasMore = rawItems.length === 50;
+      return parsed;
     } catch(e) {
       this.state.hasMore = false;
       utils.showStatus("Fetch failed: " + e.message);
@@ -533,42 +622,57 @@ class PulseUnderground {
     }
   }
 
-  async fetchPosts() {
+  async fetchPosts(reset = false) {
     if (this.state.isLoading || !this.state.channel) return;
     this.state.isLoading = true;
     utils.toggleLoading(true);
+
     try {
-      let added = false;
+      if (reset) {
+        this.state.newsItems = [];
+        this.state.hasMore = true;
+      }
+
       let page = 1;
-      while (!added && this.state.hasMore) {
+      let addedAny = false;
+
+      while (this.state.hasMore && page <= 10) {   // safety cap
         const p = await this.fetchOnePage(page);
-        const u = p.filter(o => !this.state.newsItems.some(x => x.txHash === o.txHash));
-        if (u.length) {
-          this.state.newsItems = [...this.state.newsItems, ...u].sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
-          await this.cache.saveItems(u);
-          added = true;
+        const uniqueNew = p.filter(o => !this.state.newsItems.some(x => x.txHash === o.txHash));
+
+        if (uniqueNew.length) {
+          this.state.newsItems = [...this.state.newsItems, ...uniqueNew];
+          await this.cache.saveItems(uniqueNew);
+          addedAny = true;
         }
+
+        if (uniqueNew.length < 50) break;   // no more on this page
         page++;
       }
+
+      this.state.newsItems.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
       this.renderNewsFeed();
+
+      if (!addedAny && reset) utils.showStatus("No new posts found");
     } finally {
       this.state.isLoading = false;
       utils.toggleLoading(false);
-      if (!this.state.hasMore) utils.showStatus("No more transactions found");
     }
   }
 
   parseTransactions = (t) => {
-    return t.filter(x => x.input && x.input !== "0x" && x.to && x.to.toLowerCase() === this.state.channel).map(x => {
+    return t.filter(x => x.input && x.input !== "0x" && x.to && x.to.toLowerCase() === this.state.channel.toLowerCase()).map(x => {
       try {
         let fullContent = ethers.utils.toUtf8String(x.input).trim();
         let parentTx = null;
         let displayContent = fullContent;
+
         const match = fullContent.match(/^REPLY_TO:(0x[a-f0-9]{64})\n\n/i);
         if (match) {
           parentTx = match[1].toLowerCase();
           displayContent = fullContent.substring(match[0].length).trim();
         }
+
         return displayContent.length ? {
           content: fullContent,
           displayContent: displayContent,
@@ -582,15 +686,70 @@ class PulseUnderground {
     }).filter(Boolean);
   };
 
-  checkInfiniteScroll = () => {if(this.state.hasMore && !this.state.isLoading && window.innerHeight + window.scrollY >= document.body.offsetHeight) this.fetchPosts();}
-  async refreshPosts() {this.state.nextPageParams = null; this.state.hasMore = true; await this.fetchPosts();}
-  async pollNew() {if(!this.state.channel) return; const currentMax=this.state.newsItems[0]?.timestamp?new Date(this.state.newsItems[0].timestamp):new Date(0); const oldNext=this.state.nextPageParams; this.state.nextPageParams=null; const newItems=[]; while(this.state.hasMore){const page=await this.fetchOnePage(); const filtered=page.filter(i=>new Date(i.timestamp)>currentMax&&!this.state.newsItems.some(ex=>ex.txHash===i.txHash)&&!newItems.some(ex=>ex.txHash===i.txHash)); if(filtered.length)newItems.push(...filtered); if(filtered.length<50) break;} this.state.nextPageParams=oldNext; if(newItems.length){this.state.pendingNewItems=newItems.sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp)); this.elements.newStoriesButton.style.display="block";}}
-  startPolling=()=>{this.pollInterval=setInterval(()=>this.pollNew(),120000)}
-  stopPolling=()=>{clearInterval(this.pollInterval)}
-  loadNewStories=()=>{this.state.newsItems=[...this.state.pendingNewItems,...this.state.newsItems];this.state.pendingNewItems=[];this.elements.newStoriesButton.style.display="none";this.renderNewsFeed();window.scrollTo({top:0,behavior:"smooth"})}
+  checkInfiniteScroll = () => {
+    if (this.state.hasMore && !this.state.isLoading && 
+        window.innerHeight + window.scrollY >= document.body.offsetHeight - 300) {
+      this.fetchPosts();
+    }
+  };
 
-  async loadCachedData() {const i=await this.cache.getItems();this.state.newsItems=i.filter(x=>x.channel===this.state.channel).sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));this.renderNewsFeed();}
-  async loadProfile() {const p=await this.cache.getProfile(this.state.signerAddress)||{username:"",profilePicUrl:"image1.jpeg",bio:""};this.state.profile=p;this.elements.submissionAvatar.src=p.profilePicUrl;this.renderNewsFeed();}
+  async refreshPosts() {
+    this.elements.refreshButton.textContent = "Refreshing...";
+    await this.fetchPosts(true);   // full reset + fresh fetch
+    this.elements.refreshButton.textContent = "Refresh Feed";
+  }
+
+  async pollNew() {
+    if(!this.state.channel) return;
+    const currentMax = this.state.newsItems[0]?.timestamp ? new Date(this.state.newsItems[0].timestamp) : new Date(0);
+    const newItems = [];
+
+    let page = 1;
+    while (true) {
+      const p = await this.fetchOnePage(page);
+      const reallyNew = p.filter(i => 
+        new Date(i.timestamp) > currentMax && 
+        !this.state.newsItems.some(ex => ex.txHash === i.txHash) &&
+        !newItems.some(ex => ex.txHash === i.txHash)
+      );
+
+      if (reallyNew.length) newItems.push(...reallyNew);
+      if (p.length < 50) break;
+      page++;
+      if (page > 5) break;   // safety
+    }
+
+    if (newItems.length) {
+      this.state.pendingNewItems = newItems.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+      this.elements.newStoriesButton.style.display = "block";
+      this.elements.newStoriesButton.textContent = `${newItems.length} new stories available`;
+    }
+  }
+
+  startPolling = () => { this.pollInterval = setInterval(() => this.pollNew(), 120000); };
+  stopPolling = () => { clearInterval(this.pollInterval); };
+
+  loadNewStories = () => {
+    this.state.newsItems = [...this.state.pendingNewItems, ...this.state.newsItems];
+    this.state.pendingNewItems = [];
+    this.elements.newStoriesButton.style.display = "none";
+    this.renderNewsFeed();
+    window.scrollTo({top:0, behavior:"smooth"});
+  };
+
+  async loadCachedData() {
+    const i = await this.cache.getItems();
+    this.state.newsItems = i.filter(x => x.channel === this.state.channel)
+      .sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+    this.renderNewsFeed();
+  }
+
+  async loadProfile() {
+    const p = await this.cache.getProfile(this.state.signerAddress) || {username:"", profilePicUrl:"image1.jpeg", bio:""};
+    this.state.profile = p;
+    this.elements.submissionAvatar.src = p.profilePicUrl || "image1.jpeg";
+    this.renderNewsFeed();
+  }
 }
 
 const pulse = new PulseUnderground();
