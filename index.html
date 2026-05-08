@@ -7,298 +7,256 @@
 <link rel="icon" type="image/jpeg" href="image1.jpeg">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
 <style>
-/* ─── Variables ─────────────────────────────────────────────────────────── */
+/* ─── Variables ──────────────────────────────────────────────────────────── */
 :root {
-  --primary:      #7c4dff;
-  --primary-lt:   #b388ff;
-  --primary-dim:  rgba(124,77,255,0.15);
-  --wave-a:       #ff3cac;
-  --wave-b:       #784ba0;
-  --wave-c:       #2b86c5;
-  --bg-dark:      #0d0b14;
-  --bg-light:     #13101c;
-  --bg-mid:       #1c1728;
-  --border:       #2a2438;
-  --text:         #e8e6f0;
-  --muted:        #7a7590;
-  --green:        #00e5a0;
-  --neon:         0 0 8px rgba(124,77,255,0.6), 0 0 20px rgba(124,77,255,0.2);
-  --wave-neon:    0 0 12px rgba(255,60,172,0.5), 0 0 28px rgba(120,75,160,0.3);
+  --primary:     #7c4dff;
+  --primary-lt:  #b388ff;
+  --primary-dim: rgba(124,77,255,0.15);
+  --wave-a:      #ff3cac;
+  --wave-b:      #784ba0;
+  --wave-c:      #2b86c5;
+  --bg-dark:     #0d0b14;
+  --bg-light:    #13101c;
+  --bg-mid:      #1c1728;
+  --border:      #2a2438;
+  --text:        #e8e6f0;
+  --muted:       #7a7590;
+  --green:       #00e5a0;
+  --neon:        0 0 8px rgba(124,77,255,0.6), 0 0 20px rgba(124,77,255,0.2);
+  --wave-neon:   0 0 12px rgba(255,60,172,0.5), 0 0 28px rgba(120,75,160,0.3);
 }
-
-/* ─── Reset ─────────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: var(--bg-dark);
-  color: var(--text);
-  line-height: 1.5;
-  font-size: 15px;
-  min-height: 100vh;
+  background: var(--bg-dark); color: var(--text);
+  line-height: 1.5; font-size: 15px; min-height: 100vh;
 }
 button, input, textarea { font-family: inherit; }
 a { color: inherit; }
 
 /* ─── Layout ─────────────────────────────────────────────────────────────── */
-#app {
-  display: flex;
-  max-width: 1280px;
-  margin: 0 auto;
-  min-height: 100vh;
-}
+#app { display: flex; max-width: 1280px; margin: 0 auto; min-height: 100vh; }
 
 /* ─── Left sidebar ───────────────────────────────────────────────────────── */
 #sidebar-left {
-  width: 240px;
-  flex-shrink: 0;
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
+  width: 240px; flex-shrink: 0;
+  position: sticky; top: 0; height: 100vh;
+  display: flex; flex-direction: column;
   background: var(--bg-light);
   border-right: 1px solid var(--border);
-  padding: 20px 12px;
-  overflow-y: auto;
+  padding: 20px 12px; overflow-y: auto;
 }
 .logo-wrap { text-align: center; margin-bottom: 20px; }
 .logo-wrap img {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  border: 2px solid var(--primary);
-  object-fit: cover;
+  width: 72px; height: 72px; border-radius: 50%;
+  border: 2px solid var(--primary); object-fit: cover;
 }
 .logo-wrap .site-name {
-  display: block;
-  font-size: 11px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--primary-lt);
-  margin-top: 6px;
-  font-weight: 600;
+  display: block; font-size: 11px; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--primary-lt);
+  margin-top: 6px; font-weight: 600;
 }
 nav { flex: 1; }
 .nav-btn {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  padding: 11px 14px;
-  background: transparent;
-  border: none;
-  border-radius: 12px;
-  color: var(--text);
-  font-size: 15px;
-  font-weight: 500;
-  cursor: pointer;
-  text-align: left;
-  position: relative;
+  display: flex; align-items: center; gap: 12px;
+  width: 100%; padding: 11px 14px;
+  background: transparent; border: none; border-radius: 12px;
+  color: var(--text); font-size: 15px; font-weight: 500;
+  cursor: pointer; text-align: left; position: relative;
   transition: background 0.18s, color 0.18s, box-shadow 0.18s;
   margin-bottom: 2px;
 }
 .nav-btn:hover  { background: var(--bg-mid); color: var(--primary-lt); }
 .nav-btn.active { background: var(--primary-dim); color: var(--primary-lt); box-shadow: var(--neon); }
 .nav-icon { font-size: 19px; width: 22px; text-align: center; }
-/* notification count badge */
 .notif-badge {
-  display: none;
-  position: absolute;
-  top: 8px; right: 10px;
-  min-width: 18px; height: 18px;
-  padding: 0 5px;
-  background: var(--wave-a);
-  border-radius: 9px;
-  font-size: 10px;
-  font-weight: 700;
-  line-height: 18px;
-  text-align: center;
-  color: #fff;
+  display: none; position: absolute; top: 8px; right: 10px;
+  min-width: 18px; height: 18px; padding: 0 5px;
+  background: var(--wave-a); border-radius: 9px;
+  font-size: 10px; font-weight: 700; line-height: 18px;
+  text-align: center; color: #fff;
 }
 .notif-badge.on { display: block; }
 #sidebar-bottom { margin-top: auto; padding-top: 16px; }
 .wallet-pill {
-  font-size: 11px;
-  color: var(--muted);
-  text-align: center;
-  word-break: break-all;
-  padding: 6px;
-  background: var(--bg-dark);
-  border-radius: 8px;
-  margin-bottom: 8px;
-  display: none;
+  font-size: 11px; color: var(--muted); text-align: center;
+  word-break: break-all; padding: 6px; background: var(--bg-dark);
+  border-radius: 8px; margin-bottom: 8px; display: none;
 }
 #connect-btn {
-  width: 100%;
-  padding: 11px;
+  width: 100%; padding: 11px;
   background: linear-gradient(135deg, var(--primary), var(--primary-lt));
-  color: #fff;
-  border: none;
-  border-radius: 24px;
-  font-weight: 700;
-  font-size: 13px;
-  cursor: pointer;
+  color: #fff; border: none; border-radius: 24px;
+  font-weight: 700; font-size: 13px; cursor: pointer;
   transition: box-shadow 0.2s;
 }
 #connect-btn:hover { box-shadow: var(--neon); }
 #connect-btn.ghost {
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  font-size: 12px;
-  padding: 8px;
+  background: transparent; border: 1px solid var(--border);
+  color: var(--muted); font-size: 12px; padding: 8px;
 }
 
 /* ─── Main column ────────────────────────────────────────────────────────── */
 #main {
-  flex: 1;
-  min-width: 0;
-  background: var(--bg-light);
+  flex: 1; min-width: 0; background: var(--bg-light);
   border-left: 1px solid var(--border);
   border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
+  display: flex; flex-direction: column;
 }
 #feed-header {
-  position: sticky;
-  top: 0;
-  z-index: 20;
+  position: sticky; top: 0; z-index: 20;
   background: rgba(19,16,28,0.92);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border);
   padding: 14px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  display: flex; align-items: center;
+  justify-content: space-between; gap: 12px;
 }
 #feed-title { font-size: 17px; font-weight: 700; color: var(--primary-lt); }
 #refresh-btn {
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  border-radius: 20px;
-  padding: 5px 14px;
-  font-size: 12px;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: all 0.2s;
+  background: transparent; border: 1px solid var(--border);
+  color: var(--muted); border-radius: 20px;
+  padding: 5px 14px; font-size: 12px; cursor: pointer;
+  flex-shrink: 0; transition: all 0.2s;
 }
 #refresh-btn:hover { border-color: var(--primary); color: var(--primary-lt); }
-/* "N new posts" banner */
 #new-banner {
-  display: none;
-  width: 100%;
-  padding: 10px;
-  background: var(--primary);
-  border: none;
-  color: #fff;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  letter-spacing: 0.3px;
-  transition: background 0.2s;
+  display: none; width: 100%; padding: 10px;
+  background: var(--primary); border: none; color: #fff;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  letter-spacing: 0.3px; transition: background 0.2s;
 }
 #new-banner:hover { background: var(--primary-lt); }
-/* Compose */
-#compose-area {
-  display: flex;
-  gap: 12px;
-  padding: 16px 20px;
+
+/* ─── Channel profile banner ─────────────────────────────────────────────── */
+#channel-banner {
+  display: none;
   border-bottom: 1px solid var(--border);
+  background: var(--bg-dark);
+}
+.cb-cover {
+  height: 80px;
+  background: linear-gradient(135deg, rgba(124,77,255,0.3), rgba(179,136,255,0.1), rgba(0,229,160,0.1));
+}
+.cb-content {
+  display: flex; align-items: flex-end; gap: 14px;
+  padding: 0 20px 16px; margin-top: -36px;
+}
+#cb-avatar {
+  width: 72px; height: 72px; border-radius: 50%;
+  border: 3px solid var(--bg-dark); object-fit: cover;
+  background: var(--bg-mid); flex-shrink: 0;
+}
+.cb-info { flex: 1; min-width: 0; padding-top: 36px; }
+#cb-name {
+  font-size: 17px; font-weight: 700; line-height: 1.2;
+  color: var(--text); white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+}
+#cb-bio {
+  font-size: 13px; color: var(--muted); margin-top: 2px;
+  line-height: 1.4;
+}
+#cb-address {
+  font-size: 11px; color: var(--muted); margin-top: 4px;
+  font-family: monospace; letter-spacing: 0.3px;
+}
+/* wave-specific banner */
+#channel-banner.wave-banner .cb-cover {
+  background: linear-gradient(135deg, rgba(255,60,172,0.3), rgba(120,75,160,0.2), rgba(43,134,197,0.2));
+}
+
+/* ─── Compose ─────────────────────────────────────────────────────────────── */
+#compose-area {
+  display: flex; gap: 12px;
+  padding: 16px 20px; border-bottom: 1px solid var(--border);
 }
 .compose-avatar {
-  width: 42px; height: 42px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid var(--border);
-  flex-shrink: 0;
+  width: 42px; height: 42px; border-radius: 50%;
+  object-fit: cover; border: 2px solid var(--border); flex-shrink: 0;
 }
 .compose-body { flex: 1; min-width: 0; }
 #compose-text {
-  width: 100%;
-  min-height: 76px;
-  padding: 12px;
-  background: var(--bg-dark);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  color: var(--text);
-  font-size: 15px;
-  resize: none;
+  width: 100%; min-height: 76px; max-height: 400px;
+  padding: 12px; background: var(--bg-dark);
+  border: 1px solid var(--border); border-radius: 12px;
+  color: var(--text); font-size: 15px; resize: none; overflow-y: auto;
   transition: border-color 0.2s;
 }
 #compose-text:focus { outline: none; border-color: var(--primary); }
 #compose-text::placeholder { color: var(--muted); }
 .compose-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 8px;
+  display: flex; justify-content: space-between;
+  align-items: center; margin-top: 8px;
 }
-.char-count { font-size: 13px; color: var(--muted); }
+.char-count { font-size: 13px; color: var(--muted); transition: color 0.2s; }
+.char-count.warn { color: #f5c400; }
+.char-count.over { color: var(--wave-a); }
 #post-btn {
   padding: 8px 22px;
   background: linear-gradient(135deg, var(--primary), var(--primary-lt));
-  border: none;
-  border-radius: 20px;
-  color: #fff;
-  font-weight: 700;
-  font-size: 14px;
-  cursor: pointer;
+  border: none; border-radius: 20px; color: #fff;
+  font-weight: 700; font-size: 14px; cursor: pointer;
   transition: box-shadow 0.2s;
 }
 #post-btn:hover { box-shadow: var(--neon); }
-/* Feed */
+
+/* ─── Feed / Posts ────────────────────────────────────────────────────────── */
 #feed { flex: 1; }
 .post-item {
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border);
-  cursor: pointer;
-  transition: background 0.15s;
+  padding: 16px 20px; border-bottom: 1px solid var(--border);
+  cursor: pointer; transition: background 0.15s;
 }
 .post-item:hover { background: var(--bg-mid); }
 .post-hdr { display: flex; gap: 10px; margin-bottom: 8px; }
 .post-avatar {
-  width: 40px; height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  flex-shrink: 0;
-  border: 1px solid var(--border);
-  background: var(--bg-dark);
+  width: 40px; height: 40px; border-radius: 50%;
+  object-fit: cover; flex-shrink: 0;
+  border: 1px solid var(--border); background: var(--bg-dark);
 }
 .post-meta { flex: 1; min-width: 0; }
 .post-name   { font-weight: 700; font-size: 14px; }
 .post-handle { color: var(--muted); font-size: 13px; margin-left: 4px; }
-.post-time   { color: var(--muted); font-size: 12px; }
-/* direction badge for inbox */
+.post-time   { color: var(--muted); font-size: 12px; cursor: default; }
 .dir-badge {
-  display: inline-flex;
-  align-items: center;
-  font-size: 11px;
-  font-weight: 600;
-  padding: 1px 7px;
-  border-radius: 10px;
-  margin-left: 6px;
-  vertical-align: middle;
+  display: inline-flex; align-items: center;
+  font-size: 11px; font-weight: 600;
+  padding: 1px 7px; border-radius: 10px;
+  margin-left: 6px; vertical-align: middle;
 }
 .dir-sent     { background: rgba(124,77,255,0.15); color: var(--primary-lt); }
 .dir-received { background: rgba(0,229,160,0.12);  color: var(--green); }
 .to-label     { font-size: 12px; color: var(--muted); margin-bottom: 5px; display: block; }
 .reply-badge  { font-size: 12px; color: var(--primary-lt); margin-bottom: 6px; display: block; }
-.post-body    { font-size: 15px; line-height: 1.65; word-break: break-word; color: var(--text); margin-bottom: 10px; }
+.post-body    {
+  font-size: 15px; line-height: 1.65; word-break: break-word;
+  color: var(--text); margin-bottom: 10px;
+}
+/* links detected in post body */
+.post-link {
+  color: var(--primary-lt); text-decoration: none;
+  border-bottom: 1px solid rgba(179,136,255,0.3);
+  transition: color 0.15s;
+}
+.post-link:hover { color: #fff; border-color: #fff; }
+/* inline image previews */
+.post-images { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.post-img-thumb {
+  max-width: 100%; max-height: 280px; border-radius: 10px;
+  border: 1px solid var(--border); object-fit: cover; cursor: zoom-in;
+  display: block;
+}
 .read-more-btn {
-  background: none; border: none;
-  color: var(--primary-lt); font-size: 13px; font-weight: 600;
-  cursor: pointer; padding: 0; margin-bottom: 10px; display: block;
+  background: none; border: none; color: var(--primary-lt);
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  padding: 0; margin-bottom: 10px; display: block;
 }
 .read-more-btn:hover { color: #fff; }
 .post-actions { display: flex; align-items: center; gap: 8px; }
 .act-btn {
   display: flex; align-items: center; gap: 5px;
-  padding: 5px 12px;
-  background: transparent;
-  border: 1px solid transparent;
-  border-radius: 20px;
+  padding: 5px 12px; background: transparent;
+  border: 1px solid transparent; border-radius: 20px;
   color: var(--muted); font-size: 13px; cursor: pointer;
   transition: all 0.18s;
 }
@@ -310,9 +268,8 @@ nav { flex: 1; }
 }
 .otter-link:hover { color: var(--primary-lt); }
 #loading-more {
-  display: none; padding: 24px;
-  text-align: center; color: var(--primary-lt); font-size: 13px;
-  font-style: italic;
+  display: none; padding: 24px; text-align: center;
+  color: var(--primary-lt); font-size: 13px; font-style: italic;
 }
 .empty-state { padding: 64px 24px; text-align: center; color: var(--muted); }
 .empty-icon  { font-size: 44px; margin-bottom: 16px; display: block; }
@@ -320,32 +277,22 @@ nav { flex: 1; }
 
 /* ─── Right sidebar ──────────────────────────────────────────────────────── */
 #sidebar-right {
-  width: 270px;
-  flex-shrink: 0;
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  background: var(--bg-light);
-  border-left: 1px solid var(--border);
-  padding: 20px 14px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
+  width: 270px; flex-shrink: 0;
+  position: sticky; top: 0; height: 100vh;
+  background: var(--bg-light); border-left: 1px solid var(--border);
+  padding: 20px 14px; overflow-y: auto;
+  display: flex; flex-direction: column;
 }
 .sb-section { margin-bottom: 20px; }
 .sb-title {
-  font-size: 11px; font-weight: 700;
-  color: var(--muted); letter-spacing: 1.2px;
-  text-transform: uppercase; margin-bottom: 10px;
+  font-size: 11px; font-weight: 700; color: var(--muted);
+  letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 10px;
 }
 .search-wrap { position: relative; }
 .search-wrap input {
-  width: 100%;
-  padding: 9px 12px 9px 34px;
-  background: var(--bg-dark);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  color: var(--text); font-size: 14px; outline: none;
+  width: 100%; padding: 9px 12px 9px 34px;
+  background: var(--bg-dark); border: 1px solid var(--border);
+  border-radius: 20px; color: var(--text); font-size: 14px; outline: none;
   transition: border-color 0.2s;
 }
 .search-wrap input:focus { border-color: var(--primary); }
@@ -356,34 +303,26 @@ nav { flex: 1; }
   font-size: 14px; color: var(--muted); pointer-events: none;
 }
 .ch-btn {
-  display: block; width: 100%;
-  padding: 9px 12px;
-  background: var(--bg-dark);
-  border: 1px solid var(--border); border-radius: 8px;
-  color: var(--text); font-size: 13px;
-  cursor: pointer; text-align: left;
-  transition: all 0.18s; margin-bottom: 6px;
+  display: block; width: 100%; padding: 9px 12px;
+  background: var(--bg-dark); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--text); font-size: 13px;
+  cursor: pointer; text-align: left; transition: all 0.18s; margin-bottom: 6px;
 }
 .ch-btn:hover  { border-color: var(--primary); color: var(--primary-lt); }
 .ch-btn.active { border-color: var(--primary); color: var(--primary-lt); background: var(--primary-dim); }
-#ch-self { display: none; } /* revealed on wallet connect */
+#ch-self { display: none; }
 .custom-row { display: flex; gap: 6px; margin-top: 4px; }
 .custom-row input {
-  flex: 1; min-width: 0;
-  padding: 8px 10px;
-  background: var(--bg-dark);
-  border: 1px solid var(--border); border-radius: 8px;
-  color: var(--text); font-size: 12px; outline: none;
+  flex: 1; min-width: 0; padding: 8px 10px;
+  background: var(--bg-dark); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--text); font-size: 12px; outline: none;
 }
 .custom-row input:focus { border-color: var(--primary); }
 .custom-row input::placeholder { color: var(--muted); }
 .go-btn {
-  padding: 8px 12px;
-  background: var(--primary); border: none;
-  border-radius: 8px; color: #fff;
-  font-size: 12px; font-weight: 700;
-  cursor: pointer; flex-shrink: 0;
-  transition: box-shadow 0.2s;
+  padding: 8px 12px; background: var(--primary); border: none;
+  border-radius: 8px; color: #fff; font-size: 12px; font-weight: 700;
+  cursor: pointer; flex-shrink: 0; transition: box-shadow 0.2s;
 }
 .go-btn:hover { box-shadow: var(--neon); }
 .ch-label { font-size: 11px; color: var(--muted); margin-top: 8px; word-break: break-all; line-height: 1.5; }
@@ -393,13 +332,11 @@ nav { flex: 1; }
 .wave-inner {
   background: linear-gradient(135deg, rgba(255,60,172,0.08), rgba(43,134,197,0.08));
   border: 1px solid rgba(255,60,172,0.25);
-  border-radius: 14px; padding: 14px;
-  cursor: pointer; transition: all 0.25s;
+  border-radius: 14px; padding: 14px; cursor: pointer; transition: all 0.25s;
 }
 .wave-inner:hover {
   border-color: rgba(255,60,172,0.5);
-  box-shadow: var(--wave-neon);
-  transform: translateY(-1px);
+  box-shadow: var(--wave-neon); transform: translateY(-1px);
 }
 .wave-top {
   display: flex; align-items: center;
@@ -409,9 +346,8 @@ nav { flex: 1; }
 .wave-icon {
   width: 32px; height: 32px;
   background: linear-gradient(135deg, var(--wave-a), var(--wave-b), var(--wave-c));
-  border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 16px; flex-shrink: 0;
+  border-radius: 8px; display: flex; align-items: center;
+  justify-content: center; font-size: 16px; flex-shrink: 0;
 }
 .wave-name {
   font-size: 13px; font-weight: 700;
@@ -439,13 +375,9 @@ nav { flex: 1; }
 
 /* ─── Mobile nav ─────────────────────────────────────────────────────────── */
 #mobile-nav {
-  display: none;
-  position: fixed; bottom: 0; left: 0; right: 0;
-  background: var(--bg-light);
-  border-top: 1px solid var(--border);
-  z-index: 100;
-  justify-content: space-around;
-  padding: 6px 0 10px;
+  display: none; position: fixed; bottom: 0; left: 0; right: 0;
+  background: var(--bg-light); border-top: 1px solid var(--border);
+  z-index: 100; justify-content: space-around; padding: 6px 0 10px;
 }
 .mn-btn {
   display: flex; flex-direction: column; align-items: center; gap: 2px;
@@ -463,35 +395,28 @@ nav { flex: 1; }
 
 /* ─── Modals ─────────────────────────────────────────────────────────────── */
 .modal-bg {
-  position: fixed; inset: 0;
-  background: rgba(10,8,18,0.85);
-  display: none; align-items: center;
-  justify-content: center; z-index: 500; padding: 16px;
+  position: fixed; inset: 0; background: rgba(10,8,18,0.85);
+  display: none; align-items: center; justify-content: center;
+  z-index: 500; padding: 16px;
 }
 .modal-bg.open { display: flex; }
 .modal {
-  background: var(--bg-light);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  width: 100%; max-width: 480px;
-  max-height: 90vh; overflow-y: auto;
-  padding: 24px;
+  background: var(--bg-light); border: 1px solid var(--border);
+  border-radius: 16px; width: 100%; max-width: 480px;
+  max-height: 90vh; overflow-y: auto; padding: 24px;
 }
-.modal.wide { max-width: 600px; }
+.modal.wide { max-width: 620px; }
 .modal-head {
   display: flex; justify-content: space-between; align-items: center;
   margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid var(--border);
 }
 .modal-title { font-size: 17px; font-weight: 700; }
 .modal-close {
-  background: none; border: none; color: var(--muted);
-  font-size: 20px; cursor: pointer;
-  width: 30px; height: 30px;
-  display: flex; align-items: center; justify-content: center;
-  border-radius: 50%; transition: all 0.18s;
+  background: none; border: none; color: var(--muted); font-size: 20px; cursor: pointer;
+  width: 30px; height: 30px; display: flex; align-items: center;
+  justify-content: center; border-radius: 50%; transition: all 0.18s;
 }
 .modal-close:hover { background: var(--bg-mid); color: var(--text); }
-/* profile section */
 .prof-avatar-wrap { text-align: center; margin-bottom: 20px; }
 .prof-avatar-wrap img {
   width: 90px; height: 90px; border-radius: 50%;
@@ -500,7 +425,6 @@ nav { flex: 1; }
 }
 .prof-avatar-wrap h2 { font-size: 20px; margin-bottom: 4px; }
 .prof-avatar-wrap p  { font-size: 13px; color: var(--muted); }
-/* forms */
 .form-group { margin-bottom: 14px; }
 .form-lbl {
   display: block; font-size: 12px; color: var(--muted);
@@ -508,56 +432,80 @@ nav { flex: 1; }
   text-transform: uppercase; letter-spacing: 0.5px;
 }
 .form-input, .form-textarea {
-  width: 100%; padding: 10px 12px;
-  background: var(--bg-dark);
+  width: 100%; padding: 10px 12px; background: var(--bg-dark);
   border: 1px solid var(--border); border-radius: 8px;
-  color: var(--text); font-size: 14px; outline: none;
-  transition: border-color 0.2s;
+  color: var(--text); font-size: 14px; outline: none; transition: border-color 0.2s;
 }
 .form-input:focus, .form-textarea:focus { border-color: var(--primary); }
 .form-input::placeholder, .form-textarea::placeholder { color: var(--muted); }
 .form-textarea { resize: vertical; min-height: 80px; font-family: inherit; }
+.nft-section {
+  margin-top: 16px; padding: 14px; background: var(--bg-dark);
+  border: 1px solid var(--border); border-radius: 10px;
+}
+.nft-section summary {
+  font-size: 13px; font-weight: 600; color: var(--primary-lt);
+  cursor: pointer; user-select: none; list-style: none;
+  display: flex; align-items: center; gap: 8px;
+}
+.nft-section summary::before { content: '▶'; font-size: 10px; transition: transform 0.2s; }
+.nft-section[open] summary::before { transform: rotate(90deg); }
+.nft-inner { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+.nft-row { display: flex; gap: 8px; }
+.nft-row .form-input { flex: 1; min-width: 0; }
+.nft-status { font-size: 12px; color: var(--muted); margin-top: 4px; min-height: 18px; }
 .btn-row { display: flex; gap: 8px; margin-top: 18px; }
 .btn-pri {
   flex: 1; padding: 11px;
   background: linear-gradient(135deg, var(--primary), var(--primary-lt));
-  border: none; border-radius: 10px;
-  color: #fff; font-weight: 700; font-size: 14px;
-  cursor: pointer; transition: box-shadow 0.2s;
+  border: none; border-radius: 10px; color: #fff; font-weight: 700;
+  font-size: 14px; cursor: pointer; transition: box-shadow 0.2s;
 }
 .btn-pri:hover { box-shadow: var(--neon); }
+.btn-sm {
+  padding: 8px 14px; background: var(--primary-dim);
+  border: 1px solid var(--primary); border-radius: 8px;
+  color: var(--primary-lt); font-size: 12px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s; white-space: nowrap;
+}
+.btn-sm:hover { background: var(--primary); color: #fff; }
 .btn-ghost {
-  padding: 11px 16px;
-  background: transparent; border: 1px solid var(--border);
-  border-radius: 10px; color: var(--muted); font-size: 14px;
-  cursor: pointer; transition: all 0.2s;
+  padding: 11px 16px; background: transparent;
+  border: 1px solid var(--border); border-radius: 10px;
+  color: var(--muted); font-size: 14px; cursor: pointer; transition: all 0.2s;
 }
 .btn-ghost:hover { border-color: var(--primary); color: var(--text); }
-/* reply quote */
 .reply-quote {
-  padding: 10px 14px;
-  background: var(--bg-mid);
-  border-left: 3px solid var(--primary);
-  border-radius: 0 8px 8px 0;
-  font-size: 13px; color: var(--muted);
-  margin-bottom: 14px; line-height: 1.5;
+  padding: 10px 14px; background: var(--bg-mid);
+  border-left: 3px solid var(--primary); border-radius: 0 8px 8px 0;
+  font-size: 13px; color: var(--muted); margin-bottom: 14px; line-height: 1.5;
 }
+.auto-textarea {
+  width: 100%; min-height: 76px; max-height: 400px;
+  padding: 12px; background: var(--bg-dark);
+  border: 1px solid var(--border); border-radius: 10px;
+  color: var(--text); font-size: 15px; resize: none;
+  overflow-y: auto; transition: border-color 0.2s;
+}
+.auto-textarea:focus { outline: none; border-color: var(--primary); }
+.auto-textarea::placeholder { color: var(--muted); }
 .thread-reply-item { padding: 14px 0; border-bottom: 1px solid var(--border); }
+#thread-loading {
+  padding: 16px; text-align: center; color: var(--muted); font-size: 13px; display: none;
+}
 
 /* ─── Toast ──────────────────────────────────────────────────────────────── */
 #toast {
-  position: fixed; bottom: 80px; left: 50%;
-  transform: translateX(-50%);
+  position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
   background: var(--bg-mid); border: 1px solid var(--border);
-  border-radius: 24px; padding: 9px 20px;
-  font-size: 13px; display: none; z-index: 2000;
-  box-shadow: var(--neon); white-space: nowrap; max-width: 90vw;
+  border-radius: 24px; padding: 9px 20px; font-size: 13px;
+  display: none; z-index: 2000; box-shadow: var(--neon);
+  white-space: nowrap; max-width: 90vw;
 }
 
 /* ─── Loading overlay ────────────────────────────────────────────────────── */
 #loading-overlay {
-  position: fixed; inset: 0;
-  background: rgba(13,11,20,0.65);
+  position: fixed; inset: 0; background: rgba(13,11,20,0.65);
   display: none; align-items: center; justify-content: center;
   z-index: 999; flex-direction: column; gap: 12px;
   color: var(--primary-lt); font-size: 15px;
@@ -580,13 +528,14 @@ nav { flex: 1; }
   #compose-area, .post-item, #feed-header { padding-left: 14px; padding-right: 14px; }
   .modal { padding: 16px; }
   #toast { bottom: 74px; }
+  .cb-content { padding: 0 14px 14px; }
 }
 </style>
 </head>
 <body>
 <div id="app">
 
-  <!-- Left Sidebar -->
+  <!-- ── Left Sidebar ─────────────────────────────────────────────────── -->
   <div id="sidebar-left">
     <div class="logo-wrap">
       <img src="image1.jpeg" alt="Pulse Underground">
@@ -613,28 +562,42 @@ nav { flex: 1; }
     </div>
   </div>
 
-  <!-- Main -->
+  <!-- ── Main ─────────────────────────────────────────────────────────── -->
   <div id="main">
     <button id="new-banner">✦ New posts — click to load</button>
     <div id="feed-header">
       <span id="feed-title">The Pulse Underground</span>
       <button id="refresh-btn">↺ Refresh</button>
     </div>
+
+    <!-- Channel profile banner (shown for custom/self/wave channels) -->
+    <div id="channel-banner">
+      <div class="cb-cover"></div>
+      <div class="cb-content">
+        <img id="cb-avatar" src="image1.jpeg" alt="Channel owner" onerror="this.src='image1.jpeg'">
+        <div class="cb-info">
+          <div id="cb-name">—</div>
+          <div id="cb-bio"></div>
+          <div id="cb-address"></div>
+        </div>
+      </div>
+    </div>
+
     <div id="compose-area">
       <img src="image1.jpeg" class="compose-avatar" id="compose-avatar" alt="">
       <div class="compose-body">
         <textarea id="compose-text" placeholder="What's happening on Pulse?"></textarea>
         <div class="compose-footer">
-          <span class="char-count" id="char-count">0 / ∞</span>
+          <span class="char-count" id="char-count">0</span>
           <button id="post-btn">Post ➤</button>
         </div>
       </div>
     </div>
     <div id="feed"></div>
-    <div id="loading-more">Loading more posts…</div>
+    <div id="loading-more">Scanning the chain…</div>
   </div>
 
-  <!-- Right Sidebar -->
+  <!-- ── Right Sidebar ─────────────────────────────────────────────────── -->
   <div id="sidebar-right">
     <div class="sb-section">
       <div class="search-wrap">
@@ -689,7 +652,6 @@ nav { flex: 1; }
   <button class="mn-btn" data-mn="wallet"><span class="mn-icon">🔗</span>Wallet</button>
 </nav>
 
-<!-- Loading overlay + Toast -->
 <div id="loading-overlay"><div class="spinner"></div><span id="loading-label">Publishing…</span></div>
 <div id="toast"></div>
 
@@ -700,7 +662,6 @@ nav { flex: 1; }
       <span class="modal-title" id="profile-modal-title">Profile</span>
       <button class="modal-close" id="close-profile">✕</button>
     </div>
-    <!-- View -->
     <div id="profile-view">
       <div class="prof-avatar-wrap">
         <img src="image1.jpeg" id="pv-avatar" alt="Avatar">
@@ -709,7 +670,6 @@ nav { flex: 1; }
       </div>
       <button class="btn-pri" style="width:100%" id="edit-profile-btn">✏️ Edit Profile</button>
     </div>
-    <!-- Edit -->
     <div id="profile-edit" style="display:none">
       <div style="text-align:center;margin-bottom:16px">
         <img src="image1.jpeg" id="pe-preview"
@@ -723,7 +683,19 @@ nav { flex: 1; }
         <label class="form-lbl">Profile picture (https:// URL)</label>
         <input type="text" class="form-input" id="pe-pic" placeholder="https://…">
       </div>
-      <div class="form-group">
+      <!-- NFT picker -->
+      <details class="nft-section">
+        <summary>Use an NFT as profile picture</summary>
+        <div class="nft-inner">
+          <div class="nft-row">
+            <input type="text" class="form-input" id="nft-contract" placeholder="Contract address (0x…)" style="flex:2">
+            <input type="text" class="form-input" id="nft-token-id" placeholder="Token ID" style="flex:1">
+          </div>
+          <button class="btn-sm" id="fetch-nft-btn">🖼 Fetch NFT Image</button>
+          <div class="nft-status" id="nft-status"></div>
+        </div>
+      </details>
+      <div class="form-group" style="margin-top:14px">
         <label class="form-lbl">Bio</label>
         <textarea class="form-textarea" id="pe-bio" placeholder="Tell the world…"></textarea>
       </div>
@@ -743,9 +715,8 @@ nav { flex: 1; }
       <button class="modal-close" id="close-reply">✕</button>
     </div>
     <div class="reply-quote" id="reply-quote"></div>
-    <textarea class="form-textarea" id="reply-input"
-      placeholder="Write your reply…" style="min-height:120px;font-size:15px"></textarea>
-    <div style="text-align:right;font-size:12px;color:var(--muted);margin-top:4px" id="reply-count">0 / ∞</div>
+    <textarea class="auto-textarea" id="reply-input" placeholder="Write your reply…"></textarea>
+    <div style="text-align:right;font-size:12px;color:var(--muted);margin-top:4px" id="reply-count">0</div>
     <div class="btn-row">
       <button class="btn-pri" id="post-reply-btn">Post Reply</button>
       <button class="btn-ghost" id="cancel-reply-btn">Cancel</button>
@@ -765,10 +736,10 @@ nav { flex: 1; }
       letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid var(--border);
       margin-bottom:12px">Replies</div>
     <div id="thread-replies"></div>
+    <div id="thread-loading">⟳ Fetching replies from chain…</div>
     <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border)">
-      <textarea class="form-textarea" id="thread-reply-input"
-        placeholder="Reply to this thread…" style="min-height:100px"></textarea>
-      <div style="text-align:right;font-size:12px;color:var(--muted);margin-top:4px" id="thread-count">0 / ∞</div>
+      <textarea class="auto-textarea" id="thread-reply-input" placeholder="Reply to this thread…"></textarea>
+      <div style="text-align:right;font-size:12px;color:var(--muted);margin-top:4px" id="thread-count">0</div>
       <div class="btn-row" style="margin-top:12px">
         <button class="btn-pri" id="post-thread-reply-btn">Post Reply</button>
       </div>
@@ -776,7 +747,7 @@ nav { flex: 1; }
   </div>
 </div>
 
-<!-- ═══════════════════════ JavaScript ═══════════════════════════════════ -->
+<!-- ═══════════════════════ JavaScript ════════════════════════════════════ -->
 <script>
 'use strict';
 const ethers = window.ethers;
@@ -786,16 +757,24 @@ const MAIN_CHANNEL   = '0x9cd83be15a79646a3d22b81fc8ddf7b7240a62cb';
 const PULSE_CHAIN_ID = 369;
 const REPLY_PREFIX   = 'REPLY_TO:';
 const PROFILE_PREFIX = 'PROFILE_DATA:';
-const MAX_PREVIEW    = 500;   // chars before "Read more"
-const POSTS_TARGET   = 20;    // target posts per fetch call
-const MAX_PAGES      = 40;    // hard cap: 40 pages × 50 txs = 2000 txs max
-const POLL_MS        = 120_000; // poll every 2 min
+const MAX_PREVIEW    = 500;
+const POSTS_TARGET   = 20;
+const MAX_PAGES      = 40;
+const POLL_FIRST_MS  = 30_000;   // first poll fires at 30s
+const POLL_MS        = 120_000;  // subsequent polls every 2min
 
 /*
- * WAVE_ADDRESS — replace with confirmed Wave on Pulse wallet address.
- * Format: lowercase 0x-prefixed EVM address.
+ * WAVE_ADDRESS — the Wave on Pulse donation/channel wallet address.
+ * Replace the value below with the actual address from waveonpulse.com.
+ * Current placeholder: zero address. One line to change once confirmed.
  */
-const WAVE_ADDRESS = '0x0000000000000000000000000000000000000001'; // TODO: replace
+const WAVE_ADDRESS = '0x0000000000000000000000000000000000000000'; // ← REPLACE with waveonpulse.com donation address
+
+/* ERC-721 minimal ABI for NFT profile pic fetching */
+const ERC721_ABI = [
+  'function tokenURI(uint256 tokenId) view returns (string)',
+  'function ownerOf(uint256 tokenId) view returns (address)',
+];
 
 /* ── Utils ────────────────────────────────────────────────────────────── */
 const utils = {
@@ -814,19 +793,62 @@ const utils = {
     document.getElementById('loading-label').textContent = label;
   },
 
-  /*
-   * Sanitise any blockchain-sourced string before innerHTML injection.
-   * Creates a text node so HTML entities are escaped — prevents XSS.
-   */
+  /* XSS-safe: encode text before injecting into innerHTML */
   safe(str) {
     const d = document.createElement('div');
     d.textContent = String(str ?? '');
     return d.innerHTML;
   },
 
+  /*
+   * Linkify text: detect URLs, make them clickable <a> tags.
+   * Non-URL portions are encoded via utils.safe() — XSS-safe.
+   * Image URLs get an inline <img> thumbnail instead of a link.
+   */
+  linkify(text) {
+    const urlRe  = /https?:\/\/[^\s<>"{}|\\^[\]`]+/g;
+    const imgRe  = /\.(jpg|jpeg|png|gif|webp|svg)(\?[^\s]*)?$/i;
+    let result   = '';
+    let last     = 0;
+    let m;
+    let imgHtml  = '';
+    let imgCount = 0;
+
+    while ((m = urlRe.exec(text)) !== null) {
+      result += utils.safe(text.slice(last, m.index)).replace(/\n/g, '<br>');
+      const url     = m[0];
+      const safeUrl = utils.safe(url);
+      if (imgRe.test(url) && imgCount < 2) {
+        /* data-href avoids any quote-injection risk in onclick */
+        imgHtml += `<img src="${safeUrl}" class="post-img-thumb" alt="image"
+          onerror="this.style.display='none'"
+          data-href="${safeUrl}">`;
+        imgCount++;
+      }
+      result += `<a href="${safeUrl}" target="_blank" rel="noopener noreferrer"
+        class="post-link" onclick="event.stopPropagation()">${safeUrl}</a>`;
+      last = m.index + url.length;
+    }
+    result += utils.safe(text.slice(last)).replace(/\n/g, '<br>');
+    return { text: result, images: imgHtml };
+  },
+
+  /* Resolve ipfs:// and data: URIs for NFT metadata */
+  resolveIPFS(uri) {
+    if (!uri) return null;
+    if (uri.startsWith('ipfs://')) return 'https://ipfs.io/ipfs/' + uri.slice(7);
+    return uri;
+  },
+
   debounce(fn, ms) {
     let t;
     return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); };
+  },
+
+  /* Auto-grow textarea to fit content */
+  autoGrow(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 400) + 'px';
   },
 };
 
@@ -835,7 +857,7 @@ class Cache {
   constructor() {
     this._db    = null;
     this._ready = new Promise((res, rej) => {
-      const req = indexedDB.open('PulseUnderground', 5);
+      const req = indexedDB.open('PulseUnderground', 6);
       req.onupgradeneeded = e => {
         const db = e.target.result;
         if (!db.objectStoreNames.contains('posts'))
@@ -886,7 +908,7 @@ class Cache {
     });
   }
 
-  /* Prune posts older than maxAgeDays to keep DB lean */
+  /* Remove posts older than maxAgeDays to keep DB lean */
   async prune(maxAgeDays = 7) {
     await this._ready;
     const cutoff = new Date(Date.now() - maxAgeDays * 86_400_000).toISOString();
@@ -907,36 +929,40 @@ class Cache {
 class PulseUnderground {
   constructor() {
     this.state = {
-      posts:        [],    // visible feed items
-      pending:      [],    // polled new items not yet shown
-      searchTerm:   '',
-      loading:      false,
-      hasMore:      true,
-      nextPage:     1,
-      channel:      MAIN_CHANNEL,
+      posts:       [],
+      pending:     [],
+      searchTerm:  '',
+      loading:     false,
+      hasMore:     true,
+      nextPage:    1,
+      channel:     MAIN_CHANNEL,
       /*
-       * mode — controls which address is queried and how results are filtered:
-       *
-       *   main          → TXs TO main channel address (public feed)
-       *   inbox         → ALL TXs FROM or TO user (combined, direction-tagged)
-       *   notifications → TXs TO user, newer than last-visit timestamp only
-       *   self          → TXs TO user's own address (their public channel)
-       *   custom        → TXs TO any arbitrary entered address
-       *   wave          → TXs TO Wave on Pulse address (read-only)
+       * mode:
+       *   main          → TXs TO main channel (public feed)
+       *   inbox         → TXs FROM or TO user (combined, direction-tagged)
+       *   notifications → TXs TO user, newer than last-visit timestamp
+       *   self          → TXs TO user's own address (public channel)
+       *   custom        → TXs TO any entered address
+       *   wave          → TXs TO WAVE_ADDRESS (read-only)
        */
-      mode:         'main',
-      profile:      { username: '', picUrl: 'image1.jpeg', bio: '' },
-      signerAddr:   null,
-      expanded:     new Set(),   // txHash → expanded in feed
-      replyTarget:  null,
-      threadPost:   null,
-      profCache:    {},          // address → { username, picUrl } session cache
+      mode:        'main',
+      profile:     { username: '', picUrl: 'image1.jpeg', bio: '' },
+      signerAddr:  null,
+      expanded:    new Set(),
+      replyTarget: null,
+      threadPost:  null,
+      profCache:   {},    // address → {username, picUrl} — session cache
     };
 
-    this.signer    = null;
-    this.cache     = new Cache();
-    this.pollTimer = null;
-    this.g         = id => document.getElementById(id);
+    this.signer        = null;
+    this.cache         = new Cache();
+    this.pollTimer     = null;
+    this._profInFlight = 0;
+    this._profQueue    = [];
+    this._walletListenersRegistered = false;
+    this.g             = id => document.getElementById(id);
+    /* Debounced renderFeed used by profile fetches to avoid rapid re-render spam */
+    this._debouncedRender = utils.debounce(() => this.renderFeed(), 150);
   }
 
   /* ── Init ──────────────────────────────────────────────────────────── */
@@ -947,23 +973,26 @@ class PulseUnderground {
     await this.loadCached();
     await this.tryAutoReconnect();
     await this.fetchPosts(true);
-    this.startPolling();
+    /* First poll at 30s, then on POLL_MS interval */
+    setTimeout(() => {
+      this.pollNew();
+      this.startPolling();
+    }, POLL_FIRST_MS);
   }
 
   /* ── Event wiring ──────────────────────────────────────────────────── */
   wireListeners() {
     const g = this.g.bind(this);
 
-    /* wallet */
-    g('connect-btn').onclick = () => this.toggleWallet();
+    g('connect-btn').onclick  = () => this.toggleWallet();
 
-    /* desktop nav */
+    /* Desktop nav */
     g('nav-home').onclick    = () => this.goHome();
     g('nav-messages').onclick = () => this.goInbox();
     g('nav-notifs').onclick  = () => this.goNotifications();
     g('nav-profile').onclick = () => this.openProfileModal();
 
-    /* mobile nav */
+    /* Mobile nav */
     document.querySelectorAll('[data-mn]').forEach(b => {
       b.onclick = () => {
         const t = b.dataset.mn;
@@ -976,28 +1005,36 @@ class PulseUnderground {
       };
     });
 
-    /* compose */
+    /* Compose */
     g('compose-text').oninput = () => {
-      g('char-count').textContent = g('compose-text').value.length + ' / ∞';
+      utils.autoGrow(g('compose-text'));
+      const n = g('compose-text').value.length;
+      const cc = g('char-count');
+      cc.textContent = n;
+      cc.className = 'char-count' + (n > 900 ? ' over' : n > 700 ? ' warn' : '');
     };
     g('post-btn').onclick = () => this.publishPost();
 
-    /* feed — all post interactions via event delegation */
-    g('feed').addEventListener('click', e => this.onFeedClick(e, false));
+    /* Feed event delegation */
+    g('feed').addEventListener('click', e => {
+      /* Image thumbnail click — open full size */
+      const img = e.target.closest('.post-img-thumb');
+      if (img?.dataset.href) { e.stopPropagation(); window.open(img.dataset.href, '_blank'); return; }
+      this.onFeedClick(e, false);
+    });
     g('thread-orig').addEventListener('click',    e => this.onFeedClick(e, true));
     g('thread-replies').addEventListener('click', e => this.onFeedClick(e, true));
 
-    /* search */
+    /* Search */
     g('search-input').oninput = utils.debounce(() => {
       this.state.searchTerm = g('search-input').value.trim().toLowerCase();
       this.renderFeed();
     }, 300);
 
-    /* feed controls */
     g('refresh-btn').onclick  = () => this.refreshFeed();
     g('new-banner').onclick   = () => this.loadPending();
 
-    /* channel buttons */
+    /* Channel switcher */
     g('ch-main').onclick = () => this.goHome();
     g('ch-self').onclick = () => this.goSelf();
     g('ch-go').onclick   = () => this.goCustom();
@@ -1007,38 +1044,49 @@ class PulseUnderground {
     g('wave-btn').onclick   = () => this.goWave();
     g('wave-btn').onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') this.goWave(); };
 
-    /* infinite scroll */
+    /* Infinite scroll */
     window.addEventListener('scroll', utils.debounce(() => this.onScroll(), 150));
 
-    /* profile modal */
+    /* Esc key closes open modals */
+    document.addEventListener('keydown', e => {
+      if (e.key !== 'Escape') return;
+      ['profile-modal','reply-modal','thread-modal'].forEach(id => {
+        if (g(id).classList.contains('open')) this.closeModal(id);
+      });
+    });
+
+    /* Backdrop close */
+    ['profile-modal','reply-modal','thread-modal'].forEach(id => {
+      g(id).addEventListener('click', e => { if (e.target === g(id)) this.closeModal(id); });
+    });
+
+    /* Profile modal */
     g('close-profile').onclick    = () => this.closeModal('profile-modal');
     g('edit-profile-btn').onclick = () => this.showEditForm();
     g('cancel-edit-btn').onclick  = () => this.showProfileView();
     g('save-profile-btn').onclick = () => this.saveProfile();
     g('pe-pic').oninput = () => { g('pe-preview').src = g('pe-pic').value.trim() || 'image1.jpeg'; };
+    g('fetch-nft-btn').onclick    = () => this.fetchNFTImage();
 
-    /* reply modal */
+    /* Reply modal */
     g('close-reply').onclick      = () => this.closeModal('reply-modal');
     g('cancel-reply-btn').onclick = () => this.closeModal('reply-modal');
     g('post-reply-btn').onclick   = () => this.postReply();
     g('reply-input').oninput = () => {
-      g('reply-count').textContent = g('reply-input').value.length + ' / ∞';
+      utils.autoGrow(g('reply-input'));
+      g('reply-count').textContent = g('reply-input').value.length;
     };
 
-    /* thread modal */
+    /* Thread modal */
     g('close-thread').onclick          = () => this.closeModal('thread-modal');
     g('post-thread-reply-btn').onclick = () => this.postThreadReply();
     g('thread-reply-input').oninput = () => {
-      g('thread-count').textContent = g('thread-reply-input').value.length + ' / ∞';
+      utils.autoGrow(g('thread-reply-input'));
+      g('thread-count').textContent = g('thread-reply-input').value.length;
     };
-
-    /* close modals by clicking backdrop */
-    ['profile-modal','reply-modal','thread-modal'].forEach(id => {
-      g(id).addEventListener('click', e => { if (e.target === g(id)) this.closeModal(id); });
-    });
   }
 
-  /* ── Delegated click handler ───────────────────────────────────────── */
+  /* ── Feed click delegation ──────────────────────────────────────────── */
   onFeedClick(e, inModal) {
     const action = e.target.closest('[data-action]')?.dataset.action;
     const item   = e.target.closest('.post-item');
@@ -1063,21 +1111,21 @@ class PulseUnderground {
 
   /* ── Navigation ─────────────────────────────────────────────────────── */
   async goHome() {
+    /* If already on home, just scroll to top */
+    if (this.state.mode === 'main' && this.state.channel === MAIN_CHANNEL) {
+      window.scrollTo({ top: 0, behavior: 'smooth' }); return;
+    }
     this.setNav('nav-home','home');
     this.state.mode    = 'main';
     this.state.channel = MAIN_CHANNEL;
     this.g('feed-title').textContent     = 'The Pulse Underground';
     this.g('compose-area').style.display = 'flex';
+    this.g('channel-banner').style.display = 'none';
     this.setChActive('ch-main');
     this.updateChLabel();
     await this.resetAndFetch();
   }
 
-  /*
-   * Inbox — combined view: all TXs FROM or TO the user's wallet.
-   * Sent posts show a purple "↑ sent" badge; received show green "↓ received".
-   * Also shows the recipient address on outgoing posts.
-   */
   async goInbox() {
     if (!this.signer) { utils.toast('Connect wallet to view Messages'); return; }
     this.setNav('nav-messages','messages');
@@ -1085,16 +1133,12 @@ class PulseUnderground {
     this.state.channel = this.state.signerAddr;
     this.g('feed-title').textContent     = '✉️ Messages';
     this.g('compose-area').style.display = 'none';
+    this.g('channel-banner').style.display = 'none';
     this.setChActive(null);
     this.updateChLabel();
     await this.resetAndFetch();
   }
 
-  /*
-   * Notifications — TXs TO the user that arrived since their last visit.
-   * Opening this view marks all as read (updates localStorage timestamp).
-   * Does NOT poll — it's a point-in-time snapshot.
-   */
   async goNotifications() {
     if (!this.signer) { utils.toast('Connect wallet to view Notifications'); return; }
     this.setNav('nav-notifs','notifs');
@@ -1102,6 +1146,7 @@ class PulseUnderground {
     this.state.channel = this.state.signerAddr;
     this.g('feed-title').textContent     = '🔔 Notifications';
     this.g('compose-area').style.display = 'none';
+    this.g('channel-banner').style.display = 'none';
     this.setChActive(null);
     this.updateChLabel();
     localStorage.setItem('pulseLastCheck', Date.now().toString());
@@ -1109,11 +1154,6 @@ class PulseUnderground {
     await this.resetAndFetch();
   }
 
-  /*
-   * My Channel — the user's public address channel.
-   * Shows ALL TXs TO the user's address (including self-posts, excluding
-   * PROFILE_DATA saves). Anyone can post here — it's their public chat room.
-   */
   async goSelf() {
     if (!this.signer) { utils.toast('Connect wallet to view your channel'); return; }
     this.setNav(null, null);
@@ -1123,10 +1163,10 @@ class PulseUnderground {
     this.g('compose-area').style.display = 'flex';
     this.setChActive('ch-self');
     this.updateChLabel();
+    this.showChannelBanner(this.state.signerAddr);
     await this.resetAndFetch();
   }
 
-  /* Custom — any entered 0x address; shows TXs TO that address */
   async goCustom() {
     const raw = this.g('custom-input').value.trim().toLowerCase();
     if (!ethers.utils.isAddress(raw)) { utils.toast('Invalid address'); return; }
@@ -1137,18 +1177,19 @@ class PulseUnderground {
     this.g('compose-area').style.display = 'flex';
     this.setChActive(null);
     this.updateChLabel();
+    this.showChannelBanner(raw);
     await this.resetAndFetch();
   }
 
-  /* Wave on Pulse — read-only broadcast channel */
   async goWave() {
     this.setNav(null, null);
     this.state.mode    = 'wave';
     this.state.channel = WAVE_ADDRESS;
     this.g('feed-title').textContent     = '📻 Wave on Pulse';
-    this.g('compose-area').style.display = 'none'; // read-only
+    this.g('compose-area').style.display = 'none';
     this.setChActive(null);
     this.updateChLabel();
+    this.showChannelBanner(WAVE_ADDRESS);
     await this.resetAndFetch();
   }
 
@@ -1177,6 +1218,54 @@ class PulseUnderground {
     this.g('ch-label').textContent = map[mode] || '';
   }
 
+  /* ── Channel profile banner ─────────────────────────────────────────── */
+
+  /*
+   * Shows a Twitter-style profile header when viewing a specific channel.
+   * Displays the channel owner's on-chain profile (name, bio, avatar).
+   * For unknown addresses, shows a loading state then updates when fetched.
+   */
+  showChannelBanner(address) {
+    const banner = this.g('channel-banner');
+    banner.style.display = 'block';
+
+    if (address === WAVE_ADDRESS) {
+      banner.className = 'wave-banner';
+      this.renderBanner({
+        username: 'Wave on Pulse',
+        picUrl:   'image1.jpeg',
+        bio:      'On-chain live radio — spaces & shows transcribed to PulseChain',
+      }, address);
+      return;
+    }
+
+    banner.className = '';
+
+    /* Own channel — use known profile immediately */
+    if (address === this.state.signerAddr) {
+      this.renderBanner(this.state.profile, address);
+      return;
+    }
+
+    /* Check session cache */
+    const cached = this.state.profCache[address];
+    if (cached) { this.renderBanner(cached, address); return; }
+
+    /* Show loading state, then fetch */
+    this.renderBanner({ username: '', picUrl: 'image1.jpeg', bio: 'Loading profile…' }, address);
+    this.fetchOtherProfile(address).then(() => {
+      const loaded = this.state.profCache[address];
+      if (loaded && banner.style.display !== 'none') this.renderBanner(loaded, address);
+    });
+  }
+
+  renderBanner(profile, address) {
+    this.g('cb-avatar').src        = profile?.picUrl || 'image1.jpeg';
+    this.g('cb-name').textContent  = profile?.username || this.trunc(address);
+    this.g('cb-bio').textContent   = profile?.bio  || '';
+    this.g('cb-address').textContent = address || '';
+  }
+
   /* ── Notification badge ─────────────────────────────────────────────── */
   async checkNotifBadge() {
     if (!this.state.signerAddr) return;
@@ -1185,10 +1274,9 @@ class PulseUnderground {
       const raw   = await this.apiFetch(this.state.signerAddr, 1);
       const count = raw.filter(tx => {
         if (tx.to?.toLowerCase()   !== this.state.signerAddr) return false;
-        if (tx.from?.toLowerCase() === this.state.signerAddr) return false; // no self-sends
+        if (tx.from?.toLowerCase() === this.state.signerAddr) return false;
         if (!tx.input || tx.input === '0x') return false;
         if (Number(tx.timeStamp) * 1000 <= lastCheck) return false;
-        /* Only count txs that are actually readable text posts */
         try {
           const text = ethers.utils.toUtf8String(tx.input).trim();
           return text.length > 0 && !text.startsWith(PROFILE_PREFIX);
@@ -1210,7 +1298,6 @@ class PulseUnderground {
       mb?.classList.remove('on');
     }
   }
-
   clearNotifBadge() { this.setNotifBadge(0); }
 
   /* ── Wallet ─────────────────────────────────────────────────────────── */
@@ -1222,9 +1309,34 @@ class PulseUnderground {
       if (accs.length && localStorage.getItem('pulseConnected') === '1') {
         this.signer = prov.getSigner();
         this.state.signerAddr = (await this.signer.getAddress()).toLowerCase();
+        this._registerWalletListeners();
         await this.afterConnect();
       }
     } catch (err) { console.warn('Auto-reconnect failed', err); }
+  }
+
+  /* Register MetaMask event listeners once — guards against double-registration */
+  _registerWalletListeners() {
+    if (this._walletListenersRegistered) return;
+    this._walletListenersRegistered = true;
+
+    window.ethereum.on('accountsChanged', accounts => {
+      if (accounts.length === 0) {
+        this.disconnect();
+      } else if (accounts[0].toLowerCase() !== this.state.signerAddr) {
+        utils.toast('Account changed — reconnecting…');
+        this.disconnect();
+        setTimeout(() => this.connect(), 500);
+      }
+    });
+
+    window.ethereum.on('chainChanged', chainId => {
+      const id = parseInt(chainId, 16);
+      if (id !== PULSE_CHAIN_ID) {
+        utils.toast('Wrong network — please switch to PulseChain');
+        this.disconnect();
+      }
+    });
   }
 
   async toggleWallet() { this.signer ? this.disconnect() : await this.connect(); }
@@ -1243,6 +1355,8 @@ class PulseUnderground {
       this.signer = prov.getSigner();
       this.state.signerAddr = (await this.signer.getAddress()).toLowerCase();
       localStorage.setItem('pulseConnected', '1');
+      this._registerWalletListeners();
+
       await this.afterConnect();
       utils.toast('Wallet connected ✓');
     } catch (err) { utils.toast('Connect failed: ' + (err.message || err)); }
@@ -1256,13 +1370,11 @@ class PulseUnderground {
     this.g('connect-btn').classList.add('ghost');
     this.g('ch-self').style.display     = 'block';
 
-    /* profile: cache → chain (chain always wins for freshness) */
     const cached = await this.cache.getProfile(addr);
     if (cached) this.applyProfile(cached);
-    await this.fetchMyProfile(); // updates cache + state
-
+    await this.fetchMyProfile();
     this.checkNotifBadge();
-    this.renderFeed(); // re-render so own posts show avatar/name
+    this.renderFeed();
   }
 
   disconnect() {
@@ -1283,13 +1395,10 @@ class PulseUnderground {
   /* ── Profile ─────────────────────────────────────────────────────────── */
 
   /*
-   * On-chain profile format:
-   *   tx.from === tx.to === userAddress  (0-value self-send)
-   *   tx.input = utf8(PROFILE_DATA: + JSON.stringify({username, picUrl, bio}))
-   *
-   * We scan the first page of the user's own tx history for the most recent
+   * On-chain profile: 0-value self-send (from === to === userAddr)
+   * Input: PROFILE_DATA: + JSON.stringify({username, picUrl, bio})
+   * We scan the first page of the user's tx history for the most recent
    * self-send with this prefix — that's the active profile.
-   * We require from === to to prevent a spoofed tx from overwriting the profile.
    */
   async fetchMyProfile() {
     if (!this.state.signerAddr) return;
@@ -1304,44 +1413,65 @@ class PulseUnderground {
           const data = JSON.parse(text.slice(PROFILE_PREFIX.length).trim());
           this.applyProfile(data);
           await this.cache.saveProfile({ address: this.state.signerAddr, ...data });
-          return; // most recent profile found — stop scanning
+          return;
         } catch { continue; }
       }
     } catch (err) { console.warn('Profile fetch error', err); }
   }
 
   /*
-   * Lazy-load another user's profile for their avatar/username in the feed.
-   * Checks IndexedDB first (fast). Falls back to chain page 1 (one API call).
-   * Results are cached in memory (profCache) so each address is only fetched once.
-   * Re-renders the feed after loading so avatars appear progressively.
+   * Fetch another user's on-chain profile for their avatar/name in the feed.
+   * Rate-limited: max 3 concurrent chain fetches. Excess requests are queued
+   * and drained automatically.
+   * Results cached in memory (profCache) and IndexedDB.
    */
   async fetchOtherProfile(address) {
     if (!address || address in this.state.profCache) return;
-    this.state.profCache[address] = null; // mark in-flight to prevent duplicate fetches
-    try {
-      const db = await this.cache.getProfile(address);
-      if (db) {
-        this.state.profCache[address] = { username: db.username || '', picUrl: db.picUrl || 'image1.jpeg' };
-        this.renderFeed();
-        return;
-      }
-      const raw = await this.apiFetch(address, 1);
-      for (const tx of raw) {
-        if (tx.from?.toLowerCase() !== address || tx.to?.toLowerCase() !== address) continue;
-        try {
-          const text = ethers.utils.toUtf8String(tx.input).trim();
-          if (!text.startsWith(PROFILE_PREFIX)) continue;
-          const data = JSON.parse(text.slice(PROFILE_PREFIX.length).trim());
-          this.state.profCache[address] = { username: data.username || '', picUrl: data.picUrl || 'image1.jpeg' };
-          await this.cache.saveProfile({ address, ...data });
-          this.renderFeed();
+    this.state.profCache[address] = null; // mark in-flight
+
+    const work = async () => {
+      this._profInFlight++;
+      try {
+        /* IndexedDB first */
+        const db = await this.cache.getProfile(address);
+        if (db) {
+          this.state.profCache[address] = { username: db.username || '', picUrl: db.picUrl || 'image1.jpeg' };
+          this._debouncedRender();
           return;
-        } catch { continue; }
+        }
+        /* Chain fallback */
+        const raw = await this.apiFetch(address, 1);
+        for (const tx of raw) {
+          if (tx.from?.toLowerCase() !== address || tx.to?.toLowerCase() !== address) continue;
+          try {
+            const text = ethers.utils.toUtf8String(tx.input).trim();
+            if (!text.startsWith(PROFILE_PREFIX)) continue;
+            const data = JSON.parse(text.slice(PROFILE_PREFIX.length).trim());
+            this.state.profCache[address] = { username: data.username || '', picUrl: data.picUrl || 'image1.jpeg' };
+            await this.cache.saveProfile({ address, ...data });
+            this._debouncedRender();
+            return;
+          } catch { continue; }
+        }
+        this.state.profCache[address] = { username: '', picUrl: 'image1.jpeg' };
+      } catch {
+        this.state.profCache[address] = { username: '', picUrl: 'image1.jpeg' };
+      } finally {
+        this._profInFlight--;
+        this._drainProfileQueue();
       }
-      this.state.profCache[address] = { username: '', picUrl: 'image1.jpeg' };
-    } catch {
-      this.state.profCache[address] = { username: '', picUrl: 'image1.jpeg' };
+    };
+
+    if (this._profInFlight < 3) {
+      work();
+    } else {
+      this._profQueue.push(work);
+    }
+  }
+
+  _drainProfileQueue() {
+    while (this._profInFlight < 3 && this._profQueue.length > 0) {
+      this._profQueue.shift()();
     }
   }
 
@@ -1376,6 +1506,7 @@ class PulseUnderground {
     this.g('pe-pic').value   = (p.picUrl && p.picUrl !== 'image1.jpeg') ? p.picUrl : '';
     this.g('pe-bio').value   = p.bio      || '';
     this.g('pe-preview').src = p.picUrl   || 'image1.jpeg';
+    this.g('nft-status').textContent = '';
     this.g('profile-view').style.display = 'none';
     this.g('profile-edit').style.display = 'block';
     this.g('profile-modal-title').textContent = 'Edit Profile';
@@ -1386,11 +1517,9 @@ class PulseUnderground {
     let   picUrl   = this.g('pe-pic').value.trim();
     const bio      = this.g('pe-bio').value.trim();
 
-    /* Security: only allow https:// image URLs */
     if (picUrl && !picUrl.startsWith('https://')) {
       utils.toast('Profile picture must be an https:// URL'); return;
     }
-    /* Validate the image actually loads */
     if (picUrl) {
       const ok = await new Promise(r => {
         const img = new Image();
@@ -1398,7 +1527,7 @@ class PulseUnderground {
         img.onerror = () => r(false);
         img.src = picUrl;
       });
-      if (!ok) { picUrl = ''; utils.toast('Image URL could not be loaded — using default'); }
+      if (!ok) { picUrl = ''; utils.toast('Image could not be loaded — using default'); }
     }
     picUrl = picUrl || 'image1.jpeg';
 
@@ -1406,11 +1535,6 @@ class PulseUnderground {
     this.applyProfile(data);
     await this.cache.saveProfile({ address: this.state.signerAddr, ...data });
 
-    /*
-     * Publish on-chain as a self-send.
-     * We pass signerAddr as toAddress explicitly — no state.channel mutation,
-     * so there is no race condition with the current feed channel.
-     */
     const ok = await this.publish(PROFILE_PREFIX + JSON.stringify(data), null, this.state.signerAddr);
     if (ok) {
       this.closeModal('profile-modal');
@@ -1419,14 +1543,82 @@ class PulseUnderground {
     }
   }
 
+  /* ── NFT profile pic fetcher ────────────────────────────────────────── */
+
+  /*
+   * Fetches an ERC-721 NFT's image from its tokenURI.
+   * Verifies the connected wallet owns the token.
+   * Supports http, ipfs://, and data:application/json;base64 URIs.
+   */
+  async fetchNFTImage() {
+    const contractAddr = this.g('nft-contract').value.trim().toLowerCase();
+    const tokenIdRaw   = this.g('nft-token-id').value.trim();
+    const status       = this.g('nft-status');
+
+    if (!ethers.utils.isAddress(contractAddr)) {
+      status.textContent = '✗ Invalid contract address'; return;
+    }
+    if (!tokenIdRaw || isNaN(tokenIdRaw)) {
+      status.textContent = '✗ Invalid token ID'; return;
+    }
+    if (!this.signer) {
+      status.textContent = '✗ Connect wallet first'; return;
+    }
+
+    status.textContent = '⟳ Fetching…';
+    try {
+      const provider = this.signer.provider;
+      const contract = new ethers.Contract(contractAddr, ERC721_ABI, provider);
+
+      /* Verify ownership */
+      let owner;
+      try { owner = (await contract.ownerOf(tokenIdRaw)).toLowerCase(); }
+      catch { status.textContent = '✗ Token not found'; return; }
+
+      if (owner !== this.state.signerAddr) {
+        status.textContent = '✗ You don\'t own this token'; return;
+      }
+
+      /* Fetch tokenURI */
+      let tokenUri;
+      try { tokenUri = await contract.tokenURI(tokenIdRaw); }
+      catch { status.textContent = '✗ tokenURI() failed'; return; }
+
+      /* Resolve metadata */
+      let imageUrl = null;
+
+      if (tokenUri.startsWith('data:application/json;base64,')) {
+        try {
+          const json = atob(tokenUri.slice('data:application/json;base64,'.length));
+          const meta = JSON.parse(json);
+          imageUrl = utils.resolveIPFS(meta.image);
+        } catch { status.textContent = '✗ Could not parse metadata'; return; }
+      } else {
+        const metaUrl = utils.resolveIPFS(tokenUri);
+        try {
+          const res  = await fetch(metaUrl);
+          const meta = await res.json();
+          imageUrl = utils.resolveIPFS(meta.image);
+        } catch { status.textContent = '✗ Could not fetch metadata'; return; }
+      }
+
+      if (!imageUrl) { status.textContent = '✗ No image in metadata'; return; }
+
+      /* Apply to profile pic preview */
+      this.g('pe-pic').value   = imageUrl;
+      this.g('pe-preview').src = imageUrl;
+      status.textContent = '✓ NFT image loaded!';
+
+    } catch (err) {
+      status.textContent = '✗ Error: ' + (err.message || err);
+    }
+  }
+
   /* ── Fetch pipeline ─────────────────────────────────────────────────── */
 
   /*
-   * Shared raw API call — single source of truth for PulseScan requests.
-   *
-   * IMPORTANT: uses `offset` (records per page), NOT `limit`.
-   * `limit` is silently ignored by the Etherscan-compatible API;
-   * `offset` is the correct parameter name per the API spec.
+   * Single source of truth for PulseScan API calls.
+   * Uses `offset` (records per page), NOT `limit` — critical difference.
    */
   async apiFetch(address, page) {
     const url = `https://api.scan.pulsechain.com/api?module=account&action=txlist`
@@ -1434,16 +1626,9 @@ class PulseUnderground {
     const res  = await fetch(url);
     if (!res.ok) throw new Error(`API ${res.status}`);
     const data = await res.json();
-    /* status "0" + "No transactions found" is normal — not an error */
     return (data.status === '1' && Array.isArray(data.result)) ? data.result : [];
   }
 
-  /*
-   * Which address to query depends on mode:
-   *   inbox / notifications / self → user's own address
-   *     (API returns both sent+received; parseTxs filters by mode)
-   *   main / custom / wave → the channel address
-   */
   queryAddr() {
     const { mode, channel, signerAddr } = this.state;
     return (mode === 'inbox' || mode === 'notifications' || mode === 'self')
@@ -1458,17 +1643,9 @@ class PulseUnderground {
   }
 
   /*
-   * Main fetch loop.
-   *
-   * Pages of 50 raw txs are fetched sequentially. Each page is parsed
-   * immediately. We continue until:
-   *   a) POSTS_TARGET new visible posts found, OR
-   *   b) last page reached (raw.length < 50), OR
-   *   c) MAX_PAGES safety cap hit.
-   *
-   * Renders incrementally so the user sees results as they arrive.
-   * No sleep() delays — we skip pages with no matching posts and keep going.
-   * notifications mode always stops after page 1 (recent-only view).
+   * Main fetch loop — scans pages until POSTS_TARGET posts found,
+   * last page reached, or MAX_PAGES safety cap hit.
+   * Renders incrementally. No sleep() delays.
    */
   async fetchPosts(reset = false) {
     if (this.state.loading) return;
@@ -1485,7 +1662,7 @@ class PulseUnderground {
 
         this.state.nextPage++;
         pages++;
-        this.state.hasMore = raw.length === 50; // < 50 = last page
+        this.state.hasMore = raw.length === 50;
 
         const parsed = this.parseTxs(raw);
         if (parsed.length > 0) {
@@ -1496,14 +1673,12 @@ class PulseUnderground {
               .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
             await this.cache.savePosts(unique);
             found += unique.length;
-            this.renderFeed(); // show as results arrive
+            this.renderFeed();
           }
         }
-
-        if (this.state.mode === 'notifications') break; // page 1 only
+        if (this.state.mode === 'notifications') break;
       }
-
-      if (this.state.posts.length === 0) this.renderFeed(); // show empty state
+      if (this.state.posts.length === 0) this.renderFeed();
     } finally {
       this.state.loading = false;
       this.g('loading-more').style.display = 'none';
@@ -1511,17 +1686,8 @@ class PulseUnderground {
   }
 
   /*
-   * parseTxs — filter and shape raw API results for the current mode.
-   * Each tx is decoded ONCE (no double decoding).
-   *
-   *   main / custom / wave → TXs where to === channel
-   *   inbox                → TXs where from OR to === user
-   *                          (direction-tagged 'sent' / 'received')
-   *   self                 → TXs where to === user (public channel;
-   *                          includes self-sends except PROFILE_DATA)
-   *   notifications        → TXs where to === user, newer than lastCheck
-   *
-   * PROFILE_DATA self-sends are always excluded from the visible feed.
+   * parseTxs — filter and shape raw API results for current mode.
+   * Each tx decoded ONCE. Profile self-sends always excluded from feed.
    */
   parseTxs(txs) {
     const { mode, channel, signerAddr } = this.state;
@@ -1532,52 +1698,39 @@ class PulseUnderground {
       const from = tx.from?.toLowerCase();
       const to   = tx.to?.toLowerCase();
 
-      /* Decode once per tx */
       let raw;
       try { raw = ethers.utils.toUtf8String(tx.input).trim(); }
-      catch { return acc; } // non-UTF8 / binary tx — skip silently
+      catch { return acc; }
       if (!raw) return acc;
 
-      /* Always exclude PROFILE_DATA self-sends from the feed */
       if (raw.startsWith(PROFILE_PREFIX) && from === to) return acc;
 
-      /* Mode-based filtering + direction tagging */
       let direction = null;
       if (mode === 'inbox') {
         if (from !== signerAddr && to !== signerAddr) return acc;
-        if (raw.startsWith(PROFILE_PREFIX)) return acc; // no profile saves in inbox
+        if (raw.startsWith(PROFILE_PREFIX)) return acc;
         direction = (from === signerAddr) ? 'sent' : 'received';
       } else if (mode === 'self') {
-        /* Public channel — all TXs TO user; self-sends allowed (minus profile saves) */
         if (to !== signerAddr) return acc;
       } else if (mode === 'notifications') {
-        /* Only incoming, only newer than last-check */
         if (to !== signerAddr || from === signerAddr) return acc;
         if (Number(tx.timeStamp) * 1000 <= lastCheck) return acc;
       } else {
-        /* main / custom / wave — incoming to channel */
         if (to !== channel) return acc;
       }
 
-      /* Parse reply prefix */
-      const m       = raw.match(/^REPLY_TO:(0x[a-f0-9]{64})\n\n/i);
+      const m        = raw.match(/^REPLY_TO:(0x[a-f0-9]{64})\n\n/i);
       const parentTx = m ? m[1].toLowerCase() : null;
       const display  = m ? raw.slice(m[0].length).trim() : raw;
       if (!display) return acc;
 
       acc.push({
-        content:   raw,
-        display,
-        parentTx,
-        direction,    // null | 'sent' | 'received'
-        reporter:  from,
-        to:        to ?? null,
+        content: raw, display, parentTx, direction,
+        reporter: from, to: to ?? null,
         timestamp: tx.timeStamp
           ? new Date(Number(tx.timeStamp) * 1000).toISOString()
           : new Date().toISOString(),
-        txHash:    tx.hash.toLowerCase(), // always lowercase for consistent comparison
-        channel,
-        mode,
+        txHash: tx.hash.toLowerCase(), channel, mode,
       });
       return acc;
     }, []);
@@ -1590,11 +1743,9 @@ class PulseUnderground {
   async pollNew() {
     if (!this.state.channel || this.state.loading) return;
     const latestTs = this.state.posts[0]
-      ? new Date(this.state.posts[0].timestamp)
-      : new Date(0);
+      ? new Date(this.state.posts[0].timestamp) : new Date(0);
     try {
-      const raw  = await this.fetchOnePage(1);
-      /* O(1) lookup sets instead of O(n) Array.some */
+      const raw       = await this.fetchOnePage(1);
       const inFeed    = new Set(this.state.posts.map(p => p.txHash));
       const inPending = new Set(this.state.pending.map(p => p.txHash));
       const fresh = this.parseTxs(raw).filter(p =>
@@ -1609,7 +1760,6 @@ class PulseUnderground {
         btn.textContent   = `✦ ${n} new post${n > 1 ? 's' : ''} — click to load`;
         btn.style.display = 'block';
       }
-      /* Re-check notification badge on each poll */
       if (this.state.signerAddr) this.checkNotifBadge();
     } catch (err) { console.warn('Poll error', err); }
   }
@@ -1645,18 +1795,17 @@ class PulseUnderground {
     this.g('new-banner').style.display = 'none';
     await this.loadCached();
     await this.fetchPosts(true);
-    /* Notifications are a point-in-time snapshot — no ongoing poll */
     if (this.state.mode !== 'notifications') this.startPolling();
   }
 
-  /* ── Cache helpers ───────────────────────────────────────────────────── */
+  /* ── Cache ───────────────────────────────────────────────────────────── */
   async loadCached() {
     const { mode, channel, signerAddr } = this.state;
     const posts = await this.cache.getPosts(p => {
-      if (mode === 'notifications') return false; // always live
-      if (mode === 'inbox') return p.mode === 'inbox'  && p.channel === signerAddr;
-      if (mode === 'self')  return p.mode === 'self'   && p.channel === signerAddr;
-      if (mode === 'wave')  return p.mode === 'wave'   && p.channel === channel;
+      if (mode === 'notifications') return false;
+      if (mode === 'inbox') return p.mode === 'inbox' && p.channel === signerAddr;
+      if (mode === 'self')  return p.mode === 'self'  && p.channel === signerAddr;
+      if (mode === 'wave')  return p.mode === 'wave'  && p.channel === channel;
       return p.channel === channel && p.mode === mode;
     });
     this.state.posts = posts.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
@@ -1670,16 +1819,15 @@ class PulseUnderground {
     const list = term
       ? this.state.posts.filter(p =>
           p.display.toLowerCase().includes(term) ||
-          p.reporter.toLowerCase().includes(term)
-        )
+          p.reporter.toLowerCase().includes(term))
       : this.state.posts;
 
     if (!list.length) {
       const msgs = {
         notifications: 'No new notifications',
-        inbox:         'No messages yet',
-        self:          'No posts to your channel yet',
-        wave:          'No Wave transmissions yet',
+        inbox:  'No messages yet',
+        self:   'No posts to your channel yet',
+        wave:   'No Wave transmissions yet',
       };
       feed.innerHTML = `
         <div class="empty-state">
@@ -1701,7 +1849,6 @@ class PulseUnderground {
       el.dataset.txhash = post.txHash;
       el.innerHTML      = this.postHTML(post, false);
       frag.appendChild(el);
-      /* Lazy-load other users' profiles (non-blocking, won't re-fetch if cached) */
       if (post.reporter !== this.state.signerAddr) this.fetchOtherProfile(post.reporter);
     });
     feed.innerHTML = '';
@@ -1709,15 +1856,15 @@ class PulseUnderground {
   }
 
   /*
-   * Build inner HTML for a post card.
-   * ALL blockchain-sourced text goes through utils.safe() — XSS-safe.
-   * inModal = true → always show full text, no read-more truncation.
+   * Build post card HTML.
+   * ALL blockchain text through utils.safe() — XSS-proof.
+   * URLs linkified; image URLs get inline thumbnails.
+   * Reply count badge shows known replies in loaded feed.
    */
   postHTML(post, inModal) {
     const isOwn    = post.reporter === this.state.signerAddr;
     const expanded = this.state.expanded.has(post.txHash);
 
-    /* Profile resolution */
     let picUrl, displayName;
     if (isOwn) {
       picUrl      = this.state.profile.picUrl || 'image1.jpeg';
@@ -1730,20 +1877,19 @@ class PulseUnderground {
       displayName = c?.username ? utils.safe(c.username) : this.trunc(post.reporter);
     }
 
-    /* Body — XSS-safe */
-    const safeText  = utils.safe(post.display);
-    const needsMore = !inModal && !expanded && post.display.length > MAX_PREVIEW;
-    const bodyHtml  = needsMore
-      ? utils.safe(post.display.slice(0, MAX_PREVIEW)).replace(/\n/g, '<br>')
-        + '<span style="color:var(--muted)">…</span>'
-      : safeText.replace(/\n/g, '<br>');
+    /* Body rendering with linkification */
+    const textToRender = (!inModal && !expanded && post.display.length > MAX_PREVIEW)
+      ? post.display.slice(0, MAX_PREVIEW) + '…'
+      : post.display;
 
-    /* Direction badge (inbox only) */
+    const { text: bodyHtml, images: imgHtml } = utils.linkify(textToRender);
+    const needsMore = !inModal && !expanded && post.display.length > MAX_PREVIEW;
+
+    /* Direction badge (inbox) */
     const dirBadge = post.direction
       ? `<span class="dir-badge dir-${post.direction}">${post.direction === 'sent' ? '↑ sent' : '↓ received'}</span>`
       : '';
 
-    /* "To:" label on sent inbox posts */
     const toLabel = (post.direction === 'sent' && post.to)
       ? `<span class="to-label">To: ${this.trunc(post.to)}</span>`
       : '';
@@ -1751,6 +1897,13 @@ class PulseUnderground {
     const replyBadge = post.parentTx
       ? `<span class="reply-badge">↳ Replying to ${this.trunc(post.parentTx)}</span>`
       : '';
+
+    /* Reply count from known loaded posts */
+    const replyCount = this.state.posts.filter(p => p.parentTx === post.txHash).length;
+    const replyLabel = replyCount > 0 ? ` · ${replyCount}` : '';
+
+    /* Full datetime on timestamp hover */
+    const fullDate = new Date(post.timestamp).toLocaleString();
 
     return `
       <div class="post-hdr">
@@ -1762,14 +1915,15 @@ class PulseUnderground {
             <span class="post-handle">@${this.trunc(post.reporter)}</span>
             ${dirBadge}
           </div>
-          <div class="post-time">${this.relTime(post.timestamp)}</div>
+          <div class="post-time" title="${utils.safe(fullDate)}">${this.relTime(post.timestamp)}</div>
         </div>
       </div>
       ${toLabel}${replyBadge}
+      ${imgHtml ? `<div class="post-images">${imgHtml}</div>` : ''}
       <div class="post-body">${bodyHtml}</div>
       ${needsMore ? `<button class="read-more-btn" data-action="expand">Read more ↓</button>` : ''}
       <div class="post-actions">
-        <button class="act-btn" data-action="reply">💬 Reply</button>
+        <button class="act-btn" data-action="reply">💬 Reply${replyLabel}</button>
         <a href="https://otter.pulsechain.com/tx/${post.txHash}"
           target="_blank" class="otter-link"
           onclick="event.stopPropagation()">View on OtterScan →</a>
@@ -1777,16 +1931,9 @@ class PulseUnderground {
   }
 
   /* ── Publish ─────────────────────────────────────────────────────────── */
-
-  /*
-   * Core publish.
-   * toAddress defaults to state.channel (the current feed's target).
-   * Profile saves pass signerAddr explicitly so state.channel is never mutated
-   * (fixes the original's race condition).
-   */
   async publish(content, parentTx = null, toAddress = null) {
-    if (!this.signer)      { utils.toast('Connect wallet first'); return false; }
-    if (!content?.trim())  { utils.toast('Message cannot be empty'); return false; }
+    if (!this.signer)     { utils.toast('Connect wallet first'); return false; }
+    if (!content?.trim()) { utils.toast('Message cannot be empty'); return false; }
 
     let body = content.trim();
     if (parentTx) body = `${REPLY_PREFIX}${parentTx}\n\n${body}`;
@@ -1799,23 +1946,18 @@ class PulseUnderground {
       const data    = ethers.utils.hexlify(bytes);
       const txReq   = { to, value: '0', data };
       let   gas     = await this.signer.estimateGas(txReq);
-      gas           = gas.mul(130).div(100); // +30% buffer
+      gas           = gas.mul(130).div(100);
       const tx      = await this.signer.sendTransaction({ ...txReq, gasLimit: gas });
       const receipt = await tx.wait();
       const hash    = receipt.transactionHash.toLowerCase();
 
       if (!body.startsWith(PROFILE_PREFIX)) {
         const post = {
-          content:   body,
-          display:   content.trim(),
-          parentTx,
-          direction: null,
-          reporter:  this.state.signerAddr,
-          to:        to.toLowerCase(),
+          content: body, display: content.trim(),
+          parentTx, direction: null,
+          reporter: this.state.signerAddr, to: to.toLowerCase(),
           timestamp: new Date().toISOString(),
-          txHash:    hash,
-          channel:   this.state.channel,
-          mode:      this.state.mode,
+          txHash: hash, channel: this.state.channel, mode: this.state.mode,
         };
         this.state.posts.unshift(post);
         await this.cache.savePosts([post]);
@@ -1838,7 +1980,9 @@ class PulseUnderground {
     const ok = await this.publish(text);
     if (ok) {
       this.g('compose-text').value    = '';
-      this.g('char-count').textContent = '0 / ∞';
+      this.g('compose-text').style.height = '';
+      this.g('char-count').textContent = '0';
+      this.g('char-count').className   = 'char-count';
     }
   }
 
@@ -1848,7 +1992,8 @@ class PulseUnderground {
     const preview = post.display.length > 100 ? post.display.slice(0, 100) + '…' : post.display;
     this.g('reply-quote').textContent = `↳ ${this.trunc(post.reporter)}: "${preview}"`;
     this.g('reply-input').value       = '';
-    this.g('reply-count').textContent = '0 / ∞';
+    this.g('reply-input').style.height = '';
+    this.g('reply-count').textContent = '0';
     this.g('reply-modal').classList.add('open');
     this.g('reply-input').focus();
   }
@@ -1856,8 +2001,7 @@ class PulseUnderground {
   async postReply() {
     const text = this.g('reply-input').value.trim();
     if (!text || !this.state.replyTarget) return;
-    /* Send reply to the same address the original post was sent to,
-       not state.channel — this matters in inbox/self/notifications modes */
+    /* Reply goes to the same channel as the original post */
     const ok = await this.publish(text, this.state.replyTarget.txHash, this.state.replyTarget.to);
     if (ok) { this.closeModal('reply-modal'); this.g('reply-input').value = ''; }
   }
@@ -1873,6 +2017,17 @@ class PulseUnderground {
     origEl.style.cssText  = 'border:none;cursor:default';
     this.g('thread-orig').replaceChildren(origEl);
 
+    this.renderThreadReplies(post);
+    this.g('thread-reply-input').value    = '';
+    this.g('thread-reply-input').style.height = '';
+    this.g('thread-count').textContent    = '0';
+    this.g('thread-modal').classList.add('open');
+
+    /* Background chain fetch for replies we haven't loaded yet */
+    this.fetchThreadReplies(post);
+  }
+
+  renderThreadReplies(post) {
     const replies = this.state.posts
       .filter(p => p.parentTx === post.txHash)
       .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
@@ -1891,28 +2046,88 @@ class PulseUnderground {
       rc.innerHTML = `<p style="color:var(--muted);font-size:14px;padding:16px 0;text-align:center">
         No replies yet — be the first!</p>`;
     }
+  }
 
-    this.g('thread-reply-input').value    = '';
-    this.g('thread-count').textContent    = '0 / ∞';
-    this.g('thread-modal').classList.add('open');
+  /*
+   * Fetch replies to a specific post from the chain.
+   * Scans up to 5 pages of the channel where the original was posted,
+   * looking for txs with REPLY_TO:<post.txHash> in the data.
+   * New replies found are added to state.posts and the thread is re-rendered.
+   */
+  async fetchThreadReplies(post) {
+    const loading = this.g('thread-loading');
+    loading.style.display = 'block';
+
+    const targetHash = post.txHash;
+    const scanAddr   = post.to || this.state.channel;
+    const known      = new Set(this.state.posts.map(p => p.txHash));
+    let   newFound   = [];
+
+    try {
+      for (let page = 1; page <= 5; page++) {
+        let raw;
+        try { raw = await this.apiFetch(scanAddr, page); }
+        catch { break; }
+
+        raw.forEach(tx => {
+          if (!tx.input || tx.input === '0x') return;
+          const from = tx.from?.toLowerCase();
+          const to   = tx.to?.toLowerCase();
+          try {
+            const text = ethers.utils.toUtf8String(tx.input).trim();
+            const m    = text.match(/^REPLY_TO:(0x[a-f0-9]{64})\n\n/i);
+            if (!m || m[1].toLowerCase() !== targetHash) return;
+            const display = text.slice(m[0].length).trim();
+            if (!display) return;
+            const hash = tx.hash.toLowerCase();
+            if (known.has(hash)) return;
+            known.add(hash);
+            newFound.push({
+              content: text, display,
+              parentTx: targetHash, direction: null,
+              reporter: from, to,
+              timestamp: tx.timeStamp
+                ? new Date(Number(tx.timeStamp) * 1000).toISOString()
+                : new Date().toISOString(),
+              txHash: hash, channel: scanAddr, mode: post.mode,
+            });
+          } catch { /* skip */ }
+        });
+
+        if (raw.length < 50) break;
+      }
+    } finally {
+      loading.style.display = 'none';
+    }
+
+    if (newFound.length > 0) {
+      this.state.posts = [...this.state.posts, ...newFound]
+        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+      await this.cache.savePosts(newFound);
+      /* If thread modal still showing the same post, refresh it */
+      if (this.state.threadPost?.txHash === targetHash) {
+        this.renderThreadReplies(post);
+        this.renderFeed();
+      }
+    }
   }
 
   async postThreadReply() {
     const text = this.g('thread-reply-input').value.trim();
     if (!text || !this.state.threadPost) return;
-    /* Reply to the same channel as the original post */
     const ok = await this.publish(text, this.state.threadPost.txHash, this.state.threadPost.to);
     if (ok) {
       this.g('thread-reply-input').value = '';
-      this.openThread(this.state.threadPost); // refresh reply list
+      this.g('thread-reply-input').style.height = '';
+      this.renderThreadReplies(this.state.threadPost);
     }
   }
 
   closeModal(id) { this.g(id).classList.remove('open'); }
 
-  /* ── Infinite scroll ─────────────────────────────────────────────────── */
+  /* ── Scroll ──────────────────────────────────────────────────────────── */
   onScroll() {
-    if (this.state.mode === 'notifications') return; // snapshot — no pagination
+    if (this.state.mode === 'notifications') return;
     if (this.state.hasMore && !this.state.loading) {
       const near = window.innerHeight + window.scrollY >= document.body.offsetHeight - 400;
       if (near) this.fetchPosts(false);
