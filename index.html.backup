@@ -7,768 +7,2151 @@
 <link rel="icon" type="image/jpeg" href="image1.jpeg">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
 <style>
-:root{--primary:#7c4dff;--primary-light:#b388ff;--bg-dark:#0d0b14;--bg-light:#13101c;--bg-lighter:#1a1327;--border:#2a2438;--text:#fff;--neon-glow:0 0 5px var(--primary),0 0 10px var(--primary),0 0 15px var(--primary);}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg-dark);color:var(--text);line-height:1.5;font-size:16px}
-#app-container{display:flex;min-height:100vh;max-width:1280px;margin:0 auto}
-#sidebar-left,#sidebar-right{position:sticky;top:0;height:100vh;background:var(--bg-light);padding:20px;overflow-y:auto}
-#sidebar-left{width:250px;border-right:1px solid var(--border)}
-#sidebar-right{width:300px;border-left:1px solid var(--border)}
-.logo{display:block;margin:0 auto 20px;width:100px}
-h1{font-size:24px;color:var(--primary-light);text-align:center;margin-bottom:20px}
-nav ul{list-style:none}
-nav ul li{margin-bottom:10px}
-nav a{display:flex;align-items:center;color:var(--text);text-decoration:none;padding:10px;border-radius:8px;transition:background .2s,box-shadow .2s}
-nav a:hover{background:var(--bg-lighter);box-shadow:var(--neon-glow)}
-main{flex-grow:1;width:calc(1280px - 550px);background:var(--bg-light);border:1px solid var(--border);padding:20px}
-button{width:100%;padding:12px;background:linear-gradient(45deg,var(--primary),var(--primary-light));color:var(--text);border:none;border-radius:8px;font-weight:bold;cursor:pointer;transition:all .3s;margin-bottom:15px}
-button:hover{box-shadow:var(--neon-glow)}
-button:disabled{opacity:.6;cursor:not-allowed}
-#publishStory{position:absolute;bottom:10px;right:10px;width:40px;height:40px;border-radius:50%;padding:0;display:flex;align-items:center;justify-content:center}
-#newStoriesButton{display:none;position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:999;padding:10px;background:var(--primary);border:none;color:var(--text);border-radius:20px;cursor:pointer}
-#storySubmission{display:flex;padding:15px;background:var(--bg-lighter);border-bottom:1px solid var(--border);margin-bottom:20px}
-.avatar{width:48px;height:48px;border-radius:50%;margin-right:15px}
-.input-container{flex-grow:1;position:relative}
-textarea{width:100%;min-height:100px;padding:15px;background:var(--bg-light);border:1px solid var(--border);border-radius:8px;color:var(--text);resize:none}
-textarea:focus{outline:none;border-color:var(--primary);box-shadow:var(--neon-glow)}
-.news-item{padding:15px;border-bottom:1px solid var(--border);transition:background .2s;cursor:pointer;position:relative}
-.news-item:hover{background:var(--bg-lighter)}
-.reporter-info{display:flex;align-items:center;margin-bottom:10px}
-.reporter-details{font-size:14px;margin-left:10px}
-.reporter-name{font-weight:bold}
-.report-content{margin:10px 0;line-height:1.6;word-break:break-word}
-.read-more{color:var(--primary-light);cursor:pointer;font-weight:500;margin-top:8px;display:inline-block;transition:color .2s}
-.read-more:hover{color:#fff;text-shadow:var(--neon-glow)}
-.action-row{margin-top:10px;display:flex;gap:12px;align-items:center;font-size:13px}
-.tx-link{color:var(--primary-light);text-decoration:none;transition:color .2s}
-.tx-link:hover{color:#fff;text-shadow:var(--neon-glow)}
-#loadingMore{display:none;text-align:center;padding:15px;color:var(--primary-light);font-style:italic}
-#searchInput,#customChannelInput{width:100%;padding:12px 15px;background:var(--bg-lighter);border:1px solid var(--border);border-radius:20px;color:var(--text);margin-bottom:20px}
-#loadingOverlay,#profileModal,#replyModal,#threadModal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(13,11,20,.9);color:var(--text);display:none;justify-content:center;align-items:center;z-index:1000}
-#statusMessage{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--bg-light);padding:10px 20px;border-radius:5px;display:none;z-index:1001;box-shadow:var(--neon-glow)}
-.modal-content{background:var(--bg-light);padding:20px;border-radius:8px;width:380px;max-width:90%;border:1px solid var(--border)}
-.thread-modal-content{background:var(--bg-light);padding:24px;border-radius:12px;width:90%;max-width:620px;max-height:90vh;overflow-y:auto;border:1px solid var(--border)}
-#profileHeader{background:var(--bg-lighter);padding:20px;border-radius:12px;margin-bottom:20px;text-align:center;position:relative;}
-#profileHeader .avatar{width:120px;height:120px;border-radius:50%;margin:0 auto 15px;display:block;}
-#profileHeader h2{margin:10px 0 5px;font-size:24px;}
-#profileHeader .bio{font-size:15px;color:#bbb;max-width:600px;margin:0 auto;}
-#profileHeader .edit-btn{position:absolute;top:15px;right:15px;padding:4px 10px;font-size:12px;background:var(--primary);color:#fff;border:none;border-radius:9999px;cursor:pointer;}
-.char-count{font-size:13px;color:#888;text-align:right;margin-top:5px}
+/* ─── Variables ──────────────────────────────────────────────────────────── */
+:root {
+  --primary:     #7c4dff;
+  --primary-lt:  #b388ff;
+  --primary-dim: rgba(124,77,255,0.15);
+  --wave-a:      #ff3cac;
+  --wave-b:      #784ba0;
+  --wave-c:      #2b86c5;
+  --bg-dark:     #0d0b14;
+  --bg-light:    #13101c;
+  --bg-mid:      #1c1728;
+  --border:      #2a2438;
+  --text:        #e8e6f0;
+  --muted:       #7a7590;
+  --green:       #00e5a0;
+  --neon:        0 0 8px rgba(124,77,255,0.6), 0 0 20px rgba(124,77,255,0.2);
+  --wave-neon:   0 0 12px rgba(255,60,172,0.5), 0 0 28px rgba(120,75,160,0.3);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg-dark); color: var(--text);
+  line-height: 1.5; font-size: 15px; min-height: 100vh;
+}
+button, input, textarea { font-family: inherit; }
+a { color: inherit; }
+
+/* ─── Layout ─────────────────────────────────────────────────────────────── */
+#app { display: flex; max-width: 1280px; margin: 0 auto; min-height: 100vh; }
+
+/* ─── Left sidebar ───────────────────────────────────────────────────────── */
+#sidebar-left {
+  width: 240px; flex-shrink: 0;
+  position: sticky; top: 0; height: 100vh;
+  display: flex; flex-direction: column;
+  background: var(--bg-light);
+  border-right: 1px solid var(--border);
+  padding: 20px 12px; overflow-y: auto;
+}
+.logo-wrap { text-align: center; margin-bottom: 20px; }
+.logo-wrap img {
+  width: 72px; height: 72px; border-radius: 50%;
+  border: 2px solid var(--primary); object-fit: cover;
+}
+.logo-wrap .site-name {
+  display: block; font-size: 11px; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--primary-lt);
+  margin-top: 6px; font-weight: 600;
+}
+nav { flex: 1; }
+.nav-btn {
+  display: flex; align-items: center; gap: 12px;
+  width: 100%; padding: 11px 14px;
+  background: transparent; border: none; border-radius: 12px;
+  color: var(--text); font-size: 15px; font-weight: 500;
+  cursor: pointer; text-align: left; position: relative;
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+  margin-bottom: 2px;
+}
+.nav-btn:hover  { background: var(--bg-mid); color: var(--primary-lt); }
+.nav-btn.active { background: var(--primary-dim); color: var(--primary-lt); box-shadow: var(--neon); }
+.nav-icon { font-size: 19px; width: 22px; text-align: center; }
+.notif-badge {
+  display: none; position: absolute; top: 8px; right: 10px;
+  min-width: 18px; height: 18px; padding: 0 5px;
+  background: var(--wave-a); border-radius: 9px;
+  font-size: 10px; font-weight: 700; line-height: 18px;
+  text-align: center; color: #fff;
+}
+.notif-badge.on { display: block; }
+#sidebar-bottom { margin-top: auto; padding-top: 16px; }
+.wallet-pill {
+  font-size: 11px; color: var(--muted); text-align: center;
+  word-break: break-all; padding: 6px; background: var(--bg-dark);
+  border-radius: 8px; margin-bottom: 8px; display: none;
+}
+#connect-btn {
+  width: 100%; padding: 11px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-lt));
+  color: #fff; border: none; border-radius: 24px;
+  font-weight: 700; font-size: 13px; cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+#connect-btn:hover { box-shadow: var(--neon); }
+#connect-btn.ghost {
+  background: transparent; border: 1px solid var(--border);
+  color: var(--muted); font-size: 12px; padding: 8px;
+}
+
+/* ─── Main column ────────────────────────────────────────────────────────── */
+#main {
+  flex: 1; min-width: 0; background: var(--bg-light);
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+}
+#feed-header {
+  position: sticky; top: 0; z-index: 20;
+  background: rgba(19,16,28,0.92);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 20px;
+  display: flex; align-items: center;
+  justify-content: space-between; gap: 12px;
+}
+#feed-title { font-size: 17px; font-weight: 700; color: var(--primary-lt); }
+#refresh-btn {
+  background: transparent; border: 1px solid var(--border);
+  color: var(--muted); border-radius: 20px;
+  padding: 5px 14px; font-size: 12px; cursor: pointer;
+  flex-shrink: 0; transition: all 0.2s;
+}
+#refresh-btn:hover { border-color: var(--primary); color: var(--primary-lt); }
+#new-banner {
+  display: none; width: 100%; padding: 10px;
+  background: var(--primary); border: none; color: #fff;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  letter-spacing: 0.3px; transition: background 0.2s;
+}
+#new-banner:hover { background: var(--primary-lt); }
+
+/* ─── Channel profile banner ─────────────────────────────────────────────── */
+#channel-banner {
+  display: none;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-dark);
+}
+.cb-cover {
+  height: 80px;
+  background: linear-gradient(135deg, rgba(124,77,255,0.3), rgba(179,136,255,0.1), rgba(0,229,160,0.1));
+}
+.cb-content {
+  display: flex; align-items: flex-end; gap: 14px;
+  padding: 0 20px 16px; margin-top: -36px;
+}
+#cb-avatar {
+  width: 72px; height: 72px; border-radius: 50%;
+  border: 3px solid var(--bg-dark); object-fit: cover;
+  background: var(--bg-mid); flex-shrink: 0;
+}
+.cb-info { flex: 1; min-width: 0; padding-top: 36px; }
+#cb-name {
+  font-size: 17px; font-weight: 700; line-height: 1.2;
+  color: var(--text); white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+}
+#cb-bio {
+  font-size: 13px; color: var(--muted); margin-top: 2px;
+  line-height: 1.4;
+}
+#cb-address {
+  font-size: 11px; color: var(--muted); margin-top: 4px;
+  font-family: monospace; letter-spacing: 0.3px;
+}
+/* wave-specific banner */
+#channel-banner.wave-banner .cb-cover {
+  background: linear-gradient(135deg, rgba(255,60,172,0.3), rgba(120,75,160,0.2), rgba(43,134,197,0.2));
+}
+
+/* ─── Compose ─────────────────────────────────────────────────────────────── */
+#compose-area {
+  display: flex; gap: 12px;
+  padding: 16px 20px; border-bottom: 1px solid var(--border);
+}
+.compose-avatar {
+  width: 42px; height: 42px; border-radius: 50%;
+  object-fit: cover; border: 2px solid var(--border); flex-shrink: 0;
+}
+.compose-body { flex: 1; min-width: 0; }
+#compose-text {
+  width: 100%; min-height: 76px; max-height: 400px;
+  padding: 12px; background: var(--bg-dark);
+  border: 1px solid var(--border); border-radius: 12px;
+  color: var(--text); font-size: 15px; resize: none; overflow-y: auto;
+  transition: border-color 0.2s;
+}
+#compose-text:focus { outline: none; border-color: var(--primary); }
+#compose-text::placeholder { color: var(--muted); }
+.compose-footer {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-top: 8px;
+}
+.char-count { font-size: 13px; color: var(--muted); transition: color 0.2s; }
+.char-count.warn { color: #f5c400; }
+.char-count.over { color: var(--wave-a); }
+#post-btn {
+  padding: 8px 22px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-lt));
+  border: none; border-radius: 20px; color: #fff;
+  font-weight: 700; font-size: 14px; cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+#post-btn:hover { box-shadow: var(--neon); }
+
+/* ─── Feed / Posts ────────────────────────────────────────────────────────── */
+#feed { flex: 1; }
+.post-item {
+  padding: 16px 20px; border-bottom: 1px solid var(--border);
+  cursor: pointer; transition: background 0.15s;
+}
+.post-item:hover { background: var(--bg-mid); }
+.post-hdr { display: flex; gap: 10px; margin-bottom: 8px; }
+.post-avatar {
+  width: 40px; height: 40px; border-radius: 50%;
+  object-fit: cover; flex-shrink: 0;
+  border: 1px solid var(--border); background: var(--bg-dark);
+}
+.post-meta { flex: 1; min-width: 0; }
+.post-name   { font-weight: 700; font-size: 14px; }
+.post-handle { color: var(--muted); font-size: 13px; margin-left: 4px; }
+.post-time   { color: var(--muted); font-size: 12px; cursor: default; }
+.dir-badge {
+  display: inline-flex; align-items: center;
+  font-size: 11px; font-weight: 600;
+  padding: 1px 7px; border-radius: 10px;
+  margin-left: 6px; vertical-align: middle;
+}
+.dir-sent     { background: rgba(124,77,255,0.15); color: var(--primary-lt); }
+.dir-received { background: rgba(0,229,160,0.12);  color: var(--green); }
+.to-label     { font-size: 12px; color: var(--muted); margin-bottom: 5px; display: block; }
+.reply-badge  { font-size: 12px; color: var(--primary-lt); margin-bottom: 6px; display: block; }
+.post-body    {
+  font-size: 15px; line-height: 1.65; word-break: break-word;
+  color: var(--text); margin-bottom: 10px;
+}
+/* links detected in post body */
+.post-link {
+  color: var(--primary-lt); text-decoration: none;
+  border-bottom: 1px solid rgba(179,136,255,0.3);
+  transition: color 0.15s;
+}
+.post-link:hover { color: #fff; border-color: #fff; }
+/* inline image previews */
+.post-images { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.post-img-thumb {
+  max-width: 100%; max-height: 280px; border-radius: 10px;
+  border: 1px solid var(--border); object-fit: cover; cursor: zoom-in;
+  display: block;
+}
+.read-more-btn {
+  background: none; border: none; color: var(--primary-lt);
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  padding: 0; margin-bottom: 10px; display: block;
+}
+.read-more-btn:hover { color: #fff; }
+.post-actions { display: flex; align-items: center; gap: 8px; }
+.act-btn {
+  display: flex; align-items: center; gap: 5px;
+  padding: 5px 12px; background: transparent;
+  border: 1px solid transparent; border-radius: 20px;
+  color: var(--muted); font-size: 13px; cursor: pointer;
+  transition: all 0.18s;
+}
+.act-btn:hover { border-color: var(--primary); color: var(--primary-lt); }
+.otter-link {
+  font-size: 12px; color: var(--muted);
+  text-decoration: none; padding: 5px 8px;
+  border-radius: 20px; transition: color 0.18s;
+}
+.otter-link:hover { color: var(--primary-lt); }
+#loading-more {
+  display: none; padding: 24px; text-align: center;
+  color: var(--primary-lt); font-size: 13px; font-style: italic;
+}
+.empty-state { padding: 64px 24px; text-align: center; color: var(--muted); }
+.empty-icon  { font-size: 44px; margin-bottom: 16px; display: block; }
+.empty-state h3 { font-size: 18px; color: var(--text); margin-bottom: 6px; }
+
+/* ─── Right sidebar ──────────────────────────────────────────────────────── */
+#sidebar-right {
+  width: 270px; flex-shrink: 0;
+  position: sticky; top: 0; height: 100vh;
+  background: var(--bg-light); border-left: 1px solid var(--border);
+  padding: 20px 14px; overflow-y: auto;
+  display: flex; flex-direction: column;
+}
+.sb-section { margin-bottom: 20px; }
+.sb-title {
+  font-size: 11px; font-weight: 700; color: var(--muted);
+  letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 10px;
+}
+.search-wrap { position: relative; }
+.search-wrap input {
+  width: 100%; padding: 9px 12px 9px 34px;
+  background: var(--bg-dark); border: 1px solid var(--border);
+  border-radius: 20px; color: var(--text); font-size: 14px; outline: none;
+  transition: border-color 0.2s;
+}
+.search-wrap input:focus { border-color: var(--primary); }
+.search-wrap input::placeholder { color: var(--muted); }
+.search-icon {
+  position: absolute; left: 10px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px; color: var(--muted); pointer-events: none;
+}
+.ch-btn {
+  display: block; width: 100%; padding: 9px 12px;
+  background: var(--bg-dark); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--text); font-size: 13px;
+  cursor: pointer; text-align: left; transition: all 0.18s; margin-bottom: 6px;
+}
+.ch-btn:hover  { border-color: var(--primary); color: var(--primary-lt); }
+.ch-btn.active { border-color: var(--primary); color: var(--primary-lt); background: var(--primary-dim); }
+#ch-self { display: none; }
+.custom-row { display: flex; gap: 6px; margin-top: 4px; }
+.custom-row input {
+  flex: 1; min-width: 0; padding: 8px 10px;
+  background: var(--bg-dark); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--text); font-size: 12px; outline: none;
+}
+.custom-row input:focus { border-color: var(--primary); }
+.custom-row input::placeholder { color: var(--muted); }
+.go-btn {
+  padding: 8px 12px; background: var(--primary); border: none;
+  border-radius: 8px; color: #fff; font-size: 12px; font-weight: 700;
+  cursor: pointer; flex-shrink: 0; transition: box-shadow 0.2s;
+}
+.go-btn:hover { box-shadow: var(--neon); }
+.ch-label { font-size: 11px; color: var(--muted); margin-top: 8px; word-break: break-all; line-height: 1.5; }
+
+/* ─── Wave on Pulse card ─────────────────────────────────────────────────── */
+#wave-card { margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border); }
+.wave-inner {
+  background: linear-gradient(135deg, rgba(255,60,172,0.08), rgba(43,134,197,0.08));
+  border: 1px solid rgba(255,60,172,0.25);
+  border-radius: 14px; padding: 14px; cursor: pointer; transition: all 0.25s;
+}
+.wave-inner:hover {
+  border-color: rgba(255,60,172,0.5);
+  box-shadow: var(--wave-neon); transform: translateY(-1px);
+}
+.wave-top {
+  display: flex; align-items: center;
+  justify-content: space-between; margin-bottom: 8px;
+}
+.wave-brand { display: flex; align-items: center; gap: 8px; }
+.wave-icon {
+  width: 32px; height: 32px;
+  background: linear-gradient(135deg, var(--wave-a), var(--wave-b), var(--wave-c));
+  border-radius: 8px; display: flex; align-items: center;
+  justify-content: center; font-size: 16px; flex-shrink: 0;
+}
+.wave-name {
+  font-size: 13px; font-weight: 700;
+  background: linear-gradient(90deg, var(--wave-a), var(--wave-c));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; line-height: 1.2;
+}
+.wave-sub   { font-size: 10px; color: var(--muted); }
+.wave-tune  { font-size: 10px; font-weight: 700; color: var(--wave-a); letter-spacing: 0.5px; }
+.wave-bars  { display: flex; align-items: flex-end; gap: 3px; height: 20px; margin-bottom: 8px; }
+.wave-bars span {
+  width: 3px; border-radius: 2px;
+  background: linear-gradient(to top, var(--wave-a), var(--wave-c));
+  animation: wbar 1s ease-in-out infinite;
+}
+.wave-bars span:nth-child(1){height:40%;animation-delay:0s}
+.wave-bars span:nth-child(2){height:70%;animation-delay:.1s}
+.wave-bars span:nth-child(3){height:100%;animation-delay:.2s}
+.wave-bars span:nth-child(4){height:60%;animation-delay:.3s}
+.wave-bars span:nth-child(5){height:85%;animation-delay:.15s}
+.wave-bars span:nth-child(6){height:45%;animation-delay:.25s}
+.wave-bars span:nth-child(7){height:75%;animation-delay:.05s}
+@keyframes wbar { 0%,100%{transform:scaleY(1)} 50%{transform:scaleY(0.4)} }
+.wave-desc { font-size: 11px; color: var(--muted); line-height: 1.4; }
+
+/* ─── Mobile nav ─────────────────────────────────────────────────────────── */
+#mobile-nav {
+  display: none; position: fixed; bottom: 0; left: 0; right: 0;
+  background: var(--bg-light); border-top: 1px solid var(--border);
+  z-index: 100; justify-content: space-around; padding: 6px 0 10px;
+}
+.mn-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  background: none; border: none; color: var(--muted);
+  font-size: 10px; cursor: pointer; padding: 6px 10px;
+  border-radius: 8px; position: relative; transition: color 0.18s;
+}
+.mn-btn .mn-icon { font-size: 20px; line-height: 1; }
+.mn-btn.active, .mn-btn:hover { color: var(--primary-lt); }
+.mn-dot {
+  display: none; position: absolute; top: 2px; right: 6px;
+  width: 8px; height: 8px; background: var(--wave-a); border-radius: 50%;
+}
+.mn-dot.on { display: block; }
+
+/* ─── Modals ─────────────────────────────────────────────────────────────── */
+.modal-bg {
+  position: fixed; inset: 0; background: rgba(10,8,18,0.85);
+  display: none; align-items: center; justify-content: center;
+  z-index: 500; padding: 16px;
+}
+.modal-bg.open { display: flex; }
+.modal {
+  background: var(--bg-light); border: 1px solid var(--border);
+  border-radius: 16px; width: 100%; max-width: 480px;
+  max-height: 90vh; overflow-y: auto; padding: 24px;
+}
+.modal.wide { max-width: 620px; }
+.modal-head {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid var(--border);
+}
+.modal-title { font-size: 17px; font-weight: 700; }
+.modal-close {
+  background: none; border: none; color: var(--muted); font-size: 20px; cursor: pointer;
+  width: 30px; height: 30px; display: flex; align-items: center;
+  justify-content: center; border-radius: 50%; transition: all 0.18s;
+}
+.modal-close:hover { background: var(--bg-mid); color: var(--text); }
+.prof-avatar-wrap { text-align: center; margin-bottom: 20px; }
+.prof-avatar-wrap img {
+  width: 90px; height: 90px; border-radius: 50%;
+  border: 3px solid var(--primary); object-fit: cover;
+  display: block; margin: 0 auto 12px;
+}
+.prof-avatar-wrap h2 { font-size: 20px; margin-bottom: 4px; }
+.prof-avatar-wrap p  { font-size: 13px; color: var(--muted); }
+.form-group { margin-bottom: 14px; }
+.form-lbl {
+  display: block; font-size: 12px; color: var(--muted);
+  margin-bottom: 5px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+.form-input, .form-textarea {
+  width: 100%; padding: 10px 12px; background: var(--bg-dark);
+  border: 1px solid var(--border); border-radius: 8px;
+  color: var(--text); font-size: 14px; outline: none; transition: border-color 0.2s;
+}
+.form-input:focus, .form-textarea:focus { border-color: var(--primary); }
+.form-input::placeholder, .form-textarea::placeholder { color: var(--muted); }
+.form-textarea { resize: vertical; min-height: 80px; font-family: inherit; }
+.nft-section {
+  margin-top: 16px; padding: 14px; background: var(--bg-dark);
+  border: 1px solid var(--border); border-radius: 10px;
+}
+.nft-section summary {
+  font-size: 13px; font-weight: 600; color: var(--primary-lt);
+  cursor: pointer; user-select: none; list-style: none;
+  display: flex; align-items: center; gap: 8px;
+}
+.nft-section summary::before { content: '▶'; font-size: 10px; transition: transform 0.2s; }
+.nft-section[open] summary::before { transform: rotate(90deg); }
+.nft-inner { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+.nft-row { display: flex; gap: 8px; }
+.nft-row .form-input { flex: 1; min-width: 0; }
+.nft-status { font-size: 12px; color: var(--muted); margin-top: 4px; min-height: 18px; }
+.btn-row { display: flex; gap: 8px; margin-top: 18px; }
+.btn-pri {
+  flex: 1; padding: 11px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-lt));
+  border: none; border-radius: 10px; color: #fff; font-weight: 700;
+  font-size: 14px; cursor: pointer; transition: box-shadow 0.2s;
+}
+.btn-pri:hover { box-shadow: var(--neon); }
+.btn-sm {
+  padding: 8px 14px; background: var(--primary-dim);
+  border: 1px solid var(--primary); border-radius: 8px;
+  color: var(--primary-lt); font-size: 12px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s; white-space: nowrap;
+}
+.btn-sm:hover { background: var(--primary); color: #fff; }
+.btn-ghost {
+  padding: 11px 16px; background: transparent;
+  border: 1px solid var(--border); border-radius: 10px;
+  color: var(--muted); font-size: 14px; cursor: pointer; transition: all 0.2s;
+}
+.btn-ghost:hover { border-color: var(--primary); color: var(--text); }
+.reply-quote {
+  padding: 10px 14px; background: var(--bg-mid);
+  border-left: 3px solid var(--primary); border-radius: 0 8px 8px 0;
+  font-size: 13px; color: var(--muted); margin-bottom: 14px; line-height: 1.5;
+}
+.auto-textarea {
+  width: 100%; min-height: 76px; max-height: 400px;
+  padding: 12px; background: var(--bg-dark);
+  border: 1px solid var(--border); border-radius: 10px;
+  color: var(--text); font-size: 15px; resize: none;
+  overflow-y: auto; transition: border-color 0.2s;
+}
+.auto-textarea:focus { outline: none; border-color: var(--primary); }
+.auto-textarea::placeholder { color: var(--muted); }
+.thread-reply-item { padding: 14px 0; border-bottom: 1px solid var(--border); }
+#thread-loading {
+  padding: 16px; text-align: center; color: var(--muted); font-size: 13px; display: none;
+}
+
+/* ─── Toast ──────────────────────────────────────────────────────────────── */
+#toast {
+  position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+  background: var(--bg-mid); border: 1px solid var(--border);
+  border-radius: 24px; padding: 9px 20px; font-size: 13px;
+  display: none; z-index: 2000; box-shadow: var(--neon);
+  white-space: nowrap; max-width: 90vw;
+}
+
+/* ─── Loading overlay ────────────────────────────────────────────────────── */
+#loading-overlay {
+  position: fixed; inset: 0; background: rgba(13,11,20,0.65);
+  display: none; align-items: center; justify-content: center;
+  z-index: 999; flex-direction: column; gap: 12px;
+  color: var(--primary-lt); font-size: 15px;
+}
+#loading-overlay.on { display: flex; }
+.spinner {
+  width: 32px; height: 32px;
+  border: 3px solid var(--border); border-top-color: var(--primary);
+  border-radius: 50%; animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 1050px) { #sidebar-right { width: 220px; } }
+@media (max-width: 768px) {
+  #sidebar-left, #sidebar-right { display: none; }
+  #mobile-nav { display: flex; }
+  #main { padding-bottom: 64px; }
+  #app  { max-width: 100%; }
+  #compose-area, .post-item, #feed-header { padding-left: 14px; padding-right: 14px; }
+  .modal { padding: 16px; }
+  #toast { bottom: 74px; }
+  .cb-content { padding: 0 14px 14px; }
+}
 </style>
 </head>
 <body>
-<div id="app-container">
+<div id="app">
+
+  <!-- ── Left Sidebar ─────────────────────────────────────────────────── -->
   <div id="sidebar-left">
-    <img src="image1.jpeg" alt="Pulse Underground Logo" class="logo">
+    <div class="logo-wrap">
+      <img src="image1.jpeg" alt="Pulse Underground">
+      <span class="site-name">Pulse Underground</span>
+    </div>
     <nav>
-      <ul>
-        <li><a href="#" id="homeLink"><span class="icon">🏠</span>Home</a></li>
-        <li><a href="#"><span class="icon">🔎</span>Explore</a></li>
-        <li><a href="#"><span class="icon">🛎️</span>Notifications</a></li>
-        <li><a href="#"><span class="icon">✉️</span>Messages</a></li>
-        <li><a href="#" id="profileLink"><span class="icon">👤</span>Profile</a></li>
-      </ul>
+      <button class="nav-btn active" id="nav-home">
+        <span class="nav-icon">🏠</span>Home
+      </button>
+      <button class="nav-btn" id="nav-messages">
+        <span class="nav-icon">✉️</span>Messages
+      </button>
+      <button class="nav-btn" id="nav-notifs">
+        <span class="nav-icon">🔔</span>Notifications
+        <span class="notif-badge" id="notif-badge"></span>
+      </button>
+      <button class="nav-btn" id="nav-profile">
+        <span class="nav-icon">👤</span>Profile
+      </button>
     </nav>
-    <button id="connectWallet">Connect Wallet</button>
-    <div id="walletInfo" style="display:none"><p>Connected: <span id="walletAddress"></span></p></div>
+    <div id="sidebar-bottom">
+      <div class="wallet-pill" id="wallet-pill"></div>
+      <button id="connect-btn">Connect Wallet</button>
+    </div>
   </div>
-  <main>
-    <button id="newStoriesButton">New stories available</button>
-    <h1 id="mainTitle">The Pulse Underground</h1>
-    <div id="storySubmission">
-      <img src="image1.jpeg" alt="User Avatar" class="avatar" id="submissionAvatar">
-      <div class="input-container">
-        <textarea id="reportContent" placeholder="What's happening on Pulse?"></textarea>
-        <div class="char-count" id="mainCharCount">0 / ∞</div>
-        <button id="publishStory">➤</button>
+
+  <!-- ── Main ─────────────────────────────────────────────────────────── -->
+  <div id="main">
+    <button id="new-banner">✦ New posts — click to load</button>
+    <div id="feed-header">
+      <span id="feed-title">The Pulse Underground</span>
+      <button id="refresh-btn">↺ Refresh</button>
+    </div>
+
+    <!-- Channel profile banner (shown for custom/self/wave channels) -->
+    <div id="channel-banner">
+      <div class="cb-cover"></div>
+      <div class="cb-content">
+        <img id="cb-avatar" src="image1.jpeg" alt="Channel owner" onerror="this.src='image1.jpeg'">
+        <div class="cb-info">
+          <div id="cb-name">—</div>
+          <div id="cb-bio"></div>
+          <div id="cb-address"></div>
+        </div>
       </div>
     </div>
-    <div id="profileHeader" style="display:none">
-      <img id="profileHeaderAvatar" src="image1.jpeg" class="avatar">
-      <h2 id="profileHeaderName">Username</h2>
-      <div id="profileHeaderBio" class="bio">Bio goes here...</div>
-      <button onclick="pulse.openProfileEditModal()" class="edit-btn">Edit</button>
+
+    <div id="compose-area">
+      <img src="image1.jpeg" class="compose-avatar" id="compose-avatar" alt="">
+      <div class="compose-body">
+        <textarea id="compose-text" placeholder="What's happening on Pulse?"></textarea>
+        <div class="compose-footer">
+          <span class="char-count" id="char-count">0</span>
+          <button id="post-btn">Post ➤</button>
+        </div>
+      </div>
     </div>
-    <div id="newsFeed"></div>
-    <div id="loadingMore">Loading more posts...</div>
-    <button id="refreshButton">Refresh Feed</button>
-  </main>
+    <div id="feed"></div>
+    <div id="loading-more">Scanning the chain…</div>
+  </div>
+
+  <!-- ── Right Sidebar ─────────────────────────────────────────────────── -->
   <div id="sidebar-right">
-    <input type="text" id="searchInput" placeholder="Search The Pulse Underground">
-    <div id="channelSelection">
-      <h3>Channels</h3>
-      <button id="mainChannel">Main Channel</button>
-      <button id="selfChannel">Self Channel</button>
-      <input type="text" id="customChannelInput" placeholder="Enter custom address">
-      <button id="setCustomChannel">Set Custom Channel</button>
-      <p>Current Channel: <span id="currentChannel"></span></p>
+    <div class="sb-section">
+      <div class="search-wrap">
+        <span class="search-icon">🔎</span>
+        <input type="text" id="search-input" placeholder="Search posts…">
+      </div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-title">Channels</div>
+      <button class="ch-btn active" id="ch-main">🌐 Main Channel</button>
+      <button class="ch-btn" id="ch-self">📡 My Channel</button>
+      <div class="custom-row">
+        <input type="text" id="custom-input" placeholder="0x address…">
+        <button class="go-btn" id="ch-go">Go</button>
+      </div>
+      <div class="ch-label" id="ch-label"></div>
+    </div>
+    <!-- Wave on Pulse fixed card -->
+    <div id="wave-card">
+      <div class="sb-title">Featured</div>
+      <div class="wave-inner" id="wave-btn" role="button" tabindex="0" aria-label="Wave on Pulse channel">
+        <div class="wave-top">
+          <div class="wave-brand">
+            <div class="wave-icon">📻</div>
+            <div>
+              <div class="wave-name">Wave on Pulse</div>
+              <div class="wave-sub">On-chain live radio</div>
+            </div>
+          </div>
+          <div class="wave-tune">📡 Tune In</div>
+        </div>
+        <div class="wave-bars">
+          <span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span>
+        </div>
+        <div class="wave-desc">Live spaces &amp; shows transcribed to the chain.</div>
+      </div>
+    </div>
+  </div>
+</div><!-- #app -->
+
+<!-- Mobile nav -->
+<nav id="mobile-nav">
+  <button class="mn-btn active" data-mn="home"><span class="mn-icon">🏠</span>Home</button>
+  <button class="mn-btn" data-mn="messages"><span class="mn-icon">✉️</span>Messages</button>
+  <button class="mn-btn" data-mn="wave"><span class="mn-icon">📻</span>Wave</button>
+  <button class="mn-btn" data-mn="notifs">
+    <span class="mn-icon">🔔</span>Alerts
+    <span class="mn-dot" id="mn-dot"></span>
+  </button>
+  <button class="mn-btn" data-mn="profile"><span class="mn-icon">👤</span>Profile</button>
+  <button class="mn-btn" data-mn="wallet"><span class="mn-icon">🔗</span>Wallet</button>
+</nav>
+
+<div id="loading-overlay"><div class="spinner"></div><span id="loading-label">Publishing…</span></div>
+<div id="toast"></div>
+
+<!-- Profile Modal -->
+<div class="modal-bg" id="profile-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <span class="modal-title" id="profile-modal-title">Profile</span>
+      <button class="modal-close" id="close-profile">✕</button>
+    </div>
+    <div id="profile-view">
+      <div class="prof-avatar-wrap">
+        <img src="image1.jpeg" id="pv-avatar" alt="Avatar">
+        <h2 id="pv-name">Anonymous</h2>
+        <p id="pv-bio">No bio yet.</p>
+      </div>
+      <button class="btn-pri" style="width:100%" id="edit-profile-btn">✏️ Edit Profile</button>
+    </div>
+    <div id="profile-edit" style="display:none">
+      <div style="text-align:center;margin-bottom:16px">
+        <img src="image1.jpeg" id="pe-preview"
+          style="width:80px;height:80px;border-radius:50%;border:2px solid var(--primary);object-fit:cover">
+      </div>
+      <div class="form-group">
+        <label class="form-lbl">Username</label>
+        <input type="text" class="form-input" id="pe-name" placeholder="Your display name">
+      </div>
+      <div class="form-group">
+        <label class="form-lbl">Profile picture (https:// URL)</label>
+        <input type="text" class="form-input" id="pe-pic" placeholder="https://…">
+      </div>
+      <!-- NFT picker -->
+      <details class="nft-section">
+        <summary>Use an NFT as profile picture</summary>
+        <div class="nft-inner">
+          <div class="nft-row">
+            <input type="text" class="form-input" id="nft-contract" placeholder="Contract address (0x…)" style="flex:2">
+            <input type="text" class="form-input" id="nft-token-id" placeholder="Token ID" style="flex:1">
+          </div>
+          <button class="btn-sm" id="fetch-nft-btn">🖼 Fetch NFT Image</button>
+          <div class="nft-status" id="nft-status"></div>
+        </div>
+      </details>
+      <div class="form-group" style="margin-top:14px">
+        <label class="form-lbl">Bio</label>
+        <textarea class="form-textarea" id="pe-bio" placeholder="Tell the world…"></textarea>
+      </div>
+      <div class="btn-row">
+        <button class="btn-pri" id="save-profile-btn">Save On-Chain</button>
+        <button class="btn-ghost" id="cancel-edit-btn">Cancel</button>
+      </div>
     </div>
   </div>
 </div>
 
-<div id="loadingOverlay">Loading...</div>
-<div id="statusMessage"></div>
-
-<div id="profileModal">
-  <div class="modal-content">
-    <h2>Edit Profile</h2>
-    <img src="image1.jpeg" alt="Profile Preview" id="profilePicPreview" style="width:100px;height:100px;border-radius:50%;margin:0 auto 15px;display:block">
-    <label for="usernameInput">Username:</label>
-    <input type="text" id="usernameInput" placeholder="Enter username">
-    <label for="profilePicInput">Profile Picture URL:</label>
-    <input type="text" id="profilePicInput" placeholder="Enter image URL">
-    <label for="bioInput">Bio:</label>
-    <textarea id="bioInput" placeholder="Write a short bio..." style="width:100%;min-height:80px;padding:10px;background:var(--bg-lighter);border:1px solid var(--border);border-radius:5px;color:var(--text);resize:none"></textarea>
-    <div style="margin-top:15px;display:flex;gap:10px">
-      <button id="saveProfile">Save Profile (on-chain)</button>
-      <button id="clearProfile">Clear</button>
-      <button id="closeProfileModal">Close</button>
+<!-- Reply Modal -->
+<div class="modal-bg" id="reply-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <span class="modal-title">Reply</span>
+      <button class="modal-close" id="close-reply">✕</button>
+    </div>
+    <div class="reply-quote" id="reply-quote"></div>
+    <textarea class="auto-textarea" id="reply-input" placeholder="Write your reply…"></textarea>
+    <div style="text-align:right;font-size:12px;color:var(--muted);margin-top:4px" id="reply-count">0</div>
+    <div class="btn-row">
+      <button class="btn-pri" id="post-reply-btn">Post Reply</button>
+      <button class="btn-ghost" id="cancel-reply-btn">Cancel</button>
     </div>
   </div>
 </div>
 
-<div id="replyModal">
-  <div class="modal-content" style="width:480px">
-    <h2 id="replyHeader" style="margin-bottom:15px">Reply</h2>
-    <div id="replyingTo" style="margin-bottom:15px;color:var(--primary-light);font-size:15px"></div>
-    <textarea id="replyContent" style="width:100%;min-height:140px;padding:15px;background:var(--bg-light);border:1px solid var(--border);border-radius:8px;color:var(--text);resize:none;font-size:17px" placeholder="Write your reply..."></textarea>
-    <div class="char-count" id="replyCharCount">0 / ∞</div>
-    <div style="display:flex;gap:10px;margin-top:20px">
-      <button id="cancelReply">Cancel</button>
-      <button id="postReply" style="background:linear-gradient(45deg,#00ff9d,#00cc7a)">Post Reply</button>
+<!-- Thread Modal -->
+<div class="modal-bg" id="thread-modal">
+  <div class="modal wide">
+    <div class="modal-head">
+      <span class="modal-title">Thread</span>
+      <button class="modal-close" id="close-thread">✕</button>
+    </div>
+    <div id="thread-orig"></div>
+    <div style="padding:12px 0;font-size:12px;font-weight:700;color:var(--muted);
+      letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid var(--border);
+      margin-bottom:12px">Replies</div>
+    <div id="thread-replies"></div>
+    <div id="thread-loading">⟳ Fetching replies from chain…</div>
+    <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border)">
+      <textarea class="auto-textarea" id="thread-reply-input" placeholder="Reply to this thread…"></textarea>
+      <div style="text-align:right;font-size:12px;color:var(--muted);margin-top:4px" id="thread-count">0</div>
+      <div class="btn-row" style="margin-top:12px">
+        <button class="btn-pri" id="post-thread-reply-btn">Post Reply</button>
+      </div>
     </div>
   </div>
 </div>
 
-<div id="threadModal">
-  <div class="thread-modal-content">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;border-bottom:1px solid var(--border);padding-bottom:15px">
-      <h2 style="margin:0">Thread</h2>
-      <button id="closeThreadModal" style="background:transparent;border:none;color:var(--primary-light);font-size:24px;cursor:pointer">✕</button>
-    </div>
-    <div id="threadOriginal" style="margin-bottom:30px"></div>
-    <h3 style="margin-bottom:15px">Replies</h3>
-    <div id="threadReplies"></div>
-    <div style="margin-top:40px;padding:20px;background:var(--bg-lighter);border-radius:12px">
-      <textarea id="threadReplyContent" placeholder="Reply to this thread..." style="width:100%;min-height:110px;padding:15px;background:var(--bg-light);border:1px solid var(--border);border-radius:8px;color:var(--text);resize:none;font-size:17px"></textarea>
-      <button id="postThreadReply" style="margin-top:12px;width:100%">Post Reply to Thread</button>
-    </div>
-  </div>
-</div>
-
+<!-- ═══════════════════════ JavaScript ════════════════════════════════════ -->
 <script>
+'use strict';
 const ethers = window.ethers;
-const MAIN_CHANNEL = "0x9cd83be15a79646a3d22b81fc8ddf7b7240a62cb";
-const PULSE_CHAIN_ID = 369;
-const REPLY_PREFIX = "REPLY_TO:";
-const PROFILE_PREFIX = "PROFILE_DATA:";
-const MAX_PREVIEW_LENGTH = 500;
 
+/* ── Constants ────────────────────────────────────────────────────────── */
+const MAIN_CHANNEL   = '0x9cd83be15a79646a3d22b81fc8ddf7b7240a62cb';
+const PULSE_CHAIN_ID = 369;
+const REPLY_PREFIX   = 'REPLY_TO:';
+const PROFILE_PREFIX = 'PROFILE_DATA:';
+const MAX_PREVIEW    = 500;
+const POSTS_TARGET   = 20;
+const MAX_PAGES      = 40;
+const POLL_FIRST_MS  = 30_000;   // first poll fires at 30s
+const POLL_MS        = 120_000;  // subsequent polls every 2min
+
+/*
+ * WAVE_ADDRESS — the Wave on Pulse donation/channel wallet address.
+ * Replace the value below with the actual address from waveonpulse.com.
+ * Current placeholder: zero address. One line to change once confirmed.
+ */
+const WAVE_ADDRESS = '0x0000000000000000000000000000000000000000'; // ← REPLACE with waveonpulse.com donation address
+
+/* ERC-721 minimal ABI for NFT profile pic fetching */
+const ERC721_ABI = [
+  'function tokenURI(uint256 tokenId) view returns (string)',
+  'function ownerOf(uint256 tokenId) view returns (address)',
+];
+
+/* ── Utils ────────────────────────────────────────────────────────────── */
 const utils = {
-  showStatus: (m, d = 3000) => {
-    const s = document.getElementById("statusMessage");
-    s.textContent = m;
-    s.style.display = "block";
-    setTimeout(() => s.style.display = "none", d);
+  _t: null,
+
+  toast(msg, ms = 3500) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.style.display = 'block';
+    clearTimeout(this._t);
+    this._t = setTimeout(() => { el.style.display = 'none'; }, ms);
   },
-  toggleLoading: s => document.getElementById("loadingOverlay").style.display = s ? "flex" : "none"
+
+  loading(show, label = 'Publishing…') {
+    document.getElementById('loading-overlay').classList.toggle('on', show);
+    document.getElementById('loading-label').textContent = label;
+  },
+
+  /* XSS-safe: encode text before injecting into innerHTML */
+  safe(str) {
+    const d = document.createElement('div');
+    d.textContent = String(str ?? '');
+    return d.innerHTML;
+  },
+
+  /*
+   * Linkify text: detect URLs, make them clickable <a> tags.
+   * Non-URL portions are encoded via utils.safe() — XSS-safe.
+   * Image URLs get an inline <img> thumbnail instead of a link.
+   */
+  linkify(text) {
+    const urlRe  = /https?:\/\/[^\s<>"{}|\\^[\]`]+/g;
+    const imgRe  = /\.(jpg|jpeg|png|gif|webp|svg)(\?[^\s]*)?$/i;
+    let result   = '';
+    let last     = 0;
+    let m;
+    let imgHtml  = '';
+    let imgCount = 0;
+
+    while ((m = urlRe.exec(text)) !== null) {
+      result += utils.safe(text.slice(last, m.index)).replace(/\n/g, '<br>');
+      const url     = m[0];
+      const safeUrl = utils.safe(url);
+      if (imgRe.test(url) && imgCount < 2) {
+        /* data-href avoids any quote-injection risk in onclick */
+        imgHtml += `<img src="${safeUrl}" class="post-img-thumb" alt="image"
+          onerror="this.style.display='none'"
+          data-href="${safeUrl}">`;
+        imgCount++;
+      }
+      result += `<a href="${safeUrl}" target="_blank" rel="noopener noreferrer"
+        class="post-link" onclick="event.stopPropagation()">${safeUrl}</a>`;
+      last = m.index + url.length;
+    }
+    result += utils.safe(text.slice(last)).replace(/\n/g, '<br>');
+    return { text: result, images: imgHtml };
+  },
+
+  /* Resolve ipfs:// and data: URIs for NFT metadata */
+  resolveIPFS(uri) {
+    if (!uri) return null;
+    if (uri.startsWith('ipfs://')) return 'https://ipfs.io/ipfs/' + uri.slice(7);
+    return uri;
+  },
+
+  debounce(fn, ms) {
+    let t;
+    return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); };
+  },
+
+  /* Auto-grow textarea to fit content */
+  autoGrow(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 400) + 'px';
+  },
 };
 
+/* ── IndexedDB Cache ──────────────────────────────────────────────────── */
 class Cache {
-  constructor(){this.db=null;this.initDB()}
-  initDB(){const r=indexedDB.open("PulseUndergroundCache",2);r.onupgradeneeded=e=>{const d=e.target.result;d.objectStoreNames.contains("newsItems")||d.createObjectStore("newsItems",{keyPath:"txHash"});d.objectStoreNames.contains("profiles")||d.createObjectStore("profiles",{keyPath:"address"})};r.onsuccess=()=>{this.db=r.result};r.onerror=()=>utils.showStatus("IndexedDB Error")}
-  async waitForDB(){this.db||await new Promise(r=>setTimeout(r,100))}
-  async getItems(){await this.waitForDB();return new Promise((r,e)=>{const t=this.db.transaction("newsItems","readonly").objectStore("newsItems").getAll();t.onsuccess=()=>r(t.result||[]);t.onerror=()=>e(t.error)})}
-  async saveItems(i){await this.waitForDB();const t=this.db.transaction("newsItems","readwrite"),s=t.objectStore("newsItems");i.forEach(x=>s.put(x));return new Promise((r,e)=>{t.oncomplete=r;t.onerror=()=>e(t.error)})}
-  async getProfile(a){await this.waitForDB();return new Promise((r,e)=>{const t=this.db.transaction("profiles","readonly").objectStore("profiles").get(a);t.onsuccess=()=>r(t.result);t.onerror=()=>e(t.error)})}
-  async saveProfile(p){await this.waitForDB();const t=this.db.transaction("profiles","readwrite").objectStore("profiles");t.put(p);return new Promise((r,e)=>{t.oncomplete=r;t.onerror=()=>e(t.error)})}
+  constructor() {
+    this._db    = null;
+    this._ready = new Promise((res, rej) => {
+      const req = indexedDB.open('PulseUnderground', 6);
+      req.onupgradeneeded = e => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains('posts'))
+          db.createObjectStore('posts', { keyPath: 'txHash' });
+        if (!db.objectStoreNames.contains('profiles'))
+          db.createObjectStore('profiles', { keyPath: 'address' });
+      };
+      req.onsuccess = () => { this._db = req.result; res(); };
+      req.onerror   = () => rej(req.error);
+    });
+  }
+
+  async getPosts(filterFn) {
+    await this._ready;
+    return new Promise((res, rej) => {
+      const req = this._db.transaction('posts','readonly').objectStore('posts').getAll();
+      req.onsuccess = () => res((req.result || []).filter(filterFn));
+      req.onerror   = () => rej(req.error);
+    });
+  }
+
+  async savePosts(posts) {
+    await this._ready;
+    return new Promise((res, rej) => {
+      const tx = this._db.transaction('posts','readwrite');
+      posts.forEach(p => tx.objectStore('posts').put(p));
+      tx.oncomplete = res;
+      tx.onerror    = () => rej(tx.error);
+    });
+  }
+
+  async getProfile(address) {
+    await this._ready;
+    return new Promise((res, rej) => {
+      const req = this._db.transaction('profiles','readonly').objectStore('profiles').get(address);
+      req.onsuccess = () => res(req.result ?? null);
+      req.onerror   = () => rej(req.error);
+    });
+  }
+
+  async saveProfile(data) {
+    await this._ready;
+    return new Promise((res, rej) => {
+      const tx = this._db.transaction('profiles','readwrite');
+      tx.objectStore('profiles').put(data);
+      tx.oncomplete = res;
+      tx.onerror    = () => rej(tx.error);
+    });
+  }
+
+  /* Remove posts older than maxAgeDays to keep DB lean */
+  async prune(maxAgeDays = 7) {
+    await this._ready;
+    const cutoff = new Date(Date.now() - maxAgeDays * 86_400_000).toISOString();
+    return new Promise((res, rej) => {
+      const tx  = this._db.transaction('posts','readwrite');
+      const s   = tx.objectStore('posts');
+      const req = s.getAll();
+      req.onsuccess = () => {
+        (req.result || []).filter(p => p.timestamp < cutoff).forEach(p => s.delete(p.txHash));
+        tx.oncomplete = res;
+      };
+      req.onerror = () => rej(req.error);
+    });
+  }
 }
 
+/* ── PulseUnderground ─────────────────────────────────────────────────── */
 class PulseUnderground {
   constructor() {
     this.state = {
-      newsItems: [], pendingNewItems: [], searchTerm: "", isLoading: false, hasMore: true,
-      nextPage: 1, channel: MAIN_CHANNEL, profile: {username:"", profilePicUrl:"image1.jpeg", bio:""},
-      signerAddress: null, replyingTo: null, currentThreadPost: null, isProfileView: false,
-      expandedPosts: new Set()
+      posts:       [],
+      pending:     [],
+      searchTerm:  '',
+      loading:     false,
+      hasMore:     true,
+      nextPage:    1,
+      channel:     MAIN_CHANNEL,
+      /*
+       * mode:
+       *   main          → TXs TO main channel (public feed)
+       *   inbox         → TXs FROM or TO user (combined, direction-tagged)
+       *   notifications → TXs TO user, newer than last-visit timestamp
+       *   self          → TXs TO user's own address (public channel)
+       *   custom        → TXs TO any entered address
+       *   wave          → TXs TO WAVE_ADDRESS (read-only)
+       */
+      mode:        'main',
+      profile:     { username: '', picUrl: 'image1.jpeg', bio: '' },
+      signerAddr:  null,
+      expanded:    new Set(),
+      replyTarget: null,
+      threadPost:  null,
+      profCache:   {},    // address → {username, picUrl} — session cache
     };
-    this.elements = {
-      newsFeed: document.getElementById("newsFeed"),
-      loadingMore: document.getElementById("loadingMore"),
-      reportContent: document.getElementById("reportContent"),
-      mainCharCount: document.getElementById("mainCharCount"),
-      searchInput: document.getElementById("searchInput"),
-      refreshButton: document.getElementById("refreshButton"),
-      newStoriesButton: document.getElementById("newStoriesButton"),
-      connectWallet: document.getElementById("connectWallet"),
-      walletInfo: document.getElementById("walletInfo"),
-      walletAddress: document.getElementById("walletAddress"),
-      publishStory: document.getElementById("publishStory"),
-      mainChannel: document.getElementById("mainChannel"),
-      selfChannel: document.getElementById("selfChannel"),
-      customChannelInput: document.getElementById("customChannelInput"),
-      setCustomChannel: document.getElementById("setCustomChannel"),
-      currentChannel: document.getElementById("currentChannel"),
-      submissionAvatar: document.getElementById("submissionAvatar"),
-      profileLink: document.getElementById("profileLink"),
-      profileModal: document.getElementById("profileModal"),
-      usernameInput: document.getElementById("usernameInput"),
-      profilePicInput: document.getElementById("profilePicInput"),
-      profilePicPreview: document.getElementById("profilePicPreview"),
-      saveProfile: document.getElementById("saveProfile"),
-      clearProfile: document.getElementById("clearProfile"),
-      closeProfileModal: document.getElementById("closeProfileModal"),
-      homeLink: document.getElementById("homeLink"),
-      replyModal: document.getElementById("replyModal"),
-      replyHeader: document.getElementById("replyHeader"),
-      replyingTo: document.getElementById("replyingTo"),
-      replyContent: document.getElementById("replyContent"),
-      replyCharCount: document.getElementById("replyCharCount"),
-      cancelReply: document.getElementById("cancelReply"),
-      postReply: document.getElementById("postReply"),
-      threadModal: document.getElementById("threadModal"),
-      threadOriginal: document.getElementById("threadOriginal"),
-      threadReplies: document.getElementById("threadReplies"),
-      threadReplyContent: document.getElementById("threadReplyContent"),
-      postThreadReply: document.getElementById("postThreadReply"),
-      closeThreadModal: document.getElementById("closeThreadModal"),
-      profileHeader: document.getElementById("profileHeader"),
-      profileHeaderAvatar: document.getElementById("profileHeaderAvatar"),
-      profileHeaderName: document.getElementById("profileHeaderName"),
-      profileHeaderBio: document.getElementById("profileHeaderBio"),
-      bioInput: document.getElementById("bioInput"),
-      mainTitle: document.getElementById("mainTitle"),
-      storySubmission: document.getElementById("storySubmission")
-    };
-    this.cache = new Cache();
-    this.signer = null;
-    this.pollInterval = null;
-    this.init();
+
+    this.signer        = null;
+    this.cache         = new Cache();
+    this.pollTimer     = null;
+    this._profInFlight = 0;
+    this._profQueue    = [];
+    this._walletListenersRegistered = false;
+    this.g             = id => document.getElementById(id);
+    /* Debounced renderFeed used by profile fetches to avoid rapid re-render spam */
+    this._debouncedRender = utils.debounce(() => this.renderFeed(), 150);
   }
 
+  /* ── Init ──────────────────────────────────────────────────────────── */
   async init() {
-    await this.loadCachedData();
-    this.setupListeners();
-    this.elements.currentChannel.textContent = this.truncAddr(this.state.channel);
-    await this.tryAutoReconnectWallet();
-    // Ensure initial fetch runs after everything is ready
+    this.wireListeners();
+    this.updateChLabel();
+    await this.cache.prune();
+    await this.loadCached();
+    await this.tryAutoReconnect();
     await this.fetchPosts(true);
-    this.startPolling();
+    /* First poll at 30s, then on POLL_MS interval */
+    setTimeout(() => {
+      this.pollNew();
+      this.startPolling();
+    }, POLL_FIRST_MS);
   }
 
-  truncAddr = (a) => a && a.length > 10 ? `${a.slice(0,6)}...${a.slice(-4)}` : a;
+  /* ── Event wiring ──────────────────────────────────────────────────── */
+  wireListeners() {
+    const g = this.g.bind(this);
 
-  relativeTime = (timestamp) => {
-    const diff = Math.floor((Date.now() - new Date(timestamp)) / 1000);
-    if (diff < 60) return "just now";
-    if (diff < 3600) return `${Math.floor(diff/60)}m`;
-    if (diff < 86400) return `${Math.floor(diff/3600)}h`;
-    return new Date(timestamp).toLocaleDateString("en-US", {month:"short", day:"numeric"});
-  };
+    g('connect-btn').onclick  = () => this.toggleWallet();
 
-  getPostHTML = (post) => {
-    const isOwn = post.reporter === this.state.signerAddress;
-    const isExpanded = this.state.expandedPosts.has(post.txHash);
-    let displayContent = post.displayContent || post.content || "";
-    const parentIndicator = post.parentTx ? `<div style="color:var(--primary-light);font-size:14px;margin-bottom:8px">↳ Replying to ${this.truncAddr(post.parentTx)}</div>` : "";
+    /* Desktop nav */
+    g('nav-home').onclick    = () => this.goHome();
+    g('nav-messages').onclick = () => this.goInbox();
+    g('nav-notifs').onclick  = () => this.goNotifications();
+    g('nav-profile').onclick = () => this.openProfileModal();
 
-    let contentHTML = displayContent.replace(/\n/g, "<br>");
-    let readMoreHTML = "";
+    /* Mobile nav */
+    document.querySelectorAll('[data-mn]').forEach(b => {
+      b.onclick = () => {
+        const t = b.dataset.mn;
+        if (t === 'home')     this.goHome();
+        if (t === 'messages') this.goInbox();
+        if (t === 'wave')     this.goWave();
+        if (t === 'notifs')   this.goNotifications();
+        if (t === 'profile')  this.openProfileModal();
+        if (t === 'wallet')   this.toggleWallet();
+      };
+    });
 
-    if (!isExpanded && displayContent.length > MAX_PREVIEW_LENGTH) {
-      contentHTML = displayContent.substring(0, MAX_PREVIEW_LENGTH).replace(/\n/g, "<br>");
-      readMoreHTML = `<div class="read-more" onclick="event.stopImmediatePropagation(); pulse.toggleExpand('${post.txHash}');">Read more</div>`;
+    /* Compose */
+    g('compose-text').oninput = () => {
+      utils.autoGrow(g('compose-text'));
+      const n = g('compose-text').value.length;
+      const cc = g('char-count');
+      cc.textContent = n;
+      cc.className = 'char-count' + (n > 900 ? ' over' : n > 700 ? ' warn' : '');
+    };
+    g('post-btn').onclick = () => this.publishPost();
+
+    /* Feed event delegation */
+    g('feed').addEventListener('click', e => {
+      /* Image thumbnail click — open full size */
+      const img = e.target.closest('.post-img-thumb');
+      if (img?.dataset.href) { e.stopPropagation(); window.open(img.dataset.href, '_blank'); return; }
+      this.onFeedClick(e, false);
+    });
+    g('thread-orig').addEventListener('click',    e => this.onFeedClick(e, true));
+    g('thread-replies').addEventListener('click', e => this.onFeedClick(e, true));
+
+    /* Search */
+    g('search-input').oninput = utils.debounce(() => {
+      this.state.searchTerm = g('search-input').value.trim().toLowerCase();
+      this.renderFeed();
+    }, 300);
+
+    g('refresh-btn').onclick  = () => this.refreshFeed();
+    g('new-banner').onclick   = () => this.loadPending();
+
+    /* Channel switcher */
+    g('ch-main').onclick = () => this.goHome();
+    g('ch-self').onclick = () => this.goSelf();
+    g('ch-go').onclick   = () => this.goCustom();
+    g('custom-input').onkeydown = e => { if (e.key === 'Enter') this.goCustom(); };
+
+    /* Wave card */
+    g('wave-btn').onclick   = () => this.goWave();
+    g('wave-btn').onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') this.goWave(); };
+
+    /* Infinite scroll */
+    window.addEventListener('scroll', utils.debounce(() => this.onScroll(), 150));
+
+    /* Esc key closes open modals */
+    document.addEventListener('keydown', e => {
+      if (e.key !== 'Escape') return;
+      ['profile-modal','reply-modal','thread-modal'].forEach(id => {
+        if (g(id).classList.contains('open')) this.closeModal(id);
+      });
+    });
+
+    /* Backdrop close */
+    ['profile-modal','reply-modal','thread-modal'].forEach(id => {
+      g(id).addEventListener('click', e => { if (e.target === g(id)) this.closeModal(id); });
+    });
+
+    /* Profile modal */
+    g('close-profile').onclick    = () => this.closeModal('profile-modal');
+    g('edit-profile-btn').onclick = () => this.showEditForm();
+    g('cancel-edit-btn').onclick  = () => this.showProfileView();
+    g('save-profile-btn').onclick = () => this.saveProfile();
+    g('pe-pic').oninput = () => { g('pe-preview').src = g('pe-pic').value.trim() || 'image1.jpeg'; };
+    g('fetch-nft-btn').onclick    = () => this.fetchNFTImage();
+
+    /* Reply modal */
+    g('close-reply').onclick      = () => this.closeModal('reply-modal');
+    g('cancel-reply-btn').onclick = () => this.closeModal('reply-modal');
+    g('post-reply-btn').onclick   = () => this.postReply();
+    g('reply-input').oninput = () => {
+      utils.autoGrow(g('reply-input'));
+      g('reply-count').textContent = g('reply-input').value.length;
+    };
+
+    /* Thread modal */
+    g('close-thread').onclick          = () => this.closeModal('thread-modal');
+    g('post-thread-reply-btn').onclick = () => this.postThreadReply();
+    g('thread-reply-input').oninput = () => {
+      utils.autoGrow(g('thread-reply-input'));
+      g('thread-count').textContent = g('thread-reply-input').value.length;
+    };
+  }
+
+  /* ── Feed click delegation ──────────────────────────────────────────── */
+  onFeedClick(e, inModal) {
+    const action = e.target.closest('[data-action]')?.dataset.action;
+    const item   = e.target.closest('.post-item');
+    if (!item) return;
+
+    const post = this.state.posts.find(p => p.txHash === item.dataset.txhash);
+    if (!post) return;
+
+    if (action === 'expand') {
+      e.stopPropagation();
+      this.state.expanded.has(post.txHash)
+        ? this.state.expanded.delete(post.txHash)
+        : this.state.expanded.add(post.txHash);
+      this.renderFeed();
+    } else if (action === 'reply') {
+      e.stopPropagation();
+      this.openReplyModal(post);
+    } else if (!action && !inModal && !e.target.closest('a') && !e.target.closest('button')) {
+      this.openThread(post);
+    }
+  }
+
+  /* ── Navigation ─────────────────────────────────────────────────────── */
+  async goHome() {
+    /* If already on home, just scroll to top */
+    if (this.state.mode === 'main' && this.state.channel === MAIN_CHANNEL) {
+      window.scrollTo({ top: 0, behavior: 'smooth' }); return;
+    }
+    this.setNav('nav-home','home');
+    this.state.mode    = 'main';
+    this.state.channel = MAIN_CHANNEL;
+    this.g('feed-title').textContent     = 'The Pulse Underground';
+    this.g('compose-area').style.display = 'flex';
+    this.g('channel-banner').style.display = 'none';
+    this.setChActive('ch-main');
+    this.updateChLabel();
+    await this.resetAndFetch();
+  }
+
+  async goInbox() {
+    if (!this.signer) { utils.toast('Connect wallet to view Messages'); return; }
+    this.setNav('nav-messages','messages');
+    this.state.mode    = 'inbox';
+    this.state.channel = this.state.signerAddr;
+    this.g('feed-title').textContent     = '✉️ Messages';
+    this.g('compose-area').style.display = 'none';
+    this.g('channel-banner').style.display = 'none';
+    this.setChActive(null);
+    this.updateChLabel();
+    await this.resetAndFetch();
+  }
+
+  async goNotifications() {
+    if (!this.signer) { utils.toast('Connect wallet to view Notifications'); return; }
+    this.setNav('nav-notifs','notifs');
+    this.state.mode    = 'notifications';
+    this.state.channel = this.state.signerAddr;
+    this.g('feed-title').textContent     = '🔔 Notifications';
+    this.g('compose-area').style.display = 'none';
+    this.g('channel-banner').style.display = 'none';
+    this.setChActive(null);
+    this.updateChLabel();
+    localStorage.setItem('pulseLastCheck', Date.now().toString());
+    this.clearNotifBadge();
+    await this.resetAndFetch();
+  }
+
+  async goSelf() {
+    if (!this.signer) { utils.toast('Connect wallet to view your channel'); return; }
+    this.setNav(null, null);
+    this.state.mode    = 'self';
+    this.state.channel = this.state.signerAddr;
+    this.g('feed-title').textContent     = '📡 My Channel';
+    this.g('compose-area').style.display = 'flex';
+    this.setChActive('ch-self');
+    this.updateChLabel();
+    this.showChannelBanner(this.state.signerAddr);
+    await this.resetAndFetch();
+  }
+
+  async goCustom() {
+    const raw = this.g('custom-input').value.trim().toLowerCase();
+    if (!ethers.utils.isAddress(raw)) { utils.toast('Invalid address'); return; }
+    this.setNav(null, null);
+    this.state.mode    = 'custom';
+    this.state.channel = raw;
+    this.g('feed-title').textContent     = `📬 ${this.trunc(raw)}`;
+    this.g('compose-area').style.display = 'flex';
+    this.setChActive(null);
+    this.updateChLabel();
+    this.showChannelBanner(raw);
+    await this.resetAndFetch();
+  }
+
+  async goWave() {
+    this.setNav(null, null);
+    this.state.mode    = 'wave';
+    this.state.channel = WAVE_ADDRESS;
+    this.g('feed-title').textContent     = '📻 Wave on Pulse';
+    this.g('compose-area').style.display = 'none';
+    this.setChActive(null);
+    this.updateChLabel();
+    this.showChannelBanner(WAVE_ADDRESS);
+    await this.resetAndFetch();
+  }
+
+  setNav(desktopId, mobileKey) {
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.mn-btn').forEach(b => b.classList.remove('active'));
+    if (desktopId) this.g(desktopId)?.classList.add('active');
+    if (mobileKey) document.querySelector(`[data-mn="${mobileKey}"]`)?.classList.add('active');
+  }
+
+  setChActive(id) {
+    document.querySelectorAll('.ch-btn').forEach(b => b.classList.remove('active'));
+    if (id) this.g(id)?.classList.add('active');
+  }
+
+  updateChLabel() {
+    const { mode, channel, signerAddr } = this.state;
+    const map = {
+      main:          `Main: ${this.trunc(MAIN_CHANNEL)}`,
+      inbox:         `From/to: ${this.trunc(signerAddr || '')}`,
+      notifications: `To: ${this.trunc(signerAddr || '')}`,
+      self:          `My channel: ${this.trunc(signerAddr || '')}`,
+      custom:        `Channel: ${this.trunc(channel)}`,
+      wave:          `Wave: ${this.trunc(WAVE_ADDRESS)}`,
+    };
+    this.g('ch-label').textContent = map[mode] || '';
+  }
+
+  /* ── Channel profile banner ─────────────────────────────────────────── */
+
+  /*
+   * Shows a Twitter-style profile header when viewing a specific channel.
+   * Displays the channel owner's on-chain profile (name, bio, avatar).
+   * For unknown addresses, shows a loading state then updates when fetched.
+   */
+  showChannelBanner(address) {
+    const banner = this.g('channel-banner');
+    banner.style.display = 'block';
+
+    if (address === WAVE_ADDRESS) {
+      banner.className = 'wave-banner';
+      this.renderBanner({
+        username: 'Wave on Pulse',
+        picUrl:   'image1.jpeg',
+        bio:      'On-chain live radio — spaces & shows transcribed to PulseChain',
+      }, address);
+      return;
     }
 
-    const otterLink = `https://otter.pulsechain.com/tx/${post.txHash}`;
+    banner.className = '';
 
-    return `
-      <div class="reporter-info">
-        <img src="${isOwn && this.state.profile.profilePicUrl ? this.state.profile.profilePicUrl : "image1.jpeg"}" class="avatar">
-        <div class="reporter-details">
-          <span class="reporter-name">${isOwn && this.state.profile.username ? this.state.profile.username : this.truncAddr(post.reporter)}</span>
-          <span style="margin-left:8px;color:#888">@${this.truncAddr(post.reporter)}</span>
-          <span style="margin-left:8px;color:#888">· ${this.relativeTime(post.timestamp)}</span>
-        </div>
-      </div>
-      ${parentIndicator}
-      <div class="report-content">${contentHTML}</div>
-      ${readMoreHTML}
-      <div class="action-row">
-        <a href="${otterLink}" target="_blank" class="tx-link" onclick="event.stopImmediatePropagation()">View on OtterScan →</a>
-        <button onclick="event.stopImmediatePropagation(); pulse.openReplyModal({reporter:'${post.reporter}', txHash:'${post.txHash}', parentTx:'${post.parentTx||''}'});" style="padding:6px 16px;font-size:14px;background:transparent;border:1px solid var(--primary);color:var(--primary);border-radius:9999px;cursor:pointer">Reply</button>
-      </div>
-    `;
-  };
+    /* Own channel — use known profile immediately */
+    if (address === this.state.signerAddr) {
+      this.renderBanner(this.state.profile, address);
+      return;
+    }
 
-  toggleExpand = (txHash) => {
-    if (this.state.expandedPosts.has(txHash)) this.state.expandedPosts.delete(txHash);
-    else this.state.expandedPosts.add(txHash);
-    this.renderNewsFeed();
-  };
+    /* Check session cache */
+    const cached = this.state.profCache[address];
+    if (cached) { this.renderBanner(cached, address); return; }
 
-  setupListeners = () => {
-    const e = this.elements;
-    e.connectWallet.onclick = () => this.toggleWallet();
-    e.publishStory.onclick = () => this.publishStory();
-    e.reportContent.oninput = () => { e.mainCharCount.textContent = `${e.reportContent.value.length} / ∞`; };
-    e.searchInput.oninput = this.debounce(() => {this.state.searchTerm = e.searchInput.value.trim().toLowerCase(); this.renderNewsFeed();}, 300);
-    e.refreshButton.onclick = () => this.refreshPosts();
-    e.newStoriesButton.onclick = () => this.loadNewStories();
-    window.addEventListener("scroll", this.debounce(() => this.checkInfiniteScroll(), 100));
-    e.homeLink.onclick = (ev) => {ev.preventDefault(); window.scrollTo({top:0, behavior:"smooth"});};
-    e.mainChannel.onclick = () => this.setChannel(MAIN_CHANNEL);
-    e.selfChannel.onclick = async () => {if(!this.signer) return utils.showStatus("Connect wallet first"); this.setChannel((await this.signer.getAddress()).toLowerCase());};
-    e.setCustomChannel.onclick = () => {const a = e.customChannelInput.value.trim().toLowerCase(); ethers.utils.isAddress(a) ? this.setChannel(a) : utils.showStatus("Invalid address");};
-    e.profileLink.onclick = (ev) => {ev.preventDefault(); if(!this.signer) return utils.showStatus("Connect wallet first"); this.setProfileView();};
-    e.saveProfile.onclick = () => this.saveProfile();
-    e.clearProfile.onclick = () => this.clearProfile();
-    e.closeProfileModal.onclick = () => e.profileModal.style.display = "none";
-    e.profilePicInput.oninput = () => this.previewProfilePic();
-    e.cancelReply.onclick = () => e.replyModal.style.display = "none";
-    e.postReply.onclick = () => this.postReplyFromModal();
-    e.replyContent.oninput = () => {e.replyCharCount.textContent = `${e.replyContent.value.length} / ∞`;};
-    e.closeThreadModal.onclick = () => e.threadModal.style.display = "none";
-    e.postThreadReply.onclick = () => this.postThreadReply();
-  };
+    /* Show loading state, then fetch */
+    this.renderBanner({ username: '', picUrl: 'image1.jpeg', bio: 'Loading profile…' }, address);
+    this.fetchOtherProfile(address).then(() => {
+      const loaded = this.state.profCache[address];
+      if (loaded && banner.style.display !== 'none') this.renderBanner(loaded, address);
+    });
+  }
 
-  async tryAutoReconnectWallet() {
+  renderBanner(profile, address) {
+    this.g('cb-avatar').src        = profile?.picUrl || 'image1.jpeg';
+    this.g('cb-name').textContent  = profile?.username || this.trunc(address);
+    this.g('cb-bio').textContent   = profile?.bio  || '';
+    this.g('cb-address').textContent = address || '';
+  }
+
+  /* ── Notification badge ─────────────────────────────────────────────── */
+  async checkNotifBadge() {
+    if (!this.state.signerAddr) return;
+    const lastCheck = parseInt(localStorage.getItem('pulseLastCheck') || '0', 10);
+    try {
+      const raw   = await this.apiFetch(this.state.signerAddr, 1);
+      const count = raw.filter(tx => {
+        if (tx.to?.toLowerCase()   !== this.state.signerAddr) return false;
+        if (tx.from?.toLowerCase() === this.state.signerAddr) return false;
+        if (!tx.input || tx.input === '0x') return false;
+        if (Number(tx.timeStamp) * 1000 <= lastCheck) return false;
+        try {
+          const text = ethers.utils.toUtf8String(tx.input).trim();
+          return text.length > 0 && !text.startsWith(PROFILE_PREFIX);
+        } catch { return false; }
+      }).length;
+      this.setNotifBadge(count);
+    } catch { /* silent */ }
+  }
+
+  setNotifBadge(n) {
+    const b  = this.g('notif-badge');
+    const mb = this.g('mn-dot');
+    if (n > 0) {
+      b.textContent = n > 99 ? '99+' : String(n);
+      b.classList.add('on');
+      mb?.classList.add('on');
+    } else {
+      b.classList.remove('on');
+      mb?.classList.remove('on');
+    }
+  }
+  clearNotifBadge() { this.setNotifBadge(0); }
+
+  /* ── Wallet ─────────────────────────────────────────────────────────── */
+  async tryAutoReconnect() {
     if (!window.ethereum) return;
     try {
-      const p = new ethers.providers.Web3Provider(window.ethereum);
-      const accounts = await p.listAccounts();
-      if (accounts.length > 0 && localStorage.getItem("pulseWalletConnected") === "true") {
-        this.signer = p.getSigner();
-        this.state.signerAddress = (await this.signer.getAddress()).toLowerCase();
-        this.elements.walletAddress.textContent = this.truncAddr(this.state.signerAddress);
-        this.elements.walletInfo.style.display = "block";
-        this.elements.connectWallet.textContent = "Disconnect Wallet";
-        await this.loadProfile();
+      const prov = new ethers.providers.Web3Provider(window.ethereum);
+      const accs = await prov.listAccounts();
+      if (accs.length && localStorage.getItem('pulseConnected') === '1') {
+        this.signer = prov.getSigner();
+        this.state.signerAddr = (await this.signer.getAddress()).toLowerCase();
+        this._registerWalletListeners();
+        await this.afterConnect();
       }
-    } catch(e) { console.warn("Auto-reconnect failed", e); }
+    } catch (err) { console.warn('Auto-reconnect failed', err); }
   }
 
-  async toggleWallet() { this.signer ? await this.disconnectWallet() : await this.connectWallet(); }
+  /* Register MetaMask event listeners once — guards against double-registration */
+  _registerWalletListeners() {
+    if (this._walletListenersRegistered) return;
+    this._walletListenersRegistered = true;
 
-  async connectWallet() {
-    if(!window.ethereum) return utils.showStatus("MetaMask not detected");
+    window.ethereum.on('accountsChanged', accounts => {
+      if (accounts.length === 0) {
+        this.disconnect();
+      } else if (accounts[0].toLowerCase() !== this.state.signerAddr) {
+        utils.toast('Account changed — reconnecting…');
+        this.disconnect();
+        setTimeout(() => this.connect(), 500);
+      }
+    });
+
+    window.ethereum.on('chainChanged', chainId => {
+      const id = parseInt(chainId, 16);
+      if (id !== PULSE_CHAIN_ID) {
+        utils.toast('Wrong network — please switch to PulseChain');
+        this.disconnect();
+      }
+    });
+  }
+
+  async toggleWallet() { this.signer ? this.disconnect() : await this.connect(); }
+
+  async connect() {
+    if (!window.ethereum) { utils.toast('MetaMask not detected'); return; }
     try {
-      const p = new ethers.providers.Web3Provider(window.ethereum);
-      if((await p.getNetwork()).chainId !== PULSE_CHAIN_ID) await window.ethereum.request({method:"wallet_switchEthereumChain",params:[{chainId:"0x171"}]});
-      await p.send("eth_requestAccounts",[]);
-      this.signer = p.getSigner();
-      this.state.signerAddress = (await this.signer.getAddress()).toLowerCase();
-      this.elements.walletAddress.textContent = this.truncAddr(this.state.signerAddress);
-      this.elements.walletInfo.style.display = "block";
-      this.elements.connectWallet.textContent = "Disconnect Wallet";
-      localStorage.setItem("pulseWalletConnected", "true");
-      await this.loadProfile();
-      utils.showStatus("Wallet connected");
-      await this.fetchPosts(true); // refresh feed after connect
-    } catch(e) { utils.showStatus("Connection failed: " + e.message); }
+      const prov = new ethers.providers.Web3Provider(window.ethereum);
+      if ((await prov.getNetwork()).chainId !== PULSE_CHAIN_ID) {
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: '0x171' }],
+        });
+      }
+      await prov.send('eth_requestAccounts', []);
+      this.signer = prov.getSigner();
+      this.state.signerAddr = (await this.signer.getAddress()).toLowerCase();
+      localStorage.setItem('pulseConnected', '1');
+      this._registerWalletListeners();
+
+      await this.afterConnect();
+      utils.toast('Wallet connected ✓');
+    } catch (err) { utils.toast('Connect failed: ' + (err.message || err)); }
   }
 
-  async disconnectWallet() {
+  async afterConnect() {
+    const addr = this.state.signerAddr;
+    this.g('wallet-pill').textContent   = this.trunc(addr);
+    this.g('wallet-pill').style.display = 'block';
+    this.g('connect-btn').textContent   = 'Disconnect';
+    this.g('connect-btn').classList.add('ghost');
+    this.g('ch-self').style.display     = 'block';
+
+    const cached = await this.cache.getProfile(addr);
+    if (cached) this.applyProfile(cached);
+    await this.fetchMyProfile();
+    this.checkNotifBadge();
+    this.renderFeed();
+  }
+
+  disconnect() {
     this.signer = null;
-    this.state.signerAddress = null;
-    this.state.profile = {username:"", profilePicUrl:"image1.jpeg", bio:""};
-    this.elements.walletInfo.style.display = "none";
-    this.elements.connectWallet.textContent = "Connect Wallet";
-    localStorage.removeItem("pulseWalletConnected");
-    this.renderNewsFeed();
-    utils.showStatus("Wallet disconnected");
+    this.state.signerAddr = null;
+    this.state.profile    = { username: '', picUrl: 'image1.jpeg', bio: '' };
+    this.g('wallet-pill').style.display = 'none';
+    this.g('connect-btn').textContent   = 'Connect Wallet';
+    this.g('connect-btn').classList.remove('ghost');
+    this.g('compose-avatar').src        = 'image1.jpeg';
+    this.g('ch-self').style.display     = 'none';
+    this.clearNotifBadge();
+    localStorage.removeItem('pulseConnected');
+    this.renderFeed();
+    utils.toast('Wallet disconnected');
   }
 
-  async setChannel(a) {
-    this.state.isProfileView = false;
-    this.stopPolling();
-    this.state.channel = a.toLowerCase();
-    this.state.nextPage = 1;
-    this.state.hasMore = true;
-    this.state.pendingNewItems = [];
-    this.state.expandedPosts.clear();
-    this.elements.newStoriesButton.style.display = "none";
-    this.elements.profileHeader.style.display = "none";
-    this.elements.storySubmission.style.display = "flex";
-    this.elements.mainTitle.style.display = "block";
-    const i = await this.cache.getItems();
-    this.state.newsItems = i.filter(x => x.channel === this.state.channel).sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
-    this.renderNewsFeed();
-    this.elements.currentChannel.textContent = this.truncAddr(a);
-    await this.fetchPosts(true);
-    this.startPolling();
-  }
+  /* ── Profile ─────────────────────────────────────────────────────────── */
 
-  async setProfileView() {
-    if (!this.signer) return utils.showStatus("Connect wallet first");
-    this.state.isProfileView = true;
-    this.stopPolling();
-    this.state.channel = this.state.signerAddress;
-    this.state.nextPage = 1;
-    this.state.hasMore = true;
-    this.state.pendingNewItems = [];
-    this.state.expandedPosts.clear();
-    this.elements.newStoriesButton.style.display = "none";
-    this.elements.storySubmission.style.display = "none";
-    this.elements.mainTitle.style.display = "none";
-    this.elements.profileHeader.style.display = "block";
-    const i = await this.cache.getItems();
-    this.state.newsItems = i.filter(x => x.reporter === this.state.signerAddress).sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
-    await this.loadOnChainProfile();
-    this.renderNewsFeed();
-    await this.fetchPosts(true);
-    this.startPolling();
-  }
-
-  async loadOnChainProfile() {
-    if (!this.state.signerAddress) return;
+  /*
+   * On-chain profile: 0-value self-send (from === to === userAddr)
+   * Input: PROFILE_DATA: + JSON.stringify({username, picUrl, bio})
+   * We scan the first page of the user's tx history for the most recent
+   * self-send with this prefix — that's the active profile.
+   */
+  async fetchMyProfile() {
+    if (!this.state.signerAddr) return;
     try {
-      const url = `https://api.scan.pulsechain.com/api?module=account&action=txlist&address=${this.state.signerAddress}&limit=50&sort=desc`;
-      const r = await fetch(url);
-      if (r.ok) {
-        const d = await r.json();
-        if (d.status === "1" && d.result) {
-          const profileTx = d.result.find(tx => {
-            try { return ethers.utils.toUtf8String(tx.input || "0x").trim().startsWith(PROFILE_PREFIX); } catch { return false; }
-          });
-          if (profileTx) {
-            const raw = ethers.utils.toUtf8String(profileTx.input).trim();
-            const jsonStr = raw.substring(PROFILE_PREFIX.length).trim();
-            const data = JSON.parse(jsonStr);
-            this.state.profile = {...this.state.profile, ...data};
-            await this.cache.saveProfile({address:this.state.signerAddress, ...this.state.profile});
-          }
-        }
+      const raw = await this.apiFetch(this.state.signerAddr, 1);
+      for (const tx of raw) {
+        if (tx.from?.toLowerCase() !== this.state.signerAddr) continue;
+        if (tx.to?.toLowerCase()   !== this.state.signerAddr) continue;
+        try {
+          const text = ethers.utils.toUtf8String(tx.input).trim();
+          if (!text.startsWith(PROFILE_PREFIX)) continue;
+          const data = JSON.parse(text.slice(PROFILE_PREFIX.length).trim());
+          this.applyProfile(data);
+          await this.cache.saveProfile({ address: this.state.signerAddr, ...data });
+          return;
+        } catch { continue; }
       }
-    } catch(e) {}
-    this.updateProfileHeader();
+    } catch (err) { console.warn('Profile fetch error', err); }
   }
 
-  updateProfileHeader() {
-    const p = this.state.profile;
-    this.elements.profileHeaderAvatar.src = p.profilePicUrl || "image1.jpeg";
-    this.elements.profileHeaderName.textContent = p.username || this.truncAddr(this.state.signerAddress);
-    this.elements.profileHeaderBio.textContent = p.bio || "No bio yet...";
+  /*
+   * Fetch another user's on-chain profile for their avatar/name in the feed.
+   * Rate-limited: max 3 concurrent chain fetches. Excess requests are queued
+   * and drained automatically.
+   * Results cached in memory (profCache) and IndexedDB.
+   */
+  async fetchOtherProfile(address) {
+    if (!address || address in this.state.profCache) return;
+    this.state.profCache[address] = null; // mark in-flight
+
+    const work = async () => {
+      this._profInFlight++;
+      try {
+        /* IndexedDB first */
+        const db = await this.cache.getProfile(address);
+        if (db) {
+          this.state.profCache[address] = { username: db.username || '', picUrl: db.picUrl || 'image1.jpeg' };
+          this._debouncedRender();
+          return;
+        }
+        /* Chain fallback */
+        const raw = await this.apiFetch(address, 1);
+        for (const tx of raw) {
+          if (tx.from?.toLowerCase() !== address || tx.to?.toLowerCase() !== address) continue;
+          try {
+            const text = ethers.utils.toUtf8String(tx.input).trim();
+            if (!text.startsWith(PROFILE_PREFIX)) continue;
+            const data = JSON.parse(text.slice(PROFILE_PREFIX.length).trim());
+            this.state.profCache[address] = { username: data.username || '', picUrl: data.picUrl || 'image1.jpeg' };
+            await this.cache.saveProfile({ address, ...data });
+            this._debouncedRender();
+            return;
+          } catch { continue; }
+        }
+        this.state.profCache[address] = { username: '', picUrl: 'image1.jpeg' };
+      } catch {
+        this.state.profCache[address] = { username: '', picUrl: 'image1.jpeg' };
+      } finally {
+        this._profInFlight--;
+        this._drainProfileQueue();
+      }
+    };
+
+    if (this._profInFlight < 3) {
+      work();
+    } else {
+      this._profQueue.push(work);
+    }
   }
 
-  openProfileEditModal = () => {
-    const p = this.state.profile;
-    this.elements.usernameInput.value = p.username || "";
-    this.elements.profilePicInput.value = p.profilePicUrl !== "image1.jpeg" ? p.profilePicUrl : "";
-    this.elements.bioInput.value = p.bio || "";
-    this.elements.profileModal.style.display = "flex";
-  };
+  _drainProfileQueue() {
+    while (this._profInFlight < 3 && this._profQueue.length > 0) {
+      this._profQueue.shift()();
+    }
+  }
 
-  async previewProfilePic() {
-    const url = this.elements.profilePicInput.value.trim();
-    if (url) this.elements.profilePicPreview.src = url;
+  applyProfile(data) {
+    this.state.profile = {
+      username: data.username || '',
+      picUrl:   data.picUrl || data.profilePicUrl || 'image1.jpeg',
+      bio:      data.bio    || '',
+    };
+    this.g('compose-avatar').src = this.state.profile.picUrl;
+  }
+
+  openProfileModal() {
+    if (!this.state.signerAddr) { utils.toast('Connect wallet first'); return; }
+    this.showProfileView();
+    this.g('profile-modal').classList.add('open');
+  }
+
+  showProfileView() {
+    const p = this.state.profile;
+    this.g('pv-avatar').src       = p.picUrl || 'image1.jpeg';
+    this.g('pv-name').textContent = p.username || this.trunc(this.state.signerAddr);
+    this.g('pv-bio').textContent  = p.bio      || 'No bio yet.';
+    this.g('profile-view').style.display = 'block';
+    this.g('profile-edit').style.display = 'none';
+    this.g('profile-modal-title').textContent = 'Profile';
+  }
+
+  showEditForm() {
+    const p = this.state.profile;
+    this.g('pe-name').value  = p.username || '';
+    this.g('pe-pic').value   = (p.picUrl && p.picUrl !== 'image1.jpeg') ? p.picUrl : '';
+    this.g('pe-bio').value   = p.bio      || '';
+    this.g('pe-preview').src = p.picUrl   || 'image1.jpeg';
+    this.g('nft-status').textContent = '';
+    this.g('profile-view').style.display = 'none';
+    this.g('profile-edit').style.display = 'block';
+    this.g('profile-modal-title').textContent = 'Edit Profile';
   }
 
   async saveProfile() {
-    const n = this.elements.usernameInput.value.trim();
-    let u = this.elements.profilePicInput.value.trim() || "image1.jpeg";
-    const bio = this.elements.bioInput.value.trim();
+    const username = this.g('pe-name').value.trim();
+    let   picUrl   = this.g('pe-pic').value.trim();
+    const bio      = this.g('pe-bio').value.trim();
 
-    if (u !== "image1.jpeg") {
-      const i = new Image();
-      i.src = u;
-      if (!await new Promise(r => {i.onload = () => r(true); i.onerror = () => r(false);})) {
-        utils.showStatus("Invalid profile picture URL - using default");
-        u = "image1.jpeg";
-      }
+    if (picUrl && !picUrl.startsWith('https://')) {
+      utils.toast('Profile picture must be an https:// URL'); return;
     }
-
-    this.state.profile = {username:n, profilePicUrl:u, bio};
-    await this.cache.saveProfile({address:this.state.signerAddress, ...this.state.profile});
-
-    if (this.signer) {
-      const profileData = JSON.stringify({username:n, profilePicUrl:u, bio});
-      const finalContent = `${PROFILE_PREFIX}${profileData}`;
-      const oldChannel = this.state.channel;
-      this.state.channel = this.state.signerAddress;
-      await this.doPublish(finalContent);
-      this.state.channel = oldChannel;
+    if (picUrl) {
+      const ok = await new Promise(r => {
+        const img = new Image();
+        img.onload  = () => r(true);
+        img.onerror = () => r(false);
+        img.src = picUrl;
+      });
+      if (!ok) { picUrl = ''; utils.toast('Image could not be loaded — using default'); }
     }
+    picUrl = picUrl || 'image1.jpeg';
 
-    this.elements.profileModal.style.display = "none";
-    this.updateProfileHeader();
-    this.renderNewsFeed();
-    utils.showStatus("Profile saved on-chain");
+    const data = { username, picUrl, bio };
+    this.applyProfile(data);
+    await this.cache.saveProfile({ address: this.state.signerAddr, ...data });
+
+    const ok = await this.publish(PROFILE_PREFIX + JSON.stringify(data), null, this.state.signerAddr);
+    if (ok) {
+      this.closeModal('profile-modal');
+      this.renderFeed();
+      utils.toast('Profile saved on-chain ✓');
+    }
   }
 
-  async doPublish(userContent, parentTx = null) {
-    if(!this.signer) return utils.showStatus("Connect wallet first");
-    if(!userContent?.trim()) return utils.showStatus("Content cannot be empty");
+  /* ── NFT profile pic fetcher ────────────────────────────────────────── */
 
-    let finalContent = userContent.trim();
-    if(parentTx) finalContent = `${REPLY_PREFIX}${parentTx}\n\n${finalContent}`;
+  /*
+   * Fetches an ERC-721 NFT's image from its tokenURI.
+   * Verifies the connected wallet owns the token.
+   * Supports http, ipfs://, and data:application/json;base64 URIs.
+   */
+  async fetchNFTImage() {
+    const contractAddr = this.g('nft-contract').value.trim().toLowerCase();
+    const tokenIdRaw   = this.g('nft-token-id').value.trim();
+    const status       = this.g('nft-status');
 
-    utils.toggleLoading(true);
+    if (!ethers.utils.isAddress(contractAddr)) {
+      status.textContent = '✗ Invalid contract address'; return;
+    }
+    if (!tokenIdRaw || isNaN(tokenIdRaw)) {
+      status.textContent = '✗ Invalid token ID'; return;
+    }
+    if (!this.signer) {
+      status.textContent = '✗ Connect wallet first'; return;
+    }
+
+    status.textContent = '⟳ Fetching…';
     try {
-      const bytes = ethers.utils.toUtf8Bytes(finalContent);
-      const data = ethers.utils.hexlify(bytes);
+      const provider = this.signer.provider;
+      const contract = new ethers.Contract(contractAddr, ERC721_ABI, provider);
 
-      const txRequest = { to: this.state.channel, value: "0", data };
-      let gasEstimate = await this.signer.estimateGas(txRequest);
-      gasEstimate = gasEstimate.mul(130).div(100);
+      /* Verify ownership */
+      let owner;
+      try { owner = (await contract.ownerOf(tokenIdRaw)).toLowerCase(); }
+      catch { status.textContent = '✗ Token not found'; return; }
 
-      const tx = await this.signer.sendTransaction({ ...txRequest, gasLimit: gasEstimate });
-      const receipt = await tx.wait();
+      if (owner !== this.state.signerAddr) {
+        status.textContent = '✗ You don\'t own this token'; return;
+      }
 
-      const newPost = {
-        content: finalContent,
-        displayContent: userContent.trim(),
-        parentTx: parentTx || null,
-        reporter: this.state.signerAddress,
-        timestamp: new Date().toISOString(),
-        txHash: receipt.transactionHash,
-        channel: this.state.channel
-      };
+      /* Fetch tokenURI */
+      let tokenUri;
+      try { tokenUri = await contract.tokenURI(tokenIdRaw); }
+      catch { status.textContent = '✗ tokenURI() failed'; return; }
 
-      this.state.newsItems.unshift(newPost);
-      await this.cache.saveItems([newPost]);
-      this.renderNewsFeed();
-      utils.showStatus(`Published ✓ ${this.truncAddr(receipt.transactionHash)}`);
-    } catch(e) {
-      console.error(e);
-      utils.showStatus("Publish failed: " + (e.message || e));
-    } finally {
-      utils.toggleLoading(false);
+      /* Resolve metadata */
+      let imageUrl = null;
+
+      if (tokenUri.startsWith('data:application/json;base64,')) {
+        try {
+          const json = atob(tokenUri.slice('data:application/json;base64,'.length));
+          const meta = JSON.parse(json);
+          imageUrl = utils.resolveIPFS(meta.image);
+        } catch { status.textContent = '✗ Could not parse metadata'; return; }
+      } else {
+        const metaUrl = utils.resolveIPFS(tokenUri);
+        try {
+          const res  = await fetch(metaUrl);
+          const meta = await res.json();
+          imageUrl = utils.resolveIPFS(meta.image);
+        } catch { status.textContent = '✗ Could not fetch metadata'; return; }
+      }
+
+      if (!imageUrl) { status.textContent = '✗ No image in metadata'; return; }
+
+      /* Apply to profile pic preview */
+      this.g('pe-pic').value   = imageUrl;
+      this.g('pe-preview').src = imageUrl;
+      status.textContent = '✓ NFT image loaded!';
+
+    } catch (err) {
+      status.textContent = '✗ Error: ' + (err.message || err);
     }
   }
 
-  async publishStory() {
-    const c = this.elements.reportContent.value.trim();
-    if(!c) return utils.showStatus("Content cannot be empty");
-    await this.doPublish(c);
-    this.elements.reportContent.value = "";
-    this.elements.mainCharCount.textContent = "0 / ∞";
+  /* ── Fetch pipeline ─────────────────────────────────────────────────── */
+
+  /*
+   * Single source of truth for PulseScan API calls.
+   * Uses `offset` (records per page), NOT `limit` — critical difference.
+   */
+  async apiFetch(address, page) {
+    const url = `https://api.scan.pulsechain.com/api?module=account&action=txlist`
+              + `&address=${address}&offset=50&page=${page}&sort=desc`;
+    const res  = await fetch(url);
+    if (!res.ok) throw new Error(`API ${res.status}`);
+    const data = await res.json();
+    return (data.status === '1' && Array.isArray(data.result)) ? data.result : [];
   }
 
-  openReplyModal = (postData) => {
-    this.state.replyingTo = postData;
-    const e = this.elements;
-    e.replyHeader.textContent = "Reply";
-    e.replyingTo.innerHTML = `Replying to <strong>${this.truncAddr(postData.reporter)}</strong>`;
-    e.replyContent.value = "";
-    e.replyCharCount.textContent = "0 / ∞";
-    e.replyModal.style.display = "flex";
-    e.replyContent.focus();
-  };
-
-  async postReplyFromModal() {
-    const c = this.elements.replyContent.value.trim();
-    if(!c || !this.state.replyingTo) return;
-    this.elements.replyModal.style.display = "none";
-    await this.doPublish(c, this.state.replyingTo.txHash);
-    this.elements.replyContent.value = "";
+  queryAddr() {
+    const { mode, channel, signerAddr } = this.state;
+    return (mode === 'inbox' || mode === 'notifications' || mode === 'self')
+      ? signerAddr
+      : channel;
   }
-
-  openThread = (post) => {
-    this.state.currentThreadPost = post;
-    this.renderThread();
-    this.elements.threadModal.style.display = "flex";
-  };
-
-  renderThread = () => {
-    const post = this.state.currentThreadPost;
-    if(!post) return;
-    this.elements.threadOriginal.innerHTML = `<div class="news-item" style="border:none;background:transparent;cursor:default">${this.getPostHTML(post).replace(/Read more<\/div>/, '')}</div>`;
-    const replies = this.state.newsItems.filter(r => r.parentTx === post.txHash).sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
-    let html = "";
-    replies.forEach(r => { html += `<div class="news-item" style="border:none;background:transparent;padding:15px 0">${this.getPostHTML(r)}</div>`; });
-    this.elements.threadReplies.innerHTML = replies.length ? html : `<p style="padding:20px;text-align:center;opacity:0.6">No replies yet. Be the first!</p>`;
-  };
-
-  async postThreadReply() {
-    const c = this.elements.threadReplyContent.value.trim();
-    if(!c || !this.state.currentThreadPost) return;
-    await this.doPublish(c, this.state.currentThreadPost.txHash);
-    this.elements.threadReplyContent.value = "";
-    this.renderThread();
-  }
-
-  renderNewsFeed = () => {
-    const filtered = this.state.newsItems.filter(x => 
-      this.state.searchTerm ? 
-        (x.displayContent || x.content || "").toLowerCase().includes(this.state.searchTerm) || 
-        x.reporter.toLowerCase().includes(this.state.searchTerm) : true
-    );
-
-    this.elements.newsFeed.innerHTML = filtered.length ? "" : "<p style='padding:40px;text-align:center;opacity:0.6'>No posts found.</p>";
-
-    const f = document.createDocumentFragment();
-    filtered.forEach(x => {
-      const d = document.createElement("div");
-      d.className = "news-item";
-      d.innerHTML = this.getPostHTML(x);
-      d.onclick = (e) => {
-        if (e.target.classList.contains("read-more")) return;
-        if (!e.target.closest("a") && !e.target.closest("button")) this.openThread(x);
-      };
-      f.appendChild(d);
-    });
-    this.elements.newsFeed.appendChild(f);
-  };
-
-  debounce = (f, d) => {let t; return (...a) => {clearTimeout(t); t = setTimeout(() => f.apply(this, a), d);};};
 
   async fetchOnePage(page) {
-    const u = `https://api.scan.pulsechain.com/api?module=account&action=txlist&address=${this.state.channel}&limit=50&page=${page}&sort=desc`;
-    try {
-      const r = await fetch(u);
-      if (!r.ok) throw new Error(`API error: ${r.status}`);
-      const d = await r.json();
-      const rawItems = d.status === "1" ? d.result : [];
-      return this.parseTransactions(rawItems);
-    } catch(e) {
-      utils.showStatus("Fetch failed: " + e.message);
-      return [];
-    }
+    const addr = this.queryAddr();
+    if (!addr) return [];
+    return this.apiFetch(addr, page);
   }
 
-  async sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
+  /*
+   * Main fetch loop — scans pages until POSTS_TARGET posts found,
+   * last page reached, or MAX_PAGES safety cap hit.
+   * Renders incrementally. No sleep() delays.
+   */
   async fetchPosts(reset = false) {
-    if (this.state.isLoading || !this.state.channel) return;
-    this.state.isLoading = true;
-    utils.toggleLoading(true);
-    if (!reset) this.elements.loadingMore.style.display = "block";
+    if (this.state.loading) return;
+    this.state.loading = true;
+    if (reset) { this.state.nextPage = 1; this.state.hasMore = true; }
+    this.g('loading-more').style.display = 'block';
 
+    let found = 0, pages = 0;
     try {
-      if (reset) {
-        this.state.newsItems = [];
-        this.state.nextPage = 1;
-        this.state.hasMore = true;
-        this.state.expandedPosts.clear();
-      }
+      while (found < POSTS_TARGET && this.state.hasMore && pages < MAX_PAGES) {
+        let raw;
+        try { raw = await this.fetchOnePage(this.state.nextPage); }
+        catch (err) { utils.toast('Fetch error — ' + err.message); break; }
 
-      let added = false;
-      let attempts = 0;
-      const maxAttempts = 300;
+        this.state.nextPage++;
+        pages++;
+        this.state.hasMore = raw.length === 50;
 
-      while (!added && this.state.hasMore && attempts < maxAttempts) {
-        const p = await this.fetchOnePage(this.state.nextPage);
-        const uniqueNew = p.filter(o => !this.state.newsItems.some(x => x.txHash === o.txHash));
-
-        if (uniqueNew.length > 0) {
-          this.state.newsItems = [...this.state.newsItems, ...uniqueNew];
-          await this.cache.saveItems(uniqueNew);
-          added = true;
+        const parsed = this.parseTxs(raw);
+        if (parsed.length > 0) {
+          const known  = new Set(this.state.posts.map(p => p.txHash));
+          const unique = parsed.filter(p => !known.has(p.txHash));
+          if (unique.length > 0) {
+            this.state.posts = [...this.state.posts, ...unique]
+              .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            await this.cache.savePosts(unique);
+            found += unique.length;
+            this.renderFeed();
+          }
         }
-
-        this.state.nextPage += 1;
-        this.state.hasMore = p.length === 50;
-
-        attempts++;
-
-        if (!added && this.state.hasMore) {
-          await this.sleep(300);
-        }
+        if (this.state.mode === 'notifications') break;
       }
-
-      this.state.newsItems.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
-      this.renderNewsFeed();
-
-      if (!added && !reset) {
-        utils.showStatus("Reached end of available history");
-      } else if (reset && this.state.newsItems.length === 0) {
-        // Safety retry for initial load race condition
-        await this.sleep(800);
-        await this.fetchPosts(true);
-      }
+      if (this.state.posts.length === 0) this.renderFeed();
     } finally {
-      this.state.isLoading = false;
-      utils.toggleLoading(false);
-      this.elements.loadingMore.style.display = "none";
+      this.state.loading = false;
+      this.g('loading-more').style.display = 'none';
     }
   }
 
-  parseTransactions = (t) => {
-    return t.filter(x => x.input && x.input !== "0x" && x.to && x.to.toLowerCase() === this.state.channel.toLowerCase()).map(x => {
-      try {
-        let fullContent = ethers.utils.toUtf8String(x.input).trim();
-        let parentTx = null;
-        let displayContent = fullContent;
-        const match = fullContent.match(/^REPLY_TO:(0x[a-f0-9]{64})\n\n/i);
-        if (match) {
-          parentTx = match[1].toLowerCase();
-          displayContent = fullContent.substring(match[0].length).trim();
-        }
-        return displayContent.length ? {
-          content: fullContent,
-          displayContent: displayContent,
-          parentTx: parentTx,
-          reporter: x.from.toLowerCase(),
-          timestamp: x.timeStamp ? new Date(x.timeStamp * 1000).toISOString() : new Date().toISOString(),
-          txHash: x.hash,
-          channel: this.state.channel
-        } : null;
-      } catch { return null; }
-    }).filter(Boolean);
-  };
+  /*
+   * parseTxs — filter and shape raw API results for current mode.
+   * Each tx decoded ONCE. Profile self-sends always excluded from feed.
+   */
+  parseTxs(txs) {
+    const { mode, channel, signerAddr } = this.state;
+    const lastCheck = parseInt(localStorage.getItem('pulseLastCheck') || '0', 10);
 
-  checkInfiniteScroll = () => {
-    if (this.state.hasMore && !this.state.isLoading && 
-        window.innerHeight + window.scrollY >= document.body.offsetHeight - 300) {
-      this.fetchPosts(false);
-    }
-  };
+    return txs.reduce((acc, tx) => {
+      if (!tx.input || tx.input === '0x') return acc;
+      const from = tx.from?.toLowerCase();
+      const to   = tx.to?.toLowerCase();
 
-  async refreshPosts() {
-    this.elements.refreshButton.textContent = "Refreshing...";
-    await this.fetchPosts(true);
-    window.scrollTo({top: 0, behavior: "smooth"});
-    this.elements.refreshButton.textContent = "Refresh Feed";
+      let raw;
+      try { raw = ethers.utils.toUtf8String(tx.input).trim(); }
+      catch { return acc; }
+      if (!raw) return acc;
+
+      if (raw.startsWith(PROFILE_PREFIX) && from === to) return acc;
+
+      let direction = null;
+      if (mode === 'inbox') {
+        if (from !== signerAddr && to !== signerAddr) return acc;
+        if (raw.startsWith(PROFILE_PREFIX)) return acc;
+        direction = (from === signerAddr) ? 'sent' : 'received';
+      } else if (mode === 'self') {
+        if (to !== signerAddr) return acc;
+      } else if (mode === 'notifications') {
+        if (to !== signerAddr || from === signerAddr) return acc;
+        if (Number(tx.timeStamp) * 1000 <= lastCheck) return acc;
+      } else {
+        if (to !== channel) return acc;
+      }
+
+      const m        = raw.match(/^REPLY_TO:(0x[a-f0-9]{64})\n\n/i);
+      const parentTx = m ? m[1].toLowerCase() : null;
+      const display  = m ? raw.slice(m[0].length).trim() : raw;
+      if (!display) return acc;
+
+      acc.push({
+        content: raw, display, parentTx, direction,
+        reporter: from, to: to ?? null,
+        timestamp: tx.timeStamp
+          ? new Date(Number(tx.timeStamp) * 1000).toISOString()
+          : new Date().toISOString(),
+        txHash: tx.hash.toLowerCase(), channel, mode,
+      });
+      return acc;
+    }, []);
   }
+
+  /* ── Polling ─────────────────────────────────────────────────────────── */
+  startPolling()  { this.pollTimer = setInterval(() => this.pollNew(), POLL_MS); }
+  stopPolling()   { clearInterval(this.pollTimer); }
 
   async pollNew() {
-    if(!this.state.channel) return;
-    const currentMax = this.state.newsItems[0]?.timestamp ? new Date(this.state.newsItems[0].timestamp) : new Date(0);
-    let newItems = [];
-    let page = 1;
-    while (page <= 5) {
-      const p = await this.fetchOnePage(page);
-      const reallyNew = p.filter(i => new Date(i.timestamp) > currentMax && !this.state.newsItems.some(ex => ex.txHash === i.txHash) && !newItems.some(ex => ex.txHash === i.txHash));
-      if (reallyNew.length) newItems.push(...reallyNew);
-      if (p.length < 50) break;
-      page++;
+    if (!this.state.channel || this.state.loading) return;
+    const latestTs = this.state.posts[0]
+      ? new Date(this.state.posts[0].timestamp) : new Date(0);
+    try {
+      const raw       = await this.fetchOnePage(1);
+      const inFeed    = new Set(this.state.posts.map(p => p.txHash));
+      const inPending = new Set(this.state.pending.map(p => p.txHash));
+      const fresh = this.parseTxs(raw).filter(p =>
+        new Date(p.timestamp) > latestTs &&
+        !inFeed.has(p.txHash) &&
+        !inPending.has(p.txHash)
+      );
+      if (fresh.length) {
+        this.state.pending = [...fresh, ...this.state.pending];
+        const n   = this.state.pending.length;
+        const btn = this.g('new-banner');
+        btn.textContent   = `✦ ${n} new post${n > 1 ? 's' : ''} — click to load`;
+        btn.style.display = 'block';
+      }
+      if (this.state.signerAddr) this.checkNotifBadge();
+    } catch (err) { console.warn('Poll error', err); }
+  }
+
+  loadPending() {
+    this.state.posts   = [...this.state.pending, ...this.state.posts];
+    this.state.pending = [];
+    this.g('new-banner').style.display = 'none';
+    this.renderFeed();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  async refreshFeed() {
+    const btn = this.g('refresh-btn');
+    btn.textContent       = '↻ Refreshing…';
+    this.state.posts      = [];
+    this.state.pending    = [];
+    this.state.nextPage   = 1;
+    this.state.hasMore    = true;
+    this.g('new-banner').style.display = 'none';
+    await this.fetchPosts(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    btn.textContent = '↺ Refresh';
+  }
+
+  async resetAndFetch() {
+    this.stopPolling();
+    this.state.posts    = [];
+    this.state.pending  = [];
+    this.state.nextPage = 1;
+    this.state.hasMore  = true;
+    this.state.expanded.clear();
+    this.g('new-banner').style.display = 'none';
+    await this.loadCached();
+    await this.fetchPosts(true);
+    if (this.state.mode !== 'notifications') this.startPolling();
+  }
+
+  /* ── Cache ───────────────────────────────────────────────────────────── */
+  async loadCached() {
+    const { mode, channel, signerAddr } = this.state;
+    const posts = await this.cache.getPosts(p => {
+      if (mode === 'notifications') return false;
+      if (mode === 'inbox') return p.mode === 'inbox' && p.channel === signerAddr;
+      if (mode === 'self')  return p.mode === 'self'  && p.channel === signerAddr;
+      if (mode === 'wave')  return p.mode === 'wave'  && p.channel === channel;
+      return p.channel === channel && p.mode === mode;
+    });
+    this.state.posts = posts.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    this.renderFeed();
+  }
+
+  /* ── Render ──────────────────────────────────────────────────────────── */
+  renderFeed() {
+    const feed = this.g('feed');
+    const term = this.state.searchTerm;
+    const list = term
+      ? this.state.posts.filter(p =>
+          p.display.toLowerCase().includes(term) ||
+          p.reporter.toLowerCase().includes(term))
+      : this.state.posts;
+
+    if (!list.length) {
+      const msgs = {
+        notifications: 'No new notifications',
+        inbox:  'No messages yet',
+        self:   'No posts to your channel yet',
+        wave:   'No Wave transmissions yet',
+      };
+      feed.innerHTML = `
+        <div class="empty-state">
+          <span class="empty-icon">📡</span>
+          <h3>${this.state.loading
+            ? 'Scanning the chain…'
+            : (msgs[this.state.mode] || 'Nothing here yet')}</h3>
+          <p style="font-size:14px;margin-top:4px">${this.state.loading
+            ? `Scanned ${this.state.nextPage - 1} page(s) so far`
+            : 'Be the first to post in this channel'}</p>
+        </div>`;
+      return;
     }
-    if (newItems.length) {
-      this.state.pendingNewItems = newItems.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
-      this.elements.newStoriesButton.style.display = "block";
-      this.elements.newStoriesButton.textContent = `${newItems.length} new stories available`;
+
+    const frag = document.createDocumentFragment();
+    list.forEach(post => {
+      const el = document.createElement('div');
+      el.className      = 'post-item';
+      el.dataset.txhash = post.txHash;
+      el.innerHTML      = this.postHTML(post, false);
+      frag.appendChild(el);
+      if (post.reporter !== this.state.signerAddr) this.fetchOtherProfile(post.reporter);
+    });
+    feed.innerHTML = '';
+    feed.appendChild(frag);
+  }
+
+  /*
+   * Build post card HTML.
+   * ALL blockchain text through utils.safe() — XSS-proof.
+   * URLs linkified; image URLs get inline thumbnails.
+   * Reply count badge shows known replies in loaded feed.
+   */
+  postHTML(post, inModal) {
+    const isOwn    = post.reporter === this.state.signerAddr;
+    const expanded = this.state.expanded.has(post.txHash);
+
+    let picUrl, displayName;
+    if (isOwn) {
+      picUrl      = this.state.profile.picUrl || 'image1.jpeg';
+      displayName = this.state.profile.username
+        ? utils.safe(this.state.profile.username)
+        : this.trunc(post.reporter);
+    } else {
+      const c = this.state.profCache[post.reporter];
+      picUrl      = c?.picUrl || 'image1.jpeg';
+      displayName = c?.username ? utils.safe(c.username) : this.trunc(post.reporter);
+    }
+
+    /* Body rendering with linkification */
+    const textToRender = (!inModal && !expanded && post.display.length > MAX_PREVIEW)
+      ? post.display.slice(0, MAX_PREVIEW) + '…'
+      : post.display;
+
+    const { text: bodyHtml, images: imgHtml } = utils.linkify(textToRender);
+    const needsMore = !inModal && !expanded && post.display.length > MAX_PREVIEW;
+
+    /* Direction badge (inbox) */
+    const dirBadge = post.direction
+      ? `<span class="dir-badge dir-${post.direction}">${post.direction === 'sent' ? '↑ sent' : '↓ received'}</span>`
+      : '';
+
+    const toLabel = (post.direction === 'sent' && post.to)
+      ? `<span class="to-label">To: ${this.trunc(post.to)}</span>`
+      : '';
+
+    const replyBadge = post.parentTx
+      ? `<span class="reply-badge">↳ Replying to ${this.trunc(post.parentTx)}</span>`
+      : '';
+
+    /* Reply count from known loaded posts */
+    const replyCount = this.state.posts.filter(p => p.parentTx === post.txHash).length;
+    const replyLabel = replyCount > 0 ? ` · ${replyCount}` : '';
+
+    /* Full datetime on timestamp hover */
+    const fullDate = new Date(post.timestamp).toLocaleString();
+
+    return `
+      <div class="post-hdr">
+        <img src="${utils.safe(picUrl)}" class="post-avatar" alt=""
+          onerror="this.src='image1.jpeg'">
+        <div class="post-meta">
+          <div>
+            <span class="post-name">${displayName}</span>
+            <span class="post-handle">@${this.trunc(post.reporter)}</span>
+            ${dirBadge}
+          </div>
+          <div class="post-time" title="${utils.safe(fullDate)}">${this.relTime(post.timestamp)}</div>
+        </div>
+      </div>
+      ${toLabel}${replyBadge}
+      ${imgHtml ? `<div class="post-images">${imgHtml}</div>` : ''}
+      <div class="post-body">${bodyHtml}</div>
+      ${needsMore ? `<button class="read-more-btn" data-action="expand">Read more ↓</button>` : ''}
+      <div class="post-actions">
+        <button class="act-btn" data-action="reply">💬 Reply${replyLabel}</button>
+        <a href="https://otter.pulsechain.com/tx/${post.txHash}"
+          target="_blank" class="otter-link"
+          onclick="event.stopPropagation()">View on OtterScan →</a>
+      </div>`;
+  }
+
+  /* ── Publish ─────────────────────────────────────────────────────────── */
+  async publish(content, parentTx = null, toAddress = null) {
+    if (!this.signer)     { utils.toast('Connect wallet first'); return false; }
+    if (!content?.trim()) { utils.toast('Message cannot be empty'); return false; }
+
+    let body = content.trim();
+    if (parentTx) body = `${REPLY_PREFIX}${parentTx}\n\n${body}`;
+
+    const to = toAddress || this.state.channel;
+    utils.loading(true, 'Publishing…');
+
+    try {
+      const bytes   = ethers.utils.toUtf8Bytes(body);
+      const data    = ethers.utils.hexlify(bytes);
+      const txReq   = { to, value: '0', data };
+      let   gas     = await this.signer.estimateGas(txReq);
+      gas           = gas.mul(130).div(100);
+      const tx      = await this.signer.sendTransaction({ ...txReq, gasLimit: gas });
+      const receipt = await tx.wait();
+      const hash    = receipt.transactionHash.toLowerCase();
+
+      if (!body.startsWith(PROFILE_PREFIX)) {
+        const post = {
+          content: body, display: content.trim(),
+          parentTx, direction: null,
+          reporter: this.state.signerAddr, to: to.toLowerCase(),
+          timestamp: new Date().toISOString(),
+          txHash: hash, channel: this.state.channel, mode: this.state.mode,
+        };
+        this.state.posts.unshift(post);
+        await this.cache.savePosts([post]);
+        this.renderFeed();
+      }
+
+      utils.toast(`Published ✓  ${this.trunc(hash)}`);
+      return true;
+    } catch (err) {
+      utils.toast('Failed: ' + (err.reason || err.message || 'Unknown error'));
+      return false;
+    } finally {
+      utils.loading(false);
     }
   }
 
-  startPolling = () => { this.pollInterval = setInterval(() => this.pollNew(), 120000); };
-  stopPolling = () => { clearInterval(this.pollInterval); };
+  async publishPost() {
+    const text = this.g('compose-text').value.trim();
+    if (!text) return;
+    const ok = await this.publish(text);
+    if (ok) {
+      this.g('compose-text').value    = '';
+      this.g('compose-text').style.height = '';
+      this.g('char-count').textContent = '0';
+      this.g('char-count').className   = 'char-count';
+    }
+  }
 
-  loadNewStories = () => {
-    this.state.newsItems = [...this.state.pendingNewItems, ...this.state.newsItems];
-    this.state.pendingNewItems = [];
-    this.elements.newStoriesButton.style.display = "none";
-    this.renderNewsFeed();
-    window.scrollTo({top:0, behavior:"smooth"});
+  /* ── Reply ───────────────────────────────────────────────────────────── */
+  openReplyModal(post) {
+    this.state.replyTarget = post;
+    const preview = post.display.length > 100 ? post.display.slice(0, 100) + '…' : post.display;
+    this.g('reply-quote').textContent = `↳ ${this.trunc(post.reporter)}: "${preview}"`;
+    this.g('reply-input').value       = '';
+    this.g('reply-input').style.height = '';
+    this.g('reply-count').textContent = '0';
+    this.g('reply-modal').classList.add('open');
+    this.g('reply-input').focus();
+  }
+
+  async postReply() {
+    const text = this.g('reply-input').value.trim();
+    if (!text || !this.state.replyTarget) return;
+    /* Reply goes to the same channel as the original post */
+    const ok = await this.publish(text, this.state.replyTarget.txHash, this.state.replyTarget.to);
+    if (ok) { this.closeModal('reply-modal'); this.g('reply-input').value = ''; }
+  }
+
+  /* ── Thread ──────────────────────────────────────────────────────────── */
+  openThread(post) {
+    this.state.threadPost = post;
+
+    const origEl = document.createElement('div');
+    origEl.className      = 'post-item';
+    origEl.dataset.txhash = post.txHash;
+    origEl.innerHTML      = this.postHTML(post, true);
+    origEl.style.cssText  = 'border:none;cursor:default';
+    this.g('thread-orig').replaceChildren(origEl);
+
+    this.renderThreadReplies(post);
+    this.g('thread-reply-input').value    = '';
+    this.g('thread-reply-input').style.height = '';
+    this.g('thread-count').textContent    = '0';
+    this.g('thread-modal').classList.add('open');
+
+    /* Background chain fetch for replies we haven't loaded yet */
+    this.fetchThreadReplies(post);
+  }
+
+  renderThreadReplies(post) {
+    const replies = this.state.posts
+      .filter(p => p.parentTx === post.txHash)
+      .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+    const rc = this.g('thread-replies');
+    if (replies.length) {
+      rc.innerHTML = '';
+      replies.forEach(r => {
+        const el = document.createElement('div');
+        el.className      = 'post-item thread-reply-item';
+        el.dataset.txhash = r.txHash;
+        el.innerHTML      = this.postHTML(r, true);
+        rc.appendChild(el);
+      });
+    } else {
+      rc.innerHTML = `<p style="color:var(--muted);font-size:14px;padding:16px 0;text-align:center">
+        No replies yet — be the first!</p>`;
+    }
+  }
+
+  /*
+   * Fetch replies to a specific post from the chain.
+   * Scans up to 5 pages of the channel where the original was posted,
+   * looking for txs with REPLY_TO:<post.txHash> in the data.
+   * New replies found are added to state.posts and the thread is re-rendered.
+   */
+  async fetchThreadReplies(post) {
+    const loading = this.g('thread-loading');
+    loading.style.display = 'block';
+
+    const targetHash = post.txHash;
+    const scanAddr   = post.to || this.state.channel;
+    const known      = new Set(this.state.posts.map(p => p.txHash));
+    let   newFound   = [];
+
+    try {
+      for (let page = 1; page <= 5; page++) {
+        let raw;
+        try { raw = await this.apiFetch(scanAddr, page); }
+        catch { break; }
+
+        raw.forEach(tx => {
+          if (!tx.input || tx.input === '0x') return;
+          const from = tx.from?.toLowerCase();
+          const to   = tx.to?.toLowerCase();
+          try {
+            const text = ethers.utils.toUtf8String(tx.input).trim();
+            const m    = text.match(/^REPLY_TO:(0x[a-f0-9]{64})\n\n/i);
+            if (!m || m[1].toLowerCase() !== targetHash) return;
+            const display = text.slice(m[0].length).trim();
+            if (!display) return;
+            const hash = tx.hash.toLowerCase();
+            if (known.has(hash)) return;
+            known.add(hash);
+            newFound.push({
+              content: text, display,
+              parentTx: targetHash, direction: null,
+              reporter: from, to,
+              timestamp: tx.timeStamp
+                ? new Date(Number(tx.timeStamp) * 1000).toISOString()
+                : new Date().toISOString(),
+              txHash: hash, channel: scanAddr, mode: post.mode,
+            });
+          } catch { /* skip */ }
+        });
+
+        if (raw.length < 50) break;
+      }
+    } finally {
+      loading.style.display = 'none';
+    }
+
+    if (newFound.length > 0) {
+      this.state.posts = [...this.state.posts, ...newFound]
+        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+      await this.cache.savePosts(newFound);
+      /* If thread modal still showing the same post, refresh it */
+      if (this.state.threadPost?.txHash === targetHash) {
+        this.renderThreadReplies(post);
+        this.renderFeed();
+      }
+    }
+  }
+
+  async postThreadReply() {
+    const text = this.g('thread-reply-input').value.trim();
+    if (!text || !this.state.threadPost) return;
+    const ok = await this.publish(text, this.state.threadPost.txHash, this.state.threadPost.to);
+    if (ok) {
+      this.g('thread-reply-input').value = '';
+      this.g('thread-reply-input').style.height = '';
+      this.renderThreadReplies(this.state.threadPost);
+    }
+  }
+
+  closeModal(id) { this.g(id).classList.remove('open'); }
+
+  /* ── Scroll ──────────────────────────────────────────────────────────── */
+  onScroll() {
+    if (this.state.mode === 'notifications') return;
+    if (this.state.hasMore && !this.state.loading) {
+      const near = window.innerHeight + window.scrollY >= document.body.offsetHeight - 400;
+      if (near) this.fetchPosts(false);
+    }
+  }
+
+  /* ── Helpers ─────────────────────────────────────────────────────────── */
+  trunc = a => (a && a.length > 10) ? `${a.slice(0,6)}...${a.slice(-4)}` : (a || '');
+
+  relTime = ts => {
+    const s = Math.floor((Date.now() - new Date(ts)) / 1000);
+    if (s < 60)    return 'just now';
+    if (s < 3600)  return `${Math.floor(s / 60)}m`;
+    if (s < 86400) return `${Math.floor(s / 3600)}h`;
+    return new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
-
-  async loadCachedData() {
-    const i = await this.cache.getItems();
-    this.state.newsItems = i.filter(x => x.channel === this.state.channel).sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
-    this.renderNewsFeed();
-  }
-
-  async loadProfile() {
-    const p = await this.cache.getProfile(this.state.signerAddress) || {username:"", profilePicUrl:"image1.jpeg", bio:""};
-    this.state.profile = p;
-    this.elements.submissionAvatar.src = p.profilePicUrl || "image1.jpeg";
-    this.renderNewsFeed();
-  }
 }
 
+/* ── Boot ─────────────────────────────────────────────────────────────── */
 const pulse = new PulseUnderground();
+pulse.init().catch(err => {
+  console.error('Init error:', err);
+  utils.toast('Startup failed — see console');
+});
 </script>
 </body>
 </html>
