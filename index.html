@@ -121,7 +121,8 @@ nav { flex:1; padding:4px 0; }
   font-size:13px; color:var(--muted); display:block;
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
-#ap-dots { color:var(--muted); font-size:18px; flex-shrink:0; line-height:1; }
+#ap-dots { color:var(--muted); font-size:18px; flex-shrink:0; line-height:1; padding:4px 6px; border-radius:50%; transition:background 0.18s, color 0.18s; cursor:pointer; }
+#ap-dots:hover { background:rgba(249,24,128,0.1); color:#f91880; }
 
 /* Connect button (unauthenticated) */
 #connect-btn {
@@ -794,7 +795,7 @@ nav { flex:1; padding:4px 0; }
         <span id="ap-name">My Wallet</span>
         <span id="ap-addr"></span>
       </div>
-      <span id="ap-dots">•••</span>
+      <span id="ap-dots" title="Click to disconnect">•••</span>
     </div>
     <button id="connect-btn">Connect Wallet</button>
   </div>
@@ -1346,9 +1347,17 @@ class PulseUnderground {
       }
     });
 
-    /* Account pill (opens profile modal) */
+    /* Account pill — clicking ••• dots disconnects; clicking info area opens profile */
     const apill = g('account-pill');
-    if (apill) apill.onclick = () => this.openProfileModal();
+    if (apill) {
+      apill.onclick = e => {
+        if (e.target.closest('#ap-dots')) {
+          this.disconnect();
+        } else {
+          this.openProfileModal();
+        }
+      };
+    }
     g('nav-home').onclick      = () => this.goHome();
     g('nav-messages').onclick  = () => this.goInbox();
     g('nav-notifs').onclick    = () => this.goNotifications();
@@ -1822,18 +1831,11 @@ class PulseUnderground {
 
   async afterConnect() {
     const addr = this.state.signerAddr;
-    this.g('wallet-pill').textContent   = this.trunc(addr);
-    this.g('wallet-pill').style.display = 'block';
-    this.g('connect-btn').textContent   = 'Disconnect';
-    this.g('connect-btn').classList.add('ghost');
-    this.g('ch-self').style.display     = 'block';
-    /* Update account pill */
-    const apill = this.g('account-pill');
-    if (apill) {
-      apill.style.display = 'flex';
-      this.g('ap-addr').textContent = this.trunc(addr);
-      this.g('connect-btn').style.display = 'none';
-    }
+    /* Show account pill, hide connect button */
+    this.g('account-pill').style.display = 'flex';
+    this.g('connect-btn').style.display  = 'none';
+    this.g('ap-addr').textContent        = this.trunc(addr);
+    this.g('ch-self').style.display      = 'block';
     const cached = await this.cache.getProfile(addr);
     if (cached) this.applyProfile(cached);
     await this.fetchMyProfile();
@@ -1845,13 +1847,15 @@ class PulseUnderground {
     this.signer = null;
     this.state.signerAddr = null;
     this.state.profile    = { username:'', picUrl:'image1.jpeg', bio:'' };
-    this.g('wallet-pill').style.display = 'none';
-    this.g('connect-btn').textContent   = 'Connect Wallet';
-    const apill2 = this.g('account-pill');
-    if (apill2) { apill2.style.display = 'none'; this.g('connect-btn').style.display = 'block'; }
-    this.g('connect-btn').classList.remove('ghost');
-    this.g('compose-avatar').src        = 'image1.jpeg';
-    this.g('ch-self').style.display     = 'none';
+    /* Hide account pill, show connect button */
+    this.g('account-pill').style.display = 'none';
+    this.g('connect-btn').style.display  = 'block';
+    this.g('compose-avatar').src         = 'image1.jpeg';
+    this.g('ch-self').style.display      = 'none';
+    /* Reset account pill fields */
+    this.g('ap-avatar').src          = 'image1.jpeg';
+    this.g('ap-name').textContent    = 'My Wallet';
+    this.g('ap-addr').textContent    = '';
     this.clearNotifBadge();
     localStorage.removeItem('pulseConnected');
     this.renderFeed();
@@ -1928,14 +1932,9 @@ class PulseUnderground {
     };
     this.g('compose-avatar').src = this.state.profile.picUrl;
     this.g('modal-compose-avatar').src = this.state.profile.picUrl;
-    if (this.state.profile.picUrl) {
-      const av = this.g('ap-avatar');
-      if (av) av.src = this.state.profile.picUrl;
-    }
-    if (this.state.profile.username) {
-      const nm = this.g('ap-name');
-      if (nm) nm.textContent = this.state.profile.username;
-    }
+    /* Sync profile to account pill */
+    this.g('ap-avatar').src       = this.state.profile.picUrl || 'image1.jpeg';
+    this.g('ap-name').textContent = this.state.profile.username || this.trunc(this.state.signerAddr || '');
   }
 
   openProfileModal() {
