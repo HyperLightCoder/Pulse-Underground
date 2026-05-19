@@ -870,6 +870,125 @@ nav { flex:1; padding:4px 0; }
 .settings-about-logo img { width:48px; height:48px; border-radius:50%; border:2px solid var(--primary); }
 .settings-about-logo div strong { display:block; font-size:17px; font-weight:800; }
 .settings-about-logo div span { font-size:13px; color:var(--muted); }
+/* ── Profile page (full in-column view) ─────────────────────────────────── */
+.prof-page { flex:1; overflow-y:auto; }
+
+/* Cover photo */
+.prof-cover {
+  height:200px; position:relative; overflow:hidden; flex-shrink:0;
+  background:linear-gradient(135deg,rgba(124,77,255,0.55),rgba(179,136,255,0.25),rgba(43,134,197,0.15));
+  cursor:default;
+}
+.prof-cover img {
+  width:100%; height:100%; object-fit:cover; display:block;
+}
+
+/* Avatar row — sits below cover, overlapping it */
+.prof-avatar-row {
+  display:flex; align-items:flex-end; justify-content:space-between;
+  padding:0 16px; margin-top:-52px; margin-bottom:12px; position:relative;
+}
+.prof-page-avatar {
+  width:104px; height:104px; border-radius:50%;
+  border:4px solid var(--bg-dark); object-fit:cover;
+  background:var(--bg-card); flex-shrink:0;
+  position:relative; z-index:2;
+}
+.prof-actions { display:flex; gap:8px; align-items:center; padding-bottom:4px; }
+.prof-edit-btn {
+  padding:8px 18px; background:transparent;
+  border:1px solid var(--border); border-radius:9999px;
+  color:var(--text); font-size:14px; font-weight:700;
+  cursor:pointer; transition:background 0.18s;
+}
+.prof-edit-btn:hover { background:rgba(255,255,255,0.06); }
+.prof-follow-btn {
+  padding:8px 18px; background:var(--text); border:none;
+  border-radius:9999px; color:var(--bg-dark);
+  font-size:14px; font-weight:700; cursor:pointer; transition:all 0.18s;
+}
+.prof-follow-btn:hover { background:rgba(231,233,234,0.85); }
+.prof-following-btn {
+  padding:8px 18px; background:transparent;
+  border:1px solid var(--border); border-radius:9999px;
+  color:var(--text); font-size:14px; font-weight:700;
+  cursor:pointer; transition:all 0.18s;
+}
+.prof-following-btn:hover { border-color:#f4212e; color:#f4212e; }
+
+/* Info block */
+.prof-info { padding:0 16px 12px; }
+.prof-display-name { font-size:20px; font-weight:800; line-height:1.2; color:var(--text); }
+.prof-handle {
+  font-size:15px; color:var(--muted); font-family:monospace;
+  margin-top:2px; cursor:pointer; display:inline-block;
+}
+.prof-handle:hover { text-decoration:underline; color:var(--primary-lt); }
+.prof-bio {
+  font-size:15px; line-height:1.6; color:var(--text);
+  margin-top:10px; word-break:break-word; white-space:pre-wrap;
+}
+.prof-meta-row {
+  display:flex; flex-wrap:wrap; gap:12px; margin-top:10px; align-items:center;
+}
+.prof-meta-item {
+  display:flex; align-items:center; gap:4px;
+  font-size:14px; color:var(--muted);
+}
+.prof-meta-item a { color:var(--primary-lt); }
+.prof-meta-item a:hover { text-decoration:underline; }
+.prof-counts-row {
+  display:flex; gap:20px; margin-top:12px;
+}
+.prof-count-item {
+  font-size:14px; color:var(--muted); cursor:pointer;
+}
+.prof-count-item:hover { text-decoration:underline; }
+.prof-count-item strong { color:var(--text); font-weight:700; }
+
+/* Profile tabs */
+.prof-tabs {
+  display:flex; border-bottom:1px solid var(--border);
+  position:sticky; top:53px; z-index:10;
+  background:rgba(0,0,0,0.85); backdrop-filter:blur(12px);
+}
+.prof-tab {
+  flex:1; padding:14px 0; text-align:center;
+  font-size:14px; font-weight:500; color:var(--muted);
+  background:transparent; border:none; cursor:pointer;
+  position:relative; transition:background 0.18s, color 0.18s;
+  white-space:nowrap;
+}
+.prof-tab:hover { background:rgba(255,255,255,0.03); color:var(--text); }
+.prof-tab.active { font-weight:700; color:var(--text); }
+.prof-tab.active::after {
+  content:''; position:absolute; bottom:-1px; left:50%;
+  transform:translateX(-50%);
+  width:48px; height:4px; background:var(--primary); border-radius:9999px;
+}
+
+/* Profile tab feed */
+.prof-feed { flex:1; }
+.prof-empty {
+  padding:48px 24px; text-align:center; color:var(--muted);
+}
+.prof-empty span { font-size:40px; display:block; margin-bottom:12px; }
+.prof-empty h3 { font-size:18px; font-weight:800; color:var(--text); margin-bottom:6px; }
+.prof-empty p  { font-size:14px; max-width:260px; margin:0 auto; }
+
+/* Profile media grid */
+.prof-media-grid {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:2px; padding:2px;
+}
+.prof-media-thumb {
+  aspect-ratio:1; object-fit:cover; width:100%; cursor:zoom-in;
+  display:block; transition:opacity 0.15s;
+}
+.prof-media-thumb:hover { opacity:0.85; }
+
+/* Edit modal cover preview */
+#pe-cover-preview.has-cover { color:transparent; }
+
 </style>
 </head>
 <body>
@@ -1113,53 +1232,69 @@ nav { flex:1; padding:4px 0; }
   </div>
 </div>
 
-<!-- Profile modal -->
+<!-- Edit Profile modal (view is now a full in-column page) -->
 <div class="modal-bg" id="profile-modal">
   <div class="modal">
     <div class="modal-head">
-      <span class="modal-title" id="profile-modal-title">Profile</span>
+      <span class="modal-title">Edit Profile</span>
       <button class="modal-close" id="close-profile">✕</button>
     </div>
-    <div id="profile-view">
-      <div class="prof-avatar-wrap">
-        <img src="image1.jpeg" id="pv-avatar" alt="Avatar">
-        <h2 id="pv-name">Anonymous</h2>
-        <p id="pv-bio">No bio yet.</p>
+
+    <!-- Cover photo row -->
+    <div style="position:relative;margin-bottom:56px">
+      <div id="pe-cover-preview" style="
+        height:96px;border-radius:12px;overflow:hidden;background:
+        linear-gradient(135deg,rgba(124,77,255,0.6),rgba(179,136,255,0.3));
+        cursor:pointer;display:flex;align-items:center;justify-content:center;
+        color:rgba(255,255,255,0.6);font-size:13px;font-weight:600;
+        border:1px solid var(--border)">
+        🖼 Cover photo URL below
       </div>
-      <button class="btn-pri" style="width:100%" id="edit-profile-btn">✏️ Edit Profile</button>
+      <img src="image1.jpeg" id="pe-preview" style="
+        position:absolute;bottom:-44px;left:16px;
+        width:80px;height:80px;border-radius:50%;
+        border:4px solid var(--bg-mid);object-fit:cover;background:var(--bg-card)">
     </div>
-    <div id="profile-edit" style="display:none">
-      <div style="text-align:center;margin-bottom:16px">
-        <img src="image1.jpeg" id="pe-preview"
-          style="width:84px;height:84px;border-radius:50%;border:3px solid var(--primary);object-fit:cover">
-      </div>
-      <div class="form-group">
-        <label class="form-lbl">Username</label>
-        <input type="text" class="form-input" id="pe-name" placeholder="Your display name">
-      </div>
-      <div class="form-group">
-        <label class="form-lbl">Profile picture (https:// URL)</label>
-        <input type="text" class="form-input" id="pe-pic" placeholder="https://…">
-      </div>
-      <details class="nft-section">
-        <summary>Use an NFT as profile picture</summary>
-        <div class="nft-inner">
-          <div class="nft-row">
-            <input type="text" class="form-input" id="nft-contract" placeholder="Contract (0x…)" style="flex:2">
-            <input type="text" class="form-input" id="nft-token-id" placeholder="Token ID" style="flex:1">
-          </div>
-          <button class="btn-sm" id="fetch-nft-btn">🖼 Fetch NFT Image</button>
-          <div class="nft-status" id="nft-status"></div>
+
+    <div class="form-group">
+      <label class="form-lbl">Display Name</label>
+      <input type="text" class="form-input" id="pe-name" placeholder="Your display name" maxlength="50">
+    </div>
+    <div class="form-group">
+      <label class="form-lbl">Bio</label>
+      <textarea class="form-textarea" id="pe-bio" placeholder="Tell the world…" maxlength="160" rows="3"></textarea>
+      <span id="pe-bio-count" style="font-size:12px;color:var(--muted);display:block;text-align:right;margin-top:4px"></span>
+    </div>
+    <div class="form-group">
+      <label class="form-lbl">Location</label>
+      <input type="text" class="form-input" id="pe-location" placeholder="Where in the world?" maxlength="30">
+    </div>
+    <div class="form-group">
+      <label class="form-lbl">Website</label>
+      <input type="text" class="form-input" id="pe-website" placeholder="https://…" maxlength="100">
+    </div>
+    <div class="form-group">
+      <label class="form-lbl">Profile picture (https:// URL)</label>
+      <input type="text" class="form-input" id="pe-pic" placeholder="https://…">
+    </div>
+    <div class="form-group">
+      <label class="form-lbl">Cover photo (https:// URL)</label>
+      <input type="text" class="form-input" id="pe-cover" placeholder="https://…">
+    </div>
+    <details class="nft-section">
+      <summary>Use an NFT as profile picture</summary>
+      <div class="nft-inner">
+        <div class="nft-row">
+          <input type="text" class="form-input" id="nft-contract" placeholder="Contract (0x…)" style="flex:2">
+          <input type="text" class="form-input" id="nft-token-id" placeholder="Token ID" style="flex:1">
         </div>
-      </details>
-      <div class="form-group" style="margin-top:16px">
-        <label class="form-lbl">Bio</label>
-        <textarea class="form-textarea" id="pe-bio" placeholder="Tell the world…"></textarea>
+        <button class="btn-sm" id="fetch-nft-btn">🖼 Fetch NFT Image</button>
+        <div class="nft-status" id="nft-status"></div>
       </div>
-      <div class="btn-row">
-        <button class="btn-pri" id="save-profile-btn">Save On-Chain</button>
-        <button class="btn-ghost" id="cancel-edit-btn">Cancel</button>
-      </div>
+    </details>
+    <div class="btn-row" style="margin-top:20px">
+      <button class="btn-pri" id="save-profile-btn">Save On-Chain</button>
+      <button class="btn-ghost" id="cancel-edit-btn">Cancel</button>
     </div>
   </div>
 </div>
@@ -1605,10 +1740,30 @@ class PulseUnderground {
     });
 
     g('close-profile').onclick    = () => this.closeModal('profile-modal');
-    g('edit-profile-btn').onclick = () => this.showEditForm();
-    g('cancel-edit-btn').onclick  = () => this.showProfileView();
+    g('cancel-edit-btn').onclick  = () => this.closeModal('profile-modal');
     g('save-profile-btn').onclick = () => this.saveProfile();
-    g('pe-pic').oninput = () => { g('pe-preview').src = g('pe-pic').value.trim() || 'image1.jpeg'; };
+    g('pe-pic').oninput = () => {
+      const v = g('pe-pic').value.trim();
+      g('pe-preview').src = v || 'image1.jpeg';
+    };
+    g('pe-cover').oninput = () => {
+      const v = g('pe-cover').value.trim();
+      const prev = g('pe-cover-preview');
+      if (v) {
+        prev.style.backgroundImage = `url(${v})`;
+        prev.style.backgroundSize  = 'cover';
+        prev.style.backgroundPosition = 'center';
+        prev.classList.add('has-cover');
+      } else {
+        prev.style.backgroundImage = '';
+        prev.classList.remove('has-cover');
+      }
+    };
+    g('pe-bio').oninput = () => {
+      const n = g('pe-bio').value.length;
+      g('pe-bio-count').textContent = `${n}/160`;
+      g('pe-bio-count').style.color = n > 140 ? '#f4212e' : 'var(--muted)';
+    };
     g('fetch-nft-btn').onclick = () => this.fetchNFTImage();
 
     g('close-reply').onclick      = () => this.closeModal('reply-modal');
@@ -2204,6 +2359,7 @@ class PulseUnderground {
       explore:       'Discover on PulseChain',
       bookmarks:     'Saved posts',
       settings:      'App configuration',
+      profile:       'Your on-chain profile',
     };
     this.g('ch-label').textContent = map[mode] || '';
   }
@@ -2455,9 +2611,13 @@ class PulseUnderground {
 
   applyProfile(data) {
     this.state.profile = {
-      username: data.username || '',
-      picUrl:   data.picUrl || data.profilePicUrl || 'image1.jpeg',
-      bio:      data.bio    || '',
+      username:  data.username  || '',
+      picUrl:    data.picUrl    || data.profilePicUrl || 'image1.jpeg',
+      bio:       data.bio       || '',
+      coverUrl:  data.coverUrl  || '',
+      location:  data.location  || '',
+      website:   data.website   || '',
+      joinedTs:  data.joinedTs  || null,
     };
     this.g('compose-avatar').src       = this.state.profile.picUrl;
     this.g('modal-compose-avatar').src = this.state.profile.picUrl;
@@ -2465,58 +2625,370 @@ class PulseUnderground {
     this.g('ap-name').textContent = this.state.profile.username || this.trunc(this.state.signerAddr || '');
   }
 
+  /* ── Profile page (full in-column view) ──────────────────────────────── */
   openProfileModal() {
-    if (!this.state.signerAddr) { utils.toast('Connect wallet first'); return; }
-    this.showProfileView();
-    this.g('profile-modal').classList.add('open');
+    /* Own profile: go to profile page */
+    if (this.state.signerAddr) {
+      this.goProfilePage(this.state.signerAddr, true);
+    } else {
+      utils.toast('Connect wallet to view your profile');
+    }
   }
 
-  showProfileView() {
-    const p = this.state.profile;
-    this.g('pv-avatar').src       = p.picUrl || 'image1.jpeg';
-    this.g('pv-name').textContent = p.username || this.trunc(this.state.signerAddr);
-    this.g('pv-bio').textContent  = p.bio      || 'No bio yet.';
-    this.g('profile-view').style.display = 'block';
-    this.g('profile-edit').style.display = 'none';
-    this.g('profile-modal-title').textContent = 'Profile';
+  async goProfilePage(address, isOwn = false) {
+    this.setNav(isOwn ? 'nav-profile' : null, isOwn ? 'profile' : null);
+    this.state.mode = 'profile';
+    this.g('compose-area').style.display   = 'none';
+    this.g('channel-banner').style.display = 'none';
+    this.g('feed-tabs').style.display      = 'none';
+    this.g('new-banner').style.display     = 'none';
+    this.g('loading-more').style.display   = 'none';
+    this.g('feed-title').textContent       = '';
+
+    /* Fetch profile data if not own */
+    let prof = isOwn
+      ? this.state.profile
+      : (this.state.profCache[address] || null);
+    if (!prof && !isOwn) {
+      await this.fetchOtherProfile(address);
+      prof = this.state.profCache[address] || {};
+    }
+    if (!prof) prof = {};
+
+    this.g('feed').innerHTML = this._profilePageHTML(address, prof, isOwn);
+    this._wireProfilePageListeners(address, isOwn);
+    this.loadProfileTab(address, isOwn, 'posts');
   }
 
+  _profilePageHTML(address, prof, isOwn) {
+    const name     = utils.safe(prof.username || this.trunc(address));
+    const handle   = utils.safe(address);
+    const bio      = utils.safe(prof.bio || '');
+    const location = utils.safe(prof.location || '');
+    const website  = prof.website ? utils.safe(prof.website) : '';
+    const joined   = prof.joinedTs
+      ? new Date(prof.joinedTs).toLocaleDateString('en-US',{month:'long',year:'numeric'})
+      : '';
+    const picUrl   = utils.safe(prof.picUrl   || 'image1.jpeg');
+    const coverUrl = prof.coverUrl ? utils.safe(prof.coverUrl) : '';
+
+    const coverStyle = coverUrl
+      ? `background:url('${coverUrl}') center/cover no-repeat`
+      : `background:linear-gradient(135deg,rgba(124,77,255,0.55),rgba(179,136,255,0.25),rgba(43,134,197,0.15))`;
+
+    const followBtn = isOwn
+      ? `<button class="prof-edit-btn" id="prof-edit-trigger">Edit profile</button>`
+      : this.state.following.has(address.toLowerCase())
+        ? `<button class="prof-following-btn" id="prof-follow-btn">Following</button>`
+        : `<button class="prof-follow-btn" id="prof-follow-btn">Follow</button>`;
+
+    const metaItems = [
+      location ? `<span class="prof-meta-item">📍 ${location}</span>` : '',
+      website  ? `<span class="prof-meta-item">🔗 <a href="${website}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${website.replace(/^https?:\/\//,'')}</a></span>` : '',
+      joined   ? `<span class="prof-meta-item">📅 Joined ${utils.safe(joined)}</span>` : '',
+    ].filter(Boolean).join('');
+
+    return `
+    <div class="prof-page">
+      <div class="prof-cover" style="${coverStyle}"></div>
+      <div class="prof-avatar-row">
+        <img src="${picUrl}" class="prof-page-avatar" id="prof-page-avatar"
+          alt="" onerror="this.src='image1.jpeg'">
+        <div class="prof-actions">
+          ${followBtn}
+        </div>
+      </div>
+      <div class="prof-info">
+        <div class="prof-display-name" id="prof-display-name">${name}</div>
+        <div class="prof-handle" id="prof-handle-addr"
+          title="Click to copy" data-addr="${handle}">${handle}</div>
+        ${bio ? `<div class="prof-bio">${bio}</div>` : ''}
+        ${metaItems ? `<div class="prof-meta-row">${metaItems}</div>` : ''}
+        <div class="prof-counts-row">
+          <span class="prof-count-item" id="prof-following-count">
+            <strong>—</strong> Following
+          </span>
+          <span class="prof-count-item">
+            <strong>?</strong> Followers
+          </span>
+        </div>
+      </div>
+      <div class="prof-tabs">
+        <button class="prof-tab active" data-ptab="posts">Posts</button>
+        <button class="prof-tab" data-ptab="replies">Replies</button>
+        <button class="prof-tab" data-ptab="media">Media</button>
+        <button class="prof-tab" data-ptab="likes">Likes</button>
+      </div>
+      <div class="prof-feed" id="prof-feed">
+        <div class="prof-empty">
+          <span>⏳</span>
+          <h3>Loading…</h3>
+          <p>Fetching from chain</p>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  _wireProfilePageListeners(address, isOwn) {
+    /* Tab switching */
+    document.querySelectorAll('.prof-tab').forEach(btn => {
+      btn.onclick = () => {
+        document.querySelectorAll('.prof-tab').forEach(t => t.classList.remove('active'));
+        btn.classList.add('active');
+        this.loadProfileTab(address, isOwn, btn.dataset.ptab);
+      };
+    });
+
+    /* Address copy */
+    const handleEl = document.getElementById('prof-handle-addr');
+    if (handleEl) {
+      handleEl.onclick = () => utils.copyToClipboard(address, 'Address copied!');
+    }
+
+    /* Edit profile button (own profile) */
+    const editBtn = document.getElementById('prof-edit-trigger');
+    if (editBtn) editBtn.onclick = () => this.showEditForm();
+
+    /* Follow/Unfollow (other profiles) */
+    const followBtn = document.getElementById('prof-follow-btn');
+    if (followBtn) {
+      followBtn.onclick = () => this.toggleFollow(address, followBtn);
+    }
+
+    /* Count following */
+    this._showFollowingCount();
+  }
+
+  _showFollowingCount() {
+    const el = document.getElementById('prof-following-count');
+    if (el) {
+      const n = this.state.following.size;
+      el.innerHTML = `<strong>${n}</strong> Following`;
+    }
+  }
+
+  async toggleFollow(address, btn) {
+    if (!this.signer) { utils.toast('Connect wallet to follow'); return; }
+    const addr = address.toLowerCase();
+    const isFollowing = this.state.following.has(addr);
+    const prefix = isFollowing ? UNFOLLOW_PREFIX : FOLLOW_PREFIX;
+    const ok = await this.publish(prefix + addr, null, this.state.signerAddr);
+    if (ok) {
+      if (isFollowing) {
+        this.state.following.delete(addr);
+        btn.textContent  = 'Follow';
+        btn.className    = 'prof-follow-btn';
+      } else {
+        this.state.following.add(addr);
+        btn.textContent  = 'Following';
+        btn.className    = 'prof-following-btn';
+      }
+      this._showFollowingCount();
+    }
+  }
+
+  /* ── Profile tab content ────────────────────────────────────────────── */
+  async loadProfileTab(address, isOwn, tab) {
+    const feedEl = document.getElementById('prof-feed');
+    if (!feedEl) return;
+    feedEl.innerHTML = `<div class="prof-empty"><span>⏳</span><h3>Loading…</h3></div>`;
+
+    if (tab === 'likes' && !isOwn) {
+      feedEl.innerHTML = `<div class="prof-empty"><span>🔒</span><h3>Private</h3><p>Likes are only visible to the account holder.</p></div>`;
+      return;
+    }
+
+    try {
+      let posts = [];
+      const imgRe = /\.(jpg|jpeg|png|gif|webp|svg)(\?[^\s]*)?$/i;
+
+      if (tab === 'likes') {
+        /* Likes: resolve txHashes from state.likes */
+        const likedHashes = [...this.state.likes];
+        /* First check already-cached posts */
+        const fromCache = this.state.posts.filter(p => this.state.likes.has(p.txHash));
+        const cachedSet = new Set(fromCache.map(p => p.txHash));
+        posts = fromCache;
+        /* Fetch any not in cache from chain (up to 20) */
+        const missing = likedHashes.filter(h => !cachedSet.has(h)).slice(0, 20);
+        for (const hash of missing) {
+          try {
+            const cached = await this.cache.getPosts(p => p.txHash === hash);
+            if (cached.length) { posts.push(cached[0]); continue; }
+          } catch { /* skip */ }
+        }
+        posts.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+      } else {
+        /* Posts, Replies, Media: scan address pages */
+        const raw = await this._scanProfilePages(address, 4);
+        raw.forEach(tx => {
+          const from = tx.from?.toLowerCase();
+          const to   = tx.to?.toLowerCase();
+          if (from !== address.toLowerCase()) return;
+          if (!tx.input || tx.input === '0x') return;
+          try {
+            const text = ethers.utils.toUtf8String(tx.input).trim();
+            if (text.startsWith(PROFILE_PREFIX)) return;
+            if (text.startsWith(LIKE_PREFIX) || text.startsWith(BOOKMARK_PREFIX) ||
+                text.startsWith(FOLLOW_PREFIX) || text.startsWith(UNFOLLOW_PREFIX)) return;
+            const isReply = text.startsWith(REPLY_PREFIX);
+            if (tab === 'posts'   &&  isReply) return;
+            if (tab === 'replies' && !isReply) return;
+            const m       = text.match(/^REPLY_TO:(0x[a-f0-9]{64})\n\n/i);
+            const display = m ? text.slice(m[0].length).trim() : text;
+            if (!display) return;
+            if (tab === 'media') {
+              const hasImg = /https?:\/\/[^\s<>"{}|\\^[\]`]+/g.test(display) &&
+                Array.from(display.matchAll(/https?:\/\/[^\s<>"{}|\\^[\]`]+/g))
+                  .some(mm => imgRe.test(mm[0]));
+              if (!hasImg) return;
+            }
+            posts.push({
+              content: text, display,
+              parentTx: m ? m[1].toLowerCase() : null,
+              direction: null,
+              reporter: from, to: to ?? null,
+              timestamp: tx.timeStamp
+                ? new Date(Number(tx.timeStamp)*1000).toISOString()
+                : new Date().toISOString(),
+              txHash: tx.hash.toLowerCase(),
+              channel: to, mode: 'profile',
+            });
+          } catch { /* skip */ }
+        });
+      }
+
+      if (!posts.length) {
+        const empties = {
+          posts:   ['📝','No posts yet',   'Posts will appear here.'],
+          replies: ['💬','No replies yet', 'Replies to others appear here.'],
+          media:   ['🖼','No media yet',   'Posts with images appear here.'],
+          likes:   ['🤍','No likes yet',   'Posts you like appear here.'],
+        };
+        const [icon, title, desc] = empties[tab] || ['📡','Nothing here',''];
+        feedEl.innerHTML = `<div class="prof-empty"><span>${icon}</span><h3>${title}</h3><p>${desc}</p></div>`;
+        return;
+      }
+
+      if (tab === 'media') {
+        /* Media grid */
+        const imgUrls = [];
+        posts.forEach(p => {
+          const matches = [...p.display.matchAll(/https?:\/\/[^\s<>"{}|\\^[\]`]+/g)];
+          matches.filter(mm => imgRe.test(mm[0])).forEach(mm => imgUrls.push({ url: mm[0], txHash: p.txHash }));
+        });
+        feedEl.innerHTML = `<div class="prof-media-grid">${
+          imgUrls.slice(0,60).map(({ url, txHash }) =>
+            `<img src="${utils.safe(url)}" class="prof-media-thumb" loading="lazy"
+              onerror="this.style.display='none'"
+              onclick="window.open('https://otter.pulsechain.com/tx/${utils.safe(txHash)}','_blank')">`
+          ).join('')
+        }</div>`;
+        return;
+      }
+
+      /* Posts / Replies / Likes: standard post list */
+      const replyMap = new Map();
+      posts.forEach(p => { if (p.parentTx) replyMap.set(p.parentTx, (replyMap.get(p.parentTx)||0)+1); });
+      const frag = document.createDocumentFragment();
+      posts.forEach(p => {
+        this._postMap.set(p.txHash, p);
+        const el = document.createElement('div');
+        el.className      = 'post-item';
+        el.dataset.txhash = p.txHash;
+        el.innerHTML      = this.postHTML(p, false, replyMap);
+        frag.appendChild(el);
+        if (p.reporter !== this.state.signerAddr) this.fetchOtherProfile(p.reporter);
+      });
+      feedEl.innerHTML = '';
+      feedEl.appendChild(frag);
+
+    } catch (err) {
+      feedEl.innerHTML = `<div class="prof-empty"><span>⚠️</span><h3>Error loading tab</h3><p>${utils.safe(err.message)}</p></div>`;
+    }
+  }
+
+  async _scanProfilePages(address, maxPages = 4) {
+    const all = [];
+    for (let page = 1; page <= maxPages; page++) {
+      let raw;
+      try { raw = await this.apiFetch(address, page); }
+      catch { break; }
+      all.push(...raw);
+      if (raw.length < 50) break;
+    }
+    return all;
+  }
+
+  /* ── Edit profile modal ─────────────────────────────────────────────── */
   showEditForm() {
     const p = this.state.profile;
-    this.g('pe-name').value  = p.username || '';
-    this.g('pe-pic').value   = (p.picUrl && p.picUrl !== 'image1.jpeg') ? p.picUrl : '';
-    this.g('pe-bio').value   = p.bio      || '';
-    this.g('pe-preview').src = p.picUrl   || 'image1.jpeg';
-    this.g('nft-status').textContent = '';
-    this.g('profile-view').style.display = 'none';
-    this.g('profile-edit').style.display = 'block';
-    this.g('profile-modal-title').textContent = 'Edit Profile';
+    const g = this.g.bind(this);
+    g('pe-name').value     = p.username  || '';
+    g('pe-bio').value      = p.bio       || '';
+    g('pe-location').value = p.location  || '';
+    g('pe-website').value  = p.website   || '';
+    g('pe-pic').value      = (p.picUrl && p.picUrl !== 'image1.jpeg') ? p.picUrl : '';
+    g('pe-cover').value    = p.coverUrl  || '';
+    g('pe-preview').src    = p.picUrl    || 'image1.jpeg';
+    g('nft-status').textContent = '';
+
+    /* Bio counter */
+    const n = g('pe-bio').value.length;
+    g('pe-bio-count').textContent = n ? `${n}/160` : '';
+
+    /* Cover preview */
+    const prev = g('pe-cover-preview');
+    if (p.coverUrl) {
+      prev.style.backgroundImage    = `url(${p.coverUrl})`;
+      prev.style.backgroundSize     = 'cover';
+      prev.style.backgroundPosition = 'center';
+      prev.classList.add('has-cover');
+    } else {
+      prev.style.backgroundImage = '';
+      prev.classList.remove('has-cover');
+    }
+
+    g('profile-modal').classList.add('open');
   }
 
+  /* Replaces old showProfileView — no longer needed as page view */
+  showProfileView() { this.openProfileModal(); }
+
   async saveProfile() {
-    const username = this.g('pe-name').value.trim();
-    let   picUrl   = this.g('pe-pic').value.trim();
-    const bio      = this.g('pe-bio').value.trim();
+    const g = this.g.bind(this);
+    const username = g('pe-name').value.trim();
+    let   picUrl   = g('pe-pic').value.trim();
+    let   coverUrl = g('pe-cover').value.trim();
+    const bio      = g('pe-bio').value.trim().slice(0, 160);
+    const location = g('pe-location').value.trim().slice(0, 30);
+    const website  = g('pe-website').value.trim().slice(0, 100);
+
     if (picUrl && !picUrl.startsWith('https://')) {
       utils.toast('Profile picture must be an https:// URL'); return;
     }
+    if (coverUrl && !coverUrl.startsWith('https://')) {
+      utils.toast('Cover photo must be an https:// URL'); return;
+    }
     if (picUrl) {
       const ok = await new Promise(r => {
-        const img = new Image();
-        img.onload  = () => r(true);
-        img.onerror = () => r(false);
-        img.src = picUrl;
+        const img = new Image(); img.onload = ()=>r(true); img.onerror = ()=>r(false); img.src = picUrl;
       });
-      if (!ok) { picUrl = ''; utils.toast('Image could not load — using default'); }
+      if (!ok) { picUrl = ''; utils.toast('Profile image could not load — using default'); }
     }
     picUrl = picUrl || 'image1.jpeg';
-    const data = { username, picUrl, bio };
+
+    const joinedTs = this.state.profile.joinedTs || Date.now();
+    const data = { username, picUrl, coverUrl, bio, location, website, joinedTs };
     this.applyProfile(data);
     await this.cache.saveProfile({ address: this.state.signerAddr, ...data });
     const ok = await this.publish(PROFILE_PREFIX + JSON.stringify(data), null, this.state.signerAddr);
     if (ok) {
       this.closeModal('profile-modal');
-      this.renderFeed();
+      /* Refresh profile page if currently on it */
+      if (this.state.mode === 'profile') {
+        this.goProfilePage(this.state.signerAddr, true);
+      }
       utils.toast('Profile saved on-chain ✓');
     }
   }
