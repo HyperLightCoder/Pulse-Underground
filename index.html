@@ -17,7 +17,6 @@
   --wave-b:      #784ba0;
   --wave-c:      #2b86c5;
   --bg-dark:     #000000;
-  --bg-light:    #000000;
   --bg-mid:      #16181c;
   --bg-card:     #16181c;
   --border:      #2f3336;
@@ -39,7 +38,7 @@ a { color:inherit; text-decoration:none; }
 :focus-visible { outline:2px solid var(--primary); outline-offset:2px; }
 
 /* ── Layout ─────────────────────────────────────────────────────────────── */
-#app { display:flex; min-height:100vh; max-width:1265px; margin:0 auto; }
+#app { display:flex; min-height:100vh; max-width:1225px; margin:0 auto; }
 
 /* ── Left sidebar ───────────────────────────────────────────────────────── */
 #sidebar-left {
@@ -78,8 +77,8 @@ nav { flex:1; padding:4px 0; }
   transition:background 0.18s; margin-bottom:2px; white-space:nowrap;
 }
 .nav-btn:hover  { background:rgba(255,255,255,0.06); }
-.nav-btn.active { font-weight:700; }
-.nav-btn.active .nav-icon { filter:drop-shadow(0 0 1px currentColor); }
+.nav-btn.active { font-weight:800; color:var(--text); }
+.nav-btn.active .nav-icon { filter:drop-shadow(0 0 2px var(--primary-lt)); }
 .nav-icon  { font-size:24px; width:28px; text-align:center; flex-shrink:0; }
 .nav-label { font-size:20px; }
 .notif-badge {
@@ -91,7 +90,6 @@ nav { flex:1; padding:4px 0; }
 }
 .notif-badge.on { display:block; }
 
-/* BIG purple Post pill button — Twitter's primary CTA */
 #nav-post-btn {
   display:block; width:calc(100% - 32px); margin:12px 16px;
   padding:16px; background:var(--primary); color:#fff;
@@ -101,7 +99,6 @@ nav { flex:1; padding:4px 0; }
 }
 #nav-post-btn:hover { background:var(--primary-lt); box-shadow:var(--neon); }
 
-/* Account pill at sidebar bottom — Twitter account widget */
 #account-pill {
   display:flex; align-items:center; gap:10px;
   padding:10px 16px; margin:8px 0;
@@ -125,7 +122,6 @@ nav { flex:1; padding:4px 0; }
 #ap-dots { color:var(--muted); font-size:18px; flex-shrink:0; line-height:1; padding:4px 6px; border-radius:50%; transition:background 0.18s, color 0.18s; cursor:pointer; }
 #ap-dots:hover { background:rgba(249,24,128,0.1); color:#f91880; }
 
-/* Connect button (unauthenticated) */
 #connect-btn {
   display:block; width:calc(100% - 32px); margin:12px 16px;
   padding:14px; background:var(--primary); color:#fff;
@@ -134,10 +130,6 @@ nav { flex:1; padding:4px 0; }
   transition:background 0.2s; text-align:center;
 }
 #connect-btn:hover { background:var(--primary-lt); }
-#connect-btn.ghost {
-  background:transparent; border:1px solid var(--border);
-  color:var(--muted); padding:10px; font-size:13px;
-}
 
 /* ── Main column ────────────────────────────────────────────────────────── */
 #main {
@@ -147,7 +139,6 @@ nav { flex:1; padding:4px 0; }
   display:flex; flex-direction:column;
 }
 
-/* Feed header */
 #feed-header {
   position:sticky; top:0; z-index:20;
   background:rgba(0,0,0,0.85); backdrop-filter:blur(12px) saturate(180%);
@@ -166,7 +157,6 @@ nav { flex:1; padding:4px 0; }
 }
 #refresh-btn:hover { background:rgba(255,255,255,0.06); color:var(--text); }
 
-/* Feed tabs */
 #feed-tabs { display:flex; border-bottom:1px solid var(--border); }
 .feed-tab {
   flex:1; padding:15px 0; text-align:center;
@@ -182,7 +172,6 @@ nav { flex:1; padding:4px 0; }
   width:56px; height:4px; background:var(--primary); border-radius:9999px;
 }
 
-/* New posts banner */
 #new-banner {
   display:none; width:100%; padding:14px 16px;
   background:transparent; border:none; border-bottom:1px solid var(--border);
@@ -191,7 +180,6 @@ nav { flex:1; padding:4px 0; }
 }
 #new-banner:hover { background:rgba(255,255,255,0.03); }
 
-/* Channel banner */
 #channel-banner { display:none; border-bottom:1px solid var(--border); }
 .cb-cover {
   height:130px;
@@ -223,7 +211,7 @@ nav { flex:1; padding:4px 0; }
 
 /* ── Compose ─────────────────────────────────────────────────────────────── */
 #compose-area {
-  display:flex; gap:12px; padding:12px 16px 4px;
+  display:flex; gap:12px; padding:12px 16px 8px;
   border-bottom:1px solid var(--border);
 }
 .compose-avatar {
@@ -232,7 +220,6 @@ nav { flex:1; padding:4px 0; }
 }
 .compose-body { flex:1; min-width:0; }
 
-/* Audience selector — shown on focus */
 #audience-btn {
   display:none; align-items:center; gap:4px;
   padding:3px 12px; margin-bottom:8px;
@@ -253,7 +240,6 @@ nav { flex:1; padding:4px 0; }
 #compose-text:focus { outline:none; }
 #compose-text::placeholder { color:var(--muted); }
 
-/* Compose toolbar — appears on focus */
 #compose-toolbar {
   display:flex; align-items:center;
   justify-content:space-between;
@@ -271,7 +257,6 @@ nav { flex:1; padding:4px 0; }
 .cmp-icon:hover { background:var(--primary-dim); }
 .compose-right { display:flex; align-items:center; gap:10px; }
 
-/* Circular character count ring */
 .char-ring {
   position:relative; width:26px; height:26px;
   display:flex; align-items:center; justify-content:center;
@@ -323,20 +308,21 @@ nav { flex:1; padding:4px 0; }
 }
 .post-col { flex:1; min-width:0; }
 
-/* Single-line meta: Name · @handle · time */
 .post-meta-row {
-  display:flex; align-items:baseline; flex-wrap:wrap;
-  gap:0; line-height:1.4; margin-bottom:2px;
+  display:flex; align-items:baseline; flex-wrap:nowrap;
+  gap:0; line-height:1.4; margin-bottom:2px; overflow:hidden;
 }
-.post-name   { font-weight:700; font-size:15px; flex-shrink:0; }
+.post-name   { font-weight:700; font-size:15px; flex-shrink:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:160px; }
+.post-name:hover { text-decoration:underline; cursor:pointer; }
 .post-dot    { color:var(--muted); font-size:14px; margin:0 4px; flex-shrink:0; }
 .post-handle {
-  color:var(--muted); font-size:15px; cursor:pointer;
-  flex-shrink:0; transition:color 0.15s;
+  color:var(--muted); font-size:14px; cursor:pointer;
+  flex-shrink:0; transition:color 0.15s; white-space:nowrap;
 }
 .post-handle:hover { color:var(--primary-lt); text-decoration:underline; }
 .post-time-dot { color:var(--muted); font-size:14px; margin:0 4px; flex-shrink:0; }
-.post-time     { color:var(--muted); font-size:14px; flex-shrink:0; cursor:default; }
+.post-time     { color:var(--muted); font-size:14px; flex-shrink:0; cursor:pointer; white-space:nowrap; }
+.post-time:hover { text-decoration:underline; color:var(--muted); }
 .dir-badge {
   display:inline-flex; align-items:center;
   font-size:11px; font-weight:600;
@@ -374,17 +360,17 @@ nav { flex:1; padding:4px 0; }
 }
 .read-more-btn:hover { color:#fff; }
 
-/* Post actions — Twitter icon-group style */
+/* Post actions */
 .post-actions {
   display:flex; align-items:center;
   justify-content:space-between;
-  margin-top:2px;
+  margin-top:4px; max-width:420px;
 }
 .act-btn {
   display:flex; align-items:center; gap:2px;
   background:transparent; border:none;
   color:var(--muted); font-size:13px; cursor:pointer;
-  padding:0; min-width:44px; transition:color 0.18s;
+  padding:0; transition:color 0.18s;
 }
 .act-icon {
   width:34px; height:34px; border-radius:50%;
@@ -392,19 +378,19 @@ nav { flex:1; padding:4px 0; }
   font-size:17px; transition:background 0.18s;
 }
 .act-count { font-size:13px; }
-.act-reply:hover          { color:var(--primary-lt); }
-.act-reply:hover .act-icon  { background:var(--primary-dim); }
-.act-repost:hover         { color:var(--green); }
+.act-reply:hover           { color:var(--primary-lt); }
+.act-reply:hover .act-icon { background:var(--primary-dim); }
+.act-repost:hover           { color:var(--green); }
 .act-repost:hover .act-icon { background:rgba(0,186,124,0.1); }
-.act-like:hover           { color:#f91880; }
+.act-like:hover             { color:#f91880; }
 .act-like:hover .act-icon   { background:rgba(249,24,128,0.1); }
-.act-share:hover          { color:#1d9bf0; }
+.act-share:hover            { color:#1d9bf0; }
 .act-share:hover .act-icon  { background:rgba(29,155,240,0.1); }
 .otter-link {
   display:flex; align-items:center;
-  font-size:13px; color:var(--muted); transition:color 0.18s;
+  font-size:12px; color:var(--muted); transition:color 0.18s;
 }
-.otter-link .act-icon { font-size:15px; }
+.otter-link .act-icon { font-size:14px; }
 .otter-link:hover { color:#1d9bf0; }
 .otter-link:hover .act-icon { background:rgba(29,155,240,0.1); }
 
@@ -421,7 +407,7 @@ nav { flex:1; padding:4px 0; }
 
 /* ── Right sidebar ──────────────────────────────────────────────────────── */
 #sidebar-right {
-  flex:1; max-width:350px; min-width:0;
+  flex:0 0 350px; width:350px;
   position:sticky; top:0; height:100vh;
   background:var(--bg-dark);
   overflow-y:auto; display:flex;
@@ -429,7 +415,6 @@ nav { flex:1; padding:4px 0; }
   padding:12px 16px 16px;
 }
 
-/* Sticky search */
 .sb-search {
   position:sticky; top:0; z-index:10;
   background:#000000; padding:8px 0;
@@ -449,7 +434,6 @@ nav { flex:1; padding:4px 0; }
   color:var(--muted); pointer-events:none;
 }
 
-/* Twitter-style rounded sidebar card */
 .sb-card {
   background:var(--bg-card); border:1px solid var(--border);
   border-radius:16px; overflow:hidden;
@@ -475,7 +459,6 @@ nav { flex:1; padding:4px 0; }
 }
 .sb-show-more:hover { background:rgba(255,255,255,0.03); }
 
-/* Channel card */
 .ch-btn {
   display:flex; align-items:center; gap:10px;
   width:100%; padding:12px 16px;
@@ -512,10 +495,10 @@ nav { flex:1; padding:4px 0; }
   padding:6px 16px 12px; display:block; word-break:break-all;
 }
 
-/* Wave card (inside sb-card) */
 .wave-inner {
   background:linear-gradient(135deg,rgba(255,60,172,0.08),rgba(43,134,197,0.06));
   padding:14px 16px; cursor:pointer; transition:background 0.2s;
+  border-radius:16px;
 }
 .wave-inner:hover {
   background:linear-gradient(135deg,rgba(255,60,172,0.14),rgba(43,134,197,0.1));
@@ -551,7 +534,6 @@ nav { flex:1; padding:4px 0; }
 @keyframes wbar { 0%,100%{transform:scaleY(1)} 50%{transform:scaleY(0.4)} }
 .wave-desc { font-size:12px; color:var(--muted); line-height:1.5; }
 
-/* Sidebar footer links */
 .sb-footer {
   font-size:13px; color:var(--muted); line-height:2;
   padding:4px 0; margin-top:auto;
@@ -560,7 +542,6 @@ nav { flex:1; padding:4px 0; }
 .sb-footer a:hover { text-decoration:underline; }
 
 /* ── Mobile ─────────────────────────────────────────────────────────────── */
-/* FAB — floating compose button */
 #mobile-fab {
   display:none; position:fixed; bottom:80px; right:16px;
   width:56px; height:56px; border-radius:50%;
@@ -572,10 +553,9 @@ nav { flex:1; padding:4px 0; }
 }
 #mobile-fab:hover { background:var(--primary-lt); transform:scale(1.05); }
 
-/* Mobile nav */
 #mobile-nav {
   display:none; position:fixed; bottom:0; left:0; right:0;
-  background:rgba(13,11,20,0.95); backdrop-filter:blur(12px);
+  background:rgba(0,0,0,0.95); backdrop-filter:blur(12px);
   border-top:1px solid var(--border);
   z-index:100; justify-content:space-around;
   padding:6px 0 10px;
@@ -602,7 +582,7 @@ nav { flex:1; padding:4px 0; }
 }
 .modal-bg.open { display:flex; }
 .modal {
-  background:var(--bg-light); border:1px solid var(--border);
+  background:var(--bg-mid); border:1px solid var(--border);
   border-radius:16px; width:100%; max-width:540px;
   max-height:90vh; overflow-y:auto; padding:20px;
 }
@@ -727,7 +707,6 @@ nav { flex:1; padding:4px 0; }
 }
 @keyframes spin { to { transform:rotate(360deg); } }
 
-/* Pull-to-refresh */
 #ptr-pill {
   position:fixed; top:-48px; left:50%; transform:translateX(-50%);
   background:var(--primary); color:#fff; border-radius:9999px;
@@ -737,24 +716,160 @@ nav { flex:1; padding:4px 0; }
 #ptr-pill.show { top:72px; }
 
 /* ── Responsive ─────────────────────────────────────────────────────────── */
-@media (max-width:1100px) { #sidebar-right { width:290px; } }
+@media (max-width:1100px) { #sidebar-right { flex:0 0 290px; width:290px; } }
 @media (max-width:900px) {
   #sidebar-right { display:none; }
-  #main { max-width:none; border-right:none; }
+  #main { flex:1; width:auto; max-width:none; border-right:none; }
 }
 @media (max-width:768px) {
   #sidebar-left { display:none; }
   #mobile-nav { display:flex; }
   #mobile-fab { display:flex; }
-  #main { padding-bottom:68px; max-width:100%; border-left:none; border-right:none; }
+  #main { flex:1; width:100%; padding-bottom:68px; max-width:100%; border-left:none; border-right:none; }
   #app  { max-width:100%; }
   .modal { padding:16px; }
   #toast { bottom:76px; }
   .cb-content { padding:0 12px 12px; }
-  .post-body,.post-images { margin-left:0; }
-  .post-actions { margin-top:8px; }
   #channel-banner { display:block !important; }
 }
+
+/* ── More popup ─────────────────────────────────────────────────────────── */
+.nav-more-wrap { position:relative; }
+.more-popup {
+  display:none; position:absolute; bottom:calc(100% + 4px); left:0;
+  background:var(--bg-mid); border:1px solid var(--border);
+  border-radius:16px; min-width:220px; z-index:300;
+  box-shadow:0 8px 32px rgba(0,0,0,0.5);
+  overflow:hidden; animation:popIn 0.15s ease;
+}
+.more-popup.open { display:block; }
+@keyframes popIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+.more-item {
+  display:flex; align-items:center; gap:14px;
+  width:100%; padding:14px 16px;
+  background:transparent; border:none;
+  color:var(--text); font-size:15px; font-weight:500;
+  cursor:pointer; text-align:left; transition:background 0.15s;
+}
+.more-item:hover { background:rgba(255,255,255,0.06); }
+.more-item.more-soon { opacity:0.5; cursor:default; }
+.more-icon { font-size:20px; width:24px; text-align:center; flex-shrink:0; }
+.more-label { display:flex; align-items:center; gap:8px; flex:1; }
+.soon-tag {
+  font-size:10px; font-weight:700; color:var(--muted);
+  background:var(--bg-dark); border:1px solid var(--border);
+  border-radius:4px; padding:1px 5px; text-transform:uppercase; letter-spacing:0.5px;
+}
+
+/* ── Channel history list ───────────────────────────────────────────────── */
+.ch-list { flex:1; }
+.ch-list-header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:12px 16px; border-bottom:1px solid var(--border);
+}
+.ch-list-title { font-size:15px; font-weight:700; color:var(--muted); letter-spacing:0.5px; text-transform:uppercase; }
+.ch-rescan-btn {
+  background:transparent; border:1px solid var(--border); border-radius:9999px;
+  color:var(--muted); font-size:12px; font-weight:600; padding:4px 12px;
+  cursor:pointer; transition:all 0.18s;
+}
+.ch-rescan-btn:hover { border-color:var(--primary); color:var(--primary-lt); }
+.ch-history-item {
+  display:flex; align-items:center; gap:12px;
+  padding:12px 16px; cursor:pointer; transition:background 0.15s;
+  border-bottom:1px solid var(--border);
+}
+.ch-history-item:hover { background:rgba(255,255,255,0.03); }
+.ch-hist-avatar {
+  width:44px; height:44px; border-radius:50%;
+  background:var(--bg-mid); object-fit:cover; flex-shrink:0;
+  border:1px solid var(--border);
+}
+.ch-hist-body { flex:1; min-width:0; }
+.ch-hist-top { display:flex; align-items:baseline; justify-content:space-between; margin-bottom:2px; }
+.ch-hist-name { font-size:15px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:160px; }
+.ch-hist-time { font-size:12px; color:var(--muted); flex-shrink:0; margin-left:8px; }
+.ch-hist-preview { font-size:14px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.ch-hist-count {
+  font-size:12px; font-weight:700; color:#fff;
+  background:var(--primary); border-radius:9999px;
+  min-width:18px; height:18px; padding:0 5px;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+}
+
+/* New channel input row at top of channels view */
+.ch-new-row {
+  display:flex; gap:8px; padding:12px 16px;
+  border-bottom:1px solid var(--border);
+  background:var(--bg-dark); position:sticky; top:53px; z-index:5;
+}
+.ch-new-row input {
+  flex:1; padding:9px 14px; background:rgba(255,255,255,0.07);
+  border:1px solid transparent; border-radius:9999px;
+  color:var(--text); font-size:14px; outline:none; transition:border-color 0.2s;
+}
+.ch-new-row input:focus { border-color:var(--primary); background:var(--bg-dark); }
+.ch-new-row input::placeholder { color:var(--muted); }
+
+/* ── Placeholder / static views ─────────────────────────────────────────── */
+.placeholder-view {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:80px 32px; text-align:center; color:var(--muted); flex:1;
+}
+.placeholder-view .ph-icon { font-size:56px; margin-bottom:20px; display:block; }
+.placeholder-view h2 { font-size:22px; font-weight:800; color:var(--text); margin-bottom:10px; }
+.placeholder-view p  { font-size:15px; max-width:320px; line-height:1.6; }
+.placeholder-view .ph-soon {
+  margin-top:20px; font-size:12px; font-weight:700; color:var(--primary-lt);
+  background:var(--primary-dim); border-radius:9999px; padding:4px 14px;
+  text-transform:uppercase; letter-spacing:1px;
+}
+
+/* ── Settings view ──────────────────────────────────────────────────────── */
+.settings-view { flex:1; overflow-y:auto; }
+.settings-section {
+  border-bottom:1px solid var(--border); padding:20px 16px;
+}
+.settings-section:last-child { border-bottom:none; }
+.settings-section-title {
+  font-size:12px; font-weight:700; color:var(--muted);
+  text-transform:uppercase; letter-spacing:0.8px; margin-bottom:14px;
+}
+.settings-row {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:10px 0; gap:16px;
+}
+.settings-row + .settings-row { border-top:1px solid var(--border); }
+.settings-row-label { flex:1; min-width:0; }
+.settings-row-label strong { display:block; font-size:15px; font-weight:600; color:var(--text); }
+.settings-row-label span   { display:block; font-size:13px; color:var(--muted); margin-top:2px; }
+.settings-input {
+  width:100%; padding:10px 12px;
+  background:var(--bg-dark); border:1px solid var(--border);
+  border-radius:8px; color:var(--text); font-size:14px;
+  font-family:monospace; outline:none; transition:border-color 0.2s;
+  margin-top:8px;
+}
+.settings-input:focus { border-color:var(--primary); }
+.settings-input::placeholder { color:var(--muted); }
+.settings-btn {
+  padding:9px 18px; background:transparent; border:1px solid var(--border);
+  border-radius:9999px; color:var(--text); font-size:14px; font-weight:600;
+  cursor:pointer; transition:all 0.18s; white-space:nowrap; flex-shrink:0;
+}
+.settings-btn:hover { border-color:var(--primary); color:var(--primary-lt); }
+.settings-btn.danger:hover { border-color:#f4212e; color:#f4212e; }
+.settings-btn.primary {
+  background:var(--primary); border-color:var(--primary); color:#fff;
+}
+.settings-btn.primary:hover { background:var(--primary-lt); border-color:var(--primary-lt); }
+.settings-about-logo {
+  display:flex; align-items:center; gap:12px; margin-bottom:16px;
+}
+.settings-about-logo img { width:48px; height:48px; border-radius:50%; border:2px solid var(--primary); }
+.settings-about-logo div strong { display:block; font-size:17px; font-weight:800; }
+.settings-about-logo div span { font-size:13px; color:var(--muted); }
 </style>
 </head>
 <body>
@@ -773,22 +888,50 @@ nav { flex:1; padding:4px 0; }
       <button class="nav-btn active" id="nav-home">
         <span class="nav-icon">🏠</span><span class="nav-label">Home</span>
       </button>
-      <button class="nav-btn" id="nav-messages">
-        <span class="nav-icon">✉️</span><span class="nav-label">Messages</span>
+      <button class="nav-btn" id="nav-explore">
+        <span class="nav-icon">🔭</span><span class="nav-label">Explore</span>
       </button>
       <button class="nav-btn" id="nav-notifs">
         <span class="nav-icon">🔔</span><span class="nav-label">Notifications</span>
         <span class="notif-badge" id="notif-badge"></span>
       </button>
+      <button class="nav-btn" id="nav-channels">
+        <span class="nav-icon">💬</span><span class="nav-label">Channels</span>
+      </button>
+      <button class="nav-btn" id="nav-bookmarks">
+        <span class="nav-icon">🔖</span><span class="nav-label">Bookmarks</span>
+      </button>
       <button class="nav-btn" id="nav-profile">
         <span class="nav-icon">👤</span><span class="nav-label">Profile</span>
       </button>
+      <!-- More button + popup -->
+      <div class="nav-more-wrap" id="nav-more-wrap">
+        <button class="nav-btn" id="nav-more">
+          <span class="nav-icon">⋯</span><span class="nav-label">More</span>
+        </button>
+        <div class="more-popup" id="more-popup">
+          <button class="more-item" id="more-settings">
+            <span class="more-icon">⚙️</span>
+            <span class="more-label">Settings &amp; Privacy</span>
+          </button>
+          <button class="more-item more-soon" disabled>
+            <span class="more-icon">📋</span>
+            <span class="more-label">Lists<span class="soon-tag">soon</span></span>
+          </button>
+          <button class="more-item more-soon" disabled>
+            <span class="more-icon">👥</span>
+            <span class="more-label">Communities<span class="soon-tag">soon</span></span>
+          </button>
+          <button class="more-item more-soon" disabled>
+            <span class="more-icon">🎬</span>
+            <span class="more-label">Creator Studio<span class="soon-tag">soon</span></span>
+          </button>
+        </div>
+      </div>
     </nav>
 
-    <!-- Big purple Post button -->
     <button id="nav-post-btn">Post</button>
 
-    <!-- Account pill -->
     <div id="account-pill" style="display:none">
       <img src="image1.jpeg" id="ap-avatar" alt="">
       <div id="ap-info">
@@ -838,7 +981,6 @@ nav { flex:1; padding:4px 0; }
             <button class="cmp-icon" title="Emoji">😊</button>
           </div>
           <div class="compose-right">
-            <!-- SVG ring for char count -->
             <div class="char-ring ok" id="char-ring">
               <svg width="26" height="26" viewBox="0 0 26 26">
                 <circle class="cr-bg" cx="13" cy="13" r="10"/>
@@ -868,7 +1010,6 @@ nav { flex:1; padding:4px 0; }
       </div>
     </div>
 
-    <!-- What's happening card -->
     <div class="sb-card">
       <div class="sb-card-title">What's happening</div>
       <div class="sb-card-row">
@@ -885,13 +1026,29 @@ nav { flex:1; padding:4px 0; }
           <span class="trend-count">Live radio on-chain</span>
         </div>
       </div>
-      <button class="sb-show-more" id="wave-btn"
-        role="button" aria-label="Open Wave on Pulse">
-        Open Wave on Pulse →
-      </button>
+      <button class="sb-show-more" id="wave-btn">Open Wave on Pulse →</button>
     </div>
 
-    <!-- Channels card -->
+    <div class="sb-card" style="overflow:visible">
+      <div class="wave-inner" id="wave-card-btn" role="button" tabindex="0">
+        <div class="wave-top">
+          <div class="wave-brand">
+            <div class="wave-icon">📻</div>
+            <div>
+              <div class="wave-name">Wave on Pulse</div>
+              <div class="wave-sub">On-chain live radio</div>
+            </div>
+          </div>
+          <div class="wave-tune">📡 Tune In</div>
+        </div>
+        <div class="wave-bars">
+          <span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span>
+        </div>
+        <div class="wave-desc">Live spaces &amp; shows transcribed directly to the chain.</div>
+      </div>
+    </div>
+
     <div class="sb-card">
       <div class="sb-card-title">Channels</div>
       <button class="ch-btn active" id="ch-main">
@@ -907,13 +1064,12 @@ nav { flex:1; padding:4px 0; }
       <span class="ch-label" id="ch-label"></span>
     </div>
 
-    <!-- Sidebar footer -->
     <div class="sb-footer">
       <a href="#">About</a><a href="#">PulseChain</a><a href="#">Wave</a>
       <br>© 2025 Pulse Underground
     </div>
   </div>
-</div><!-- #app -->
+</div>
 
 <!-- Mobile FAB -->
 <button id="mobile-fab" aria-label="New post">✦</button>
@@ -921,14 +1077,13 @@ nav { flex:1; padding:4px 0; }
 <!-- Mobile nav -->
 <nav id="mobile-nav">
   <button class="mn-btn active" data-mn="home"><span class="mn-icon">🏠</span>Home</button>
-  <button class="mn-btn" data-mn="messages"><span class="mn-icon">✉️</span>Messages</button>
-  <button class="mn-btn" data-mn="wave"><span class="mn-icon">📻</span>Wave</button>
+  <button class="mn-btn" data-mn="explore"><span class="mn-icon">🔭</span>Explore</button>
   <button class="mn-btn" data-mn="notifs">
     <span class="mn-icon">🔔</span>Alerts
     <span class="mn-dot" id="mn-dot"></span>
   </button>
+  <button class="mn-btn" data-mn="channels"><span class="mn-icon">💬</span>Channels</button>
   <button class="mn-btn" data-mn="profile"><span class="mn-icon">👤</span>Profile</button>
-  <button class="mn-btn" data-mn="wallet"><span class="mn-icon">🔗</span>Wallet</button>
 </nav>
 
 <div id="ptr-pill">↓ Release to refresh</div>
@@ -1066,12 +1221,13 @@ const POLL_MS        = 120_000;
 const DRAFT_KEY      = 'pulseDraft';
 const PRUNE_KEY      = 'pulseLastPrune';
 const LAST_CHECK_KEY = 'pulseLastCheck';
-
-/*
- * WAVE_ADDRESS — replace with the actual Wave on Pulse donation address
- * from waveonpulse.com. One line to change.
- */
-const WAVE_ADDRESS = '0x0000000000000000000000000000000000000000'; // ← replace
+const WAVE_ADDRESS   = '0x0000000000000000000000000000000000000000';
+const LIKE_PREFIX     = 'LIKE:';
+const BOOKMARK_PREFIX = 'BOOKMARK:';
+const FOLLOW_PREFIX   = 'FOLLOW:';
+const UNFOLLOW_PREFIX = 'UNFOLLOW:';
+const SETTINGS_KEY    = 'pulseSettings';
+const CHANNELS_KEY    = 'pulseChannelsScan';
 
 const ERC721_ABI = [
   'function tokenURI(uint256 tokenId) view returns (string)',
@@ -1081,7 +1237,6 @@ const ERC721_ABI = [
 /* ── Utils ────────────────────────────────────────────────────────────── */
 const utils = {
   _t: null,
-
   toast(msg, ms = 3000) {
     const el = document.getElementById('toast');
     el.textContent = msg;
@@ -1089,52 +1244,34 @@ const utils = {
     clearTimeout(this._t);
     this._t = setTimeout(() => { el.style.display = 'none'; }, ms);
   },
-
   loading(show, label = 'Publishing…') {
     document.getElementById('loading-overlay').classList.toggle('on', show);
     document.getElementById('loading-label').textContent = label;
   },
-
-  /* XSS-safe: HTML-encode any blockchain text before innerHTML injection */
   safe(str) {
     const d = document.createElement('div');
     d.textContent = String(str ?? '');
     return d.innerHTML;
   },
-
-  /*
-   * Linkify — single pass over text detecting:
-   *   • https?:// URLs  → <a> links; image URLs also get <img> thumbnails
-   *   • #hashtag        → clickable tag (filters feed or future search)
-   *   • @0xaddr         → clickable mention (opens that channel)
-   * All non-URL text goes through utils.safe() — XSS-proof.
-   */
   linkify(text) {
     const re = /https?:\/\/[^\s<>"{}|\\^[\]`]+|#([a-zA-Z]\w{0,99})|@(0x[a-fA-F0-9]{40})/g;
     const imgRe = /\.(jpg|jpeg|png|gif|webp|svg)(\?[^\s]*)?$/i;
     let result = '', last = 0, imgHtml = '', imgCount = 0, m;
-
     while ((m = re.exec(text)) !== null) {
       result += utils.safe(text.slice(last, m.index)).replace(/\n/g, '<br>');
       last = m.index + m[0].length;
-
       if (m[0].startsWith('http')) {
         const url = m[0];
         const safeUrl = utils.safe(url);
         if (imgRe.test(url) && imgCount < 2) {
-          imgHtml += `<img src="${safeUrl}" class="post-img-thumb" alt="image"
-            loading="lazy" onerror="this.style.display='none'"
-            data-href="${safeUrl}">`;
+          imgHtml += `<img src="${safeUrl}" class="post-img-thumb" alt="image" loading="lazy" onerror="this.style.display='none'" data-href="${safeUrl}">`;
           imgCount++;
         }
-        result += `<a href="${safeUrl}" target="_blank" rel="noopener noreferrer"
-          class="post-link" onclick="event.stopPropagation()">${safeUrl}</a>`;
+        result += `<a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="post-link" onclick="event.stopPropagation()">${safeUrl}</a>`;
       } else if (m[1]) {
-        // hashtag
         const tag = m[1];
         result += `<span class="post-tag" data-tag="${utils.safe(tag)}">#${utils.safe(tag)}</span>`;
       } else if (m[2]) {
-        // @address mention
         const addr = m[2].toLowerCase();
         result += `<span class="post-mention" data-addr="${utils.safe(addr)}">@${utils.safe(addr.slice(0,6)+'…'+addr.slice(-4))}</span>`;
       }
@@ -1142,43 +1279,35 @@ const utils = {
     result += utils.safe(text.slice(last)).replace(/\n/g, '<br>');
     return { text: result, images: imgHtml };
   },
-
   resolveIPFS(uri) {
     if (!uri) return null;
     if (uri.startsWith('ipfs://')) return 'https://ipfs.io/ipfs/' + uri.slice(7);
     return uri;
   },
-
   debounce(fn, ms) {
     let t;
     return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); };
   },
-
   autoGrow(el) {
     el.style.height = 'auto';
     el.style.height = Math.min(el.scrollHeight, 400) + 'px';
   },
-
   copyToClipboard(text, label = 'Copied to clipboard!') {
-    navigator.clipboard?.writeText(text).then(() => this.toast(label))
-      .catch(() => this.toast('Copy failed'));
+    navigator.clipboard?.writeText(text).then(() => this.toast(label)).catch(() => this.toast('Copy failed'));
   },
-
   updateCharCount(el, countEl) {
     const n   = el.value.length;
-    const max = 62.83; // 2*pi*r where r=10
-    // Drive SVG ring if present (compose area)
+    const max = 62.83;
     const ring = document.getElementById('char-ring');
     const fg   = document.getElementById('cr-fg');
     const num  = document.getElementById('char-count-num');
     if (ring && fg) {
-      const pct  = Math.min(n / 1000, 1);
+      const pct = Math.min(n / 1000, 1);
       fg.setAttribute('stroke-dasharray', `${pct * max} ${max}`);
       const cls = n > 1000 ? 'over' : n > 500 ? 'warn' : n > 280 ? 'note' : 'ok';
       ring.className = 'char-ring ' + cls;
       if (num) num.textContent = n > 280 ? (n > 1000 ? '+' + (n-1000) : n) : '';
     }
-    // Also drive plain text count elements (reply/thread modals)
     if (countEl && countEl !== document.getElementById('char-ring')) {
       countEl.textContent = n > 0 ? n.toLocaleString() : '';
     }
@@ -1190,19 +1319,20 @@ class Cache {
   constructor() {
     this._db    = null;
     this._ready = new Promise((res, rej) => {
-      const req = indexedDB.open('PulseUnderground', 6);
+      const req = indexedDB.open('PulseUnderground', 7);
       req.onupgradeneeded = e => {
         const db = e.target.result;
         if (!db.objectStoreNames.contains('posts'))
           db.createObjectStore('posts', { keyPath: 'txHash' });
         if (!db.objectStoreNames.contains('profiles'))
           db.createObjectStore('profiles', { keyPath: 'address' });
+        if (!db.objectStoreNames.contains('channels'))
+          db.createObjectStore('channels', { keyPath: 'address' });
       };
       req.onsuccess = () => { this._db = req.result; res(); };
       req.onerror   = () => rej(req.error);
     });
   }
-
   async getPosts(filterFn) {
     await this._ready;
     return new Promise((res, rej) => {
@@ -1211,7 +1341,6 @@ class Cache {
       req.onerror   = () => rej(req.error);
     });
   }
-
   async savePosts(posts) {
     await this._ready;
     return new Promise((res, rej) => {
@@ -1221,7 +1350,6 @@ class Cache {
       tx.onerror    = () => rej(tx.error);
     });
   }
-
   async getProfile(address) {
     await this._ready;
     return new Promise((res, rej) => {
@@ -1230,7 +1358,6 @@ class Cache {
       req.onerror   = () => rej(req.error);
     });
   }
-
   async saveProfile(data) {
     await this._ready;
     return new Promise((res, rej) => {
@@ -1240,11 +1367,9 @@ class Cache {
       tx.onerror    = () => rej(tx.error);
     });
   }
-
-  /* Only prune once per day to avoid scanning DB on every page load */
   async pruneIfStale(maxAgeDays = 7) {
     const last = parseInt(localStorage.getItem(PRUNE_KEY) || '0', 10);
-    if (Date.now() - last < 86_400_000) return; // already ran today
+    if (Date.now() - last < 86_400_000) return;
     await this._ready;
     const cutoff = new Date(Date.now() - maxAgeDays * 86_400_000).toISOString();
     await new Promise((res, rej) => {
@@ -1258,42 +1383,77 @@ class Cache {
       req.onerror = () => rej(req.error);
     });
   }
+  /* ── Channel history store ── */
+  async getChannels() {
+    await this._ready;
+    return new Promise((res, rej) => {
+      const req = this._db.transaction('channels','readonly').objectStore('channels').getAll();
+      req.onsuccess = () => res((req.result || []).sort((a,b) => (b.lastActivity||'') > (a.lastActivity||'') ? 1 : -1));
+      req.onerror   = () => rej(req.error);
+    });
+  }
+  async saveChannel(data) {
+    await this._ready;
+    return new Promise((res, rej) => {
+      const tx = this._db.transaction('channels','readwrite');
+      tx.objectStore('channels').put(data);
+      tx.oncomplete = res;
+      tx.onerror    = () => rej(tx.error);
+    });
+  }
+  async clearChannels() {
+    await this._ready;
+    return new Promise((res, rej) => {
+      const tx = this._db.transaction('channels','readwrite');
+      tx.objectStore('channels').clear();
+      tx.oncomplete = res;
+      tx.onerror    = () => rej(tx.error);
+    });
+  }
+  async clearAllPosts() {
+    await this._ready;
+    return new Promise((res, rej) => {
+      const tx = this._db.transaction('posts','readwrite');
+      tx.objectStore('posts').clear();
+      tx.oncomplete = res;
+      tx.onerror    = () => rej(tx.error);
+    });
+  }
 }
 
 /* ── PulseUnderground ─────────────────────────────────────────────────── */
 class PulseUnderground {
   constructor() {
     this.state = {
-      posts:       [],
-      pending:     [],
-      searchTerm:  '',
-      activeTag:   null,   // hashtag filter
-      loading:     false,
-      hasMore:     true,
-      nextPage:    1,
-      channel:     MAIN_CHANNEL,
-      mode:        'main',
-      profile:     { username:'', picUrl:'image1.jpeg', bio:'' },
-      signerAddr:  null,
-      expanded:    new Set(),
-      replyTarget: null,
-      threadPost:  null,
-      profCache:   {},
+      posts: [], pending: [], searchTerm: '', activeTag: null,
+      loading: false, hasMore: true, nextPage: 1,
+      channel: MAIN_CHANNEL, mode: 'main',
+      profile: { username:'', picUrl:'image1.jpeg', bio:'' },
+      signerAddr: null, expanded: new Set(),
+      replyTarget: null, threadPost: null, profCache: {},
+      /* reactions & social */
+      likes:      new Set(),   /* txHashes this user has liked */
+      bookmarks:  new Set(),   /* txHashes this user has bookmarked */
+      following:  new Set(),   /* addresses this user follows */
+      /* channel history */
+      channelHistory: [],      /* [{address, label, lastActivity, preview, postCount}] */
+      /* settings */
+      settings: (() => {
+        try { return JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}'); } catch { return {}; }
+      })(),
     };
-
     this.signer        = null;
     this.cache         = new Cache();
     this.pollTimer     = null;
     this._profInFlight = 0;
     this._profQueue    = [];
     this._walletReg    = false;
-    this._postMap      = new Map(); // txHash → post, O(1) lookup
+    this._postMap      = new Map();
     this.g             = id => document.getElementById(id);
     this._debouncedRender = utils.debounce(() => this.renderFeed(), 150);
     this._draftSave       = utils.debounce(() => this._saveDraft(), 500);
   }
 
-  /* ── Init ──────────────────────────────────────────────────────────── */
   async init() {
     this.wireListeners();
     this.updateChLabel();
@@ -1305,23 +1465,19 @@ class PulseUnderground {
     setTimeout(() => { this.pollNew(); this.startPolling(); }, POLL_FIRST_MS);
   }
 
-  /* ── Draft persistence ──────────────────────────────────────────────── */
   _saveDraft() {
     const v = this.g('compose-text').value;
     v.trim() ? localStorage.setItem(DRAFT_KEY, v) : localStorage.removeItem(DRAFT_KEY);
   }
-
   _restoreDraft() {
     const draft = localStorage.getItem(DRAFT_KEY);
     if (!draft) return;
     this.g('compose-text').value = draft;
     utils.autoGrow(this.g('compose-text'));
-    utils.updateCharCount(this.g('compose-text'), this.g('char-count'));
+    utils.updateCharCount(this.g('compose-text'), null);
   }
-
   _clearDraft() { localStorage.removeItem(DRAFT_KEY); }
 
-  /* ── Event wiring ──────────────────────────────────────────────────── */
   wireListeners() {
     const g = this.g.bind(this);
 
@@ -1329,15 +1485,12 @@ class PulseUnderground {
     g('nav-post-btn').onclick  = () => this.openComposeModal();
     g('mobile-fab').onclick    = () => this.openComposeModal();
 
-    /* Feed tabs */
-    g('tab-foryou').onclick  = () => { this.setFeedTab('foryou');  };
-    g('tab-channel').onclick = () => { this.setFeedTab('channel'); };
+    g('tab-foryou').onclick  = () => this.setFeedTab('foryou');
+    g('tab-channel').onclick = () => this.setFeedTab('channel');
 
-    /* Compose focus/blur → expand toolbar */
     g('compose-text').addEventListener('focus', () => {
       g('compose-area').classList.add('focused');
     });
-    /* Collapse only when clicking outside compose entirely */
     document.addEventListener('click', e => {
       if (!g('compose-area').contains(e.target) &&
           e.target !== g('post-btn') && e.target !== g('expand-compose-btn')) {
@@ -1345,47 +1498,45 @@ class PulseUnderground {
           g('compose-area').classList.remove('focused');
         }
       }
+      /* close More popup on outside click */
+      if (!g('nav-more-wrap').contains(e.target)) this.hideMoreMenu();
     });
 
-    /* Account pill — clicking ••• dots disconnects; clicking info area opens profile */
     const apill = g('account-pill');
     if (apill) {
       apill.onclick = e => {
-        if (e.target.closest('#ap-dots')) {
-          this.disconnect();
-        } else {
-          this.openProfileModal();
-        }
+        if (e.target.closest('#ap-dots')) this.disconnect();
+        else this.openProfileModal();
       };
     }
     g('nav-home').onclick      = () => this.goHome();
-    g('nav-messages').onclick  = () => this.goInbox();
+    g('nav-explore').onclick   = () => this.goExplore();
     g('nav-notifs').onclick    = () => this.goNotifications();
+    g('nav-channels').onclick  = () => this.goChannels();
+    g('nav-bookmarks').onclick = () => this.goBookmarks();
     g('nav-profile').onclick   = () => this.openProfileModal();
+    g('nav-more').onclick      = e => { e.stopPropagation(); this.toggleMoreMenu(); };
+    g('more-settings').onclick = () => { this.hideMoreMenu(); this.goSettings(); };
 
-    /* Mobile nav */
     document.querySelectorAll('[data-mn]').forEach(b => {
       b.onclick = () => {
         const t = b.dataset.mn;
         if (t === 'home')     this.goHome();
-        if (t === 'messages') this.goInbox();
-        if (t === 'wave')     this.goWave();
+        if (t === 'explore')  this.goExplore();
         if (t === 'notifs')   this.goNotifications();
+        if (t === 'channels') this.goChannels();
         if (t === 'profile')  this.openProfileModal();
-        if (t === 'wallet')   this.toggleWallet();
       };
     });
 
-    /* Compose */
     g('compose-text').oninput = () => {
       utils.autoGrow(g('compose-text'));
-      utils.updateCharCount(g('compose-text'), g('char-count'));
+      utils.updateCharCount(g('compose-text'), null);
       this._draftSave();
     };
-    g('post-btn').onclick            = () => this.publishPost();
-    g('expand-compose-btn').onclick  = () => this.openComposeModal();
+    g('post-btn').onclick           = () => this.publishPost();
+    g('expand-compose-btn').onclick = () => this.openComposeModal();
 
-    /* Fullscreen compose */
     g('close-compose-modal').onclick = () => this.closeModal('compose-modal');
     g('modal-compose-text').oninput  = () => {
       utils.autoGrow(g('modal-compose-text'));
@@ -1393,82 +1544,55 @@ class PulseUnderground {
     };
     g('modal-post-btn').onclick = () => this.publishFromModal();
 
-    /* Shared delegated handler for post interactions — used by feed + thread modal */
     const handlePostClick = (e, inModal) => {
       const img = e.target.closest('.post-img-thumb');
-      if (img?.dataset.href) {
-        e.stopPropagation(); window.open(img.dataset.href, '_blank'); return;
-      }
+      if (img?.dataset.href) { e.stopPropagation(); window.open(img.dataset.href, '_blank'); return; }
       const tag = e.target.closest('.post-tag');
-      if (tag) {
-        e.stopPropagation(); this.filterByTag(tag.dataset.tag); return;
-      }
+      if (tag) { e.stopPropagation(); this.filterByTag(tag.dataset.tag); return; }
       const mention = e.target.closest('.post-mention');
-      if (mention) {
-        e.stopPropagation();
-        this.g('custom-input').value = mention.dataset.addr;
-        this.goCustom(); return;
-      }
+      if (mention) { e.stopPropagation(); this.g('custom-input').value = mention.dataset.addr; this.goCustom(); return; }
       const handle = e.target.closest('.post-handle');
-      if (handle) {
-        e.stopPropagation();
-        utils.copyToClipboard(handle.dataset.addr, 'Address copied!'); return;
-      }
+      if (handle) { e.stopPropagation(); utils.copyToClipboard(handle.dataset.addr, 'Address copied!'); return; }
       this.onFeedClick(e, inModal);
     };
 
-    g('feed').addEventListener('click',          e => handlePostClick(e, false));
-    g('thread-orig').addEventListener('click',   e => handlePostClick(e, true));
-    g('thread-replies').addEventListener('click',e => handlePostClick(e, true));
+    g('feed').addEventListener('click',           e => handlePostClick(e, false));
+    g('thread-orig').addEventListener('click',    e => handlePostClick(e, true));
+    g('thread-replies').addEventListener('click', e => handlePostClick(e, true));
 
-    /* Channel banner address copy */
     g('cb-address').onclick = () => {
       const addr = g('cb-address').textContent;
       if (addr) utils.copyToClipboard(addr, 'Address copied!');
     };
 
-    /* Search */
     g('search-input').oninput = utils.debounce(() => {
       this.state.searchTerm = g('search-input').value.trim().toLowerCase();
       this.state.activeTag  = null;
       this.renderFeed();
     }, 250);
 
-    g('refresh-btn').onclick  = () => this.refreshFeed();
-    g('new-banner').onclick   = () => this.loadPending();
+    g('refresh-btn').onclick = () => this.refreshFeed();
+    g('new-banner').onclick  = () => this.loadPending();
 
-    /* Channels */
     g('ch-main').onclick = () => this.goHome();
     g('ch-self').onclick = () => this.goSelf();
     g('ch-go').onclick   = () => this.goCustom();
     g('custom-input').onkeydown = e => { if (e.key === 'Enter') this.goCustom(); };
-    g('wave-btn').onclick   = () => this.goWave();
-    g('wave-btn').onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') this.goWave(); };
+    g('wave-btn').onclick = () => this.goWave();
+    const wcb = g('wave-card-btn');
+    if (wcb) {
+      wcb.onclick   = () => this.goWave();
+      wcb.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') this.goWave(); };
+    }
 
-    /* Infinite scroll */
     window.addEventListener('scroll', utils.debounce(() => this.onScroll(), 150));
 
-    /* Keyboard shortcuts */
     document.addEventListener('keydown', e => {
       const active = document.activeElement?.tagName;
       if (active === 'INPUT' || active === 'TEXTAREA') return;
-      if (e.key === 'n' || e.key === 'N') {
-        e.preventDefault();
-        if (['main','self','custom','wave'].includes(this.state.mode)) {
-          g('compose-text').focus();
-          g('compose-text').scrollIntoView({ behavior:'smooth', block:'center' });
-        }
-      }
-      if (e.key === '/') {
-        e.preventDefault();
-        g('search-input').focus();
-      }
-      if (e.key === 'e' || e.key === 'E') {
-        if (this.g('compose-area').style.display !== 'none') {
-          e.preventDefault();
-          this.openComposeModal();
-        }
-      }
+      if (e.key === 'n' || e.key === 'N') { e.preventDefault(); g('compose-text').focus(); g('compose-text').scrollIntoView({ behavior:'smooth', block:'center' }); }
+      if (e.key === '/') { e.preventDefault(); g('search-input').focus(); }
+      if (e.key === 'e' || e.key === 'E') { e.preventDefault(); this.openComposeModal(); }
       if (e.key === 'Escape') {
         ['compose-modal','profile-modal','reply-modal','thread-modal'].forEach(id => {
           if (g(id).classList.contains('open')) this.closeModal(id);
@@ -1476,12 +1600,10 @@ class PulseUnderground {
       }
     });
 
-    /* Backdrop close */
     ['compose-modal','profile-modal','reply-modal','thread-modal'].forEach(id => {
       g(id).addEventListener('click', e => { if (e.target === g(id)) this.closeModal(id); });
     });
 
-    /* Profile modal */
     g('close-profile').onclick    = () => this.closeModal('profile-modal');
     g('edit-profile-btn').onclick = () => this.showEditForm();
     g('cancel-edit-btn').onclick  = () => this.showProfileView();
@@ -1489,7 +1611,6 @@ class PulseUnderground {
     g('pe-pic').oninput = () => { g('pe-preview').src = g('pe-pic').value.trim() || 'image1.jpeg'; };
     g('fetch-nft-btn').onclick = () => this.fetchNFTImage();
 
-    /* Reply modal */
     g('close-reply').onclick      = () => this.closeModal('reply-modal');
     g('cancel-reply-btn').onclick = () => this.closeModal('reply-modal');
     g('post-reply-btn').onclick   = () => this.postReply();
@@ -1498,7 +1619,6 @@ class PulseUnderground {
       utils.updateCharCount(g('reply-input'), g('reply-count'));
     };
 
-    /* Thread modal */
     g('close-thread').onclick          = () => this.closeModal('thread-modal');
     g('post-thread-reply-btn').onclick = () => this.postThreadReply();
     g('thread-reply-input').oninput = () => {
@@ -1506,40 +1626,30 @@ class PulseUnderground {
       utils.updateCharCount(g('thread-reply-input'), g('thread-count'));
     };
 
-    /* Pull-to-refresh */
     this._initPullToRefresh();
   }
 
-  /* ── Pull to refresh ────────────────────────────────────────────────── */
   _initPullToRefresh() {
     let startY = 0, active = false;
     const pill = this.g('ptr-pill');
-
     document.addEventListener('touchstart', e => {
       if (window.scrollY === 0) { startY = e.touches[0].clientY; active = true; }
     }, { passive: true });
-
     document.addEventListener('touchmove', e => {
       if (!active) return;
       if (e.touches[0].clientY - startY > 70) pill.classList.add('show');
     }, { passive: true });
-
     document.addEventListener('touchend', () => {
       if (!active) return;
       active = false;
-      if (pill.classList.contains('show')) {
-        pill.classList.remove('show');
-        this.refreshFeed();
-      }
+      if (pill.classList.contains('show')) { pill.classList.remove('show'); this.refreshFeed(); }
     });
   }
 
-  /* ── Feed click delegation ──────────────────────────────────────────── */
   onFeedClick(e, inModal) {
     const action = e.target.closest('[data-action]')?.dataset.action;
     const item   = e.target.closest('.post-item');
     if (!item) return;
-
     const post = this._postMap.get(item.dataset.txhash);
     if (!post) return;
 
@@ -1560,12 +1670,15 @@ class PulseUnderground {
     }
   }
 
-  /* ── Hashtag filter ─────────────────────────────────────────────────── */
   setFeedTab(tab) {
     document.querySelectorAll('.feed-tab').forEach(t => t.classList.remove('active'));
     this.g(tab === 'foryou' ? 'tab-foryou' : 'tab-channel').classList.add('active');
-    /* For now both tabs show the same feed - placeholder for future */
-    utils.toast(tab === 'channel' ? 'Showing channel posts' : 'Showing all posts');
+    if (tab === 'channel') {
+      if (this.state.signerAddr) this.goSelf();
+      else utils.toast('Connect wallet to view your channel');
+    } else {
+      this.goHome();
+    }
   }
 
   filterByTag(tag) {
@@ -1576,7 +1689,6 @@ class PulseUnderground {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  /* ── Fullscreen compose ─────────────────────────────────────────────── */
   openComposeModal() {
     const existing = this.g('compose-text').value;
     this.g('modal-compose-text').value = existing;
@@ -1590,7 +1702,6 @@ class PulseUnderground {
   async publishFromModal() {
     const text = this.g('modal-compose-text').value.trim();
     if (!text) return;
-    /* Sync to main compose and publish */
     this.g('compose-text').value = text;
     const ok = await this.publishPost();
     if (ok === true) {
@@ -1599,7 +1710,6 @@ class PulseUnderground {
     }
   }
 
-  /* ── Navigation ─────────────────────────────────────────────────────── */
   async goHome() {
     if (this.state.mode === 'main' && this.state.channel === MAIN_CHANNEL) {
       window.scrollTo({ top: 0, behavior: 'smooth' }); return;
@@ -1607,25 +1717,18 @@ class PulseUnderground {
     this.setNav('nav-home','home');
     this.state.mode    = 'main';
     this.state.channel = MAIN_CHANNEL;
-    this.g('feed-title').textContent     = 'Pulse Underground';
-    this.g('compose-area').style.display = 'flex';
+    this.g('feed-title').textContent       = 'Pulse Underground';
+    this.g('compose-area').style.display   = 'flex';
     this.g('channel-banner').style.display = 'none';
+    this.g('feed-tabs').style.display      = 'flex';
     this.setChActive('ch-main');
     this.updateChLabel();
     await this.resetAndFetch();
   }
 
   async goInbox() {
-    if (!this.signer) { utils.toast('Connect wallet to view Messages'); return; }
-    this.setNav('nav-messages','messages');
-    this.state.mode    = 'inbox';
-    this.state.channel = this.state.signerAddr;
-    this.g('feed-title').textContent     = '✉️ Messages';
-    this.g('compose-area').style.display = 'none';
-    this.g('channel-banner').style.display = 'none';
-    this.setChActive(null);
-    this.updateChLabel();
-    await this.resetAndFetch();
+    /* Legacy — redirect to Channels view */
+    this.goChannels();
   }
 
   async goNotifications() {
@@ -1667,6 +1770,8 @@ class PulseUnderground {
     this.setChActive(null);
     this.updateChLabel();
     this.showChannelBanner(raw);
+    /* track this channel in history */
+    this._touchChannelHistory(raw);
     await this.resetAndFetch();
   }
 
@@ -1680,6 +1785,399 @@ class PulseUnderground {
     this.updateChLabel();
     this.showChannelBanner(WAVE_ADDRESS);
     await this.resetAndFetch();
+  }
+
+  /* ── New navigation methods ─────────────────────────────────────────── */
+  goExplore() {
+    this.setNav('nav-explore','explore');
+    this.g('feed-title').textContent     = '🔭 Explore';
+    this.g('compose-area').style.display = 'none';
+    this.g('channel-banner').style.display = 'none';
+    this.g('feed-tabs').style.display    = 'none';
+    this.g('feed').innerHTML = `
+      <div class="placeholder-view">
+        <span class="ph-icon">🔭</span>
+        <h2>Explore is coming</h2>
+        <p>Trending hashtags, top channels, and active addresses on PulseChain will appear here.</p>
+        <span class="ph-soon">Coming soon</span>
+      </div>`;
+    this.g('loading-more').style.display = 'none';
+  }
+
+  goBookmarks() {
+    if (!this.signer) { utils.toast('Connect wallet to view Bookmarks'); return; }
+    this.setNav('nav-bookmarks', null);
+    this.g('feed-title').textContent     = '🔖 Bookmarks';
+    this.g('compose-area').style.display = 'none';
+    this.g('channel-banner').style.display = 'none';
+    this.g('feed-tabs').style.display    = 'none';
+    this.g('loading-more').style.display = 'none';
+    if (this.state.bookmarks.size === 0) {
+      this.g('feed').innerHTML = `
+        <div class="placeholder-view">
+          <span class="ph-icon">🔖</span>
+          <h2>No bookmarks yet</h2>
+          <p>Save posts by clicking the bookmark icon. Your bookmarks are stored privately on-chain and only visible to you.</p>
+        </div>`;
+    } else {
+      /* filter feed to bookmarked posts */
+      const bookmarked = this.state.posts.filter(p => this.state.bookmarks.has(p.txHash));
+      if (!bookmarked.length) {
+        this.g('feed').innerHTML = `<div class="placeholder-view"><span class="ph-icon">🔖</span><h2>Bookmarks loading…</h2><p>Syncing your saved posts from the chain.</p></div>`;
+      } else {
+        const frag = document.createDocumentFragment();
+        bookmarked.forEach(post => {
+          this._postMap.set(post.txHash, post);
+          const el = document.createElement('div');
+          el.className = 'post-item';
+          el.dataset.txhash = post.txHash;
+          el.innerHTML = this.postHTML(post, false, null);
+          frag.appendChild(el);
+        });
+        this.g('feed').innerHTML = '';
+        this.g('feed').appendChild(frag);
+      }
+    }
+  }
+
+  async goChannels() {
+    this.setNav('nav-channels','channels');
+    this.g('feed-title').textContent     = '💬 Channels';
+    this.g('compose-area').style.display = 'none';
+    this.g('channel-banner').style.display = 'none';
+    this.g('feed-tabs').style.display    = 'none';
+    this.g('loading-more').style.display = 'none';
+    this.state.mode = 'channels';
+
+    /* Load cached immediately */
+    const cached = await this.cache.getChannels();
+    this.state.channelHistory = cached;
+    this.renderChannelHistory();
+
+    /* If nothing cached, trigger a rescan from chain */
+    if (cached.length === 0 && this.state.signerAddr) {
+      this.rebuildChannelHistory();
+    }
+  }
+
+  goSettings() {
+    this.setNav(null, null);
+    this.g('feed-title').textContent     = '⚙️ Settings';
+    this.g('compose-area').style.display = 'none';
+    this.g('channel-banner').style.display = 'none';
+    this.g('feed-tabs').style.display    = 'none';
+    this.g('loading-more').style.display = 'none';
+    this.g('feed').innerHTML = this._settingsHTML();
+    this._wireSettingsListeners();
+  }
+
+  /* ── More menu ──────────────────────────────────────────────────────── */
+  toggleMoreMenu() {
+    const p = this.g('more-popup');
+    p.classList.toggle('open');
+  }
+  hideMoreMenu() {
+    this.g('more-popup')?.classList.remove('open');
+  }
+
+  /* ── Channel history ────────────────────────────────────────────────── */
+  async _touchChannelHistory(address) {
+    if (!address || address === MAIN_CHANNEL) return;
+    const existing = this.state.channelHistory.find(c => c.address === address) || {};
+    const prof = this.state.profCache[address];
+    const updated = {
+      address,
+      label:        prof?.username || existing.label || '',
+      picUrl:       prof?.picUrl   || existing.picUrl || 'image1.jpeg',
+      lastActivity: new Date().toISOString(),
+      preview:      existing.preview || '',
+      postCount:    (existing.postCount || 0) + 1,
+    };
+    await this.cache.saveChannel(updated);
+    /* update in-memory list */
+    const idx = this.state.channelHistory.findIndex(c => c.address === address);
+    if (idx >= 0) this.state.channelHistory[idx] = updated;
+    else this.state.channelHistory.unshift(updated);
+  }
+
+  async rebuildChannelHistory() {
+    if (!this.state.signerAddr) return;
+    utils.toast('Scanning chain for channel history…', 5000);
+    const seen = new Map(); /* address → {lastActivity, preview, postCount} */
+    try {
+      /* Scan pages 1-6 (300 txs) of the user's own address */
+      for (let page = 1; page <= 6; page++) {
+        let raw;
+        try { raw = await this.apiFetch(this.state.signerAddr, page); }
+        catch { break; }
+        raw.forEach(tx => {
+          const from = tx.from?.toLowerCase();
+          const to   = tx.to?.toLowerCase();
+          if (!tx.input || tx.input === '0x') return;
+          /* Interactions: from=me → channel, or from=other → me */
+          const partner = (from === this.state.signerAddr) ? to : from;
+          if (!partner || partner === this.state.signerAddr || partner === MAIN_CHANNEL) return;
+          try {
+            const text = ethers.utils.toUtf8String(tx.input).trim();
+            if (text.startsWith(PROFILE_PREFIX) || text.startsWith(LIKE_PREFIX) ||
+                text.startsWith(BOOKMARK_PREFIX) || text.startsWith(FOLLOW_PREFIX)) return;
+            const ts = tx.timeStamp ? new Date(Number(tx.timeStamp) * 1000).toISOString() : '';
+            const prev = seen.get(partner);
+            if (!prev || ts > prev.lastActivity) {
+              seen.set(partner, {
+                lastActivity: ts,
+                preview: text.slice(0, 80),
+                postCount: (prev?.postCount || 0) + 1,
+              });
+            }
+          } catch { /* skip */ }
+        });
+        if (raw.length < 50) break;
+      }
+    } catch { /* silent */ }
+
+    /* Merge with existing cache */
+    for (const [address, data] of seen) {
+      const existing = this.state.channelHistory.find(c => c.address === address) || {};
+      const prof = this.state.profCache[address];
+      await this.cache.saveChannel({
+        address,
+        label:        prof?.username || existing.label || '',
+        picUrl:       prof?.picUrl   || existing.picUrl || 'image1.jpeg',
+        lastActivity: data.lastActivity,
+        preview:      data.preview,
+        postCount:    data.postCount,
+      });
+    }
+
+    /* Reload and re-render if still in channels view */
+    this.state.channelHistory = await this.cache.getChannels();
+    localStorage.setItem(CHANNELS_KEY, Date.now().toString());
+    if (this.state.mode === 'channels') this.renderChannelHistory();
+    utils.toast('Channel history updated ✓');
+  }
+
+  renderChannelHistory() {
+    const feed = this.g('feed');
+    const history = this.state.channelHistory;
+
+    let html = `
+      <div class="ch-new-row">
+        <input type="text" id="ch-new-input" placeholder="Enter 0x address to open a channel…">
+        <button class="go-btn" id="ch-new-go">Go</button>
+      </div>`;
+
+    if (!history.length) {
+      html += `
+        <div class="placeholder-view">
+          <span class="ph-icon">💬</span>
+          <h2>No channels yet</h2>
+          <p>Every wallet address is a channel. Post to any address and it appears here. Your history builds automatically.</p>
+          ${this.state.signerAddr
+            ? `<button class="settings-btn primary" style="margin-top:20px" onclick="pulse.rebuildChannelHistory()">🔍 Scan chain history</button>`
+            : `<p style="margin-top:16px;color:var(--primary-lt)">Connect your wallet to see your channel history.</p>`}
+        </div>`;
+    } else {
+      html += `<div class="ch-list">
+        <div class="ch-list-header">
+          <span class="ch-list-title">${history.length} Channel${history.length !== 1 ? 's' : ''}</span>
+          <button class="ch-rescan-btn" onclick="pulse.rebuildChannelHistory()">↺ Rescan</button>
+        </div>`;
+      history.forEach(ch => {
+        const pic  = utils.safe(ch.picUrl || 'image1.jpeg');
+        const name = utils.safe(ch.label || this.trunc(ch.address));
+        const addr = utils.safe(ch.address);
+        const prev = utils.safe(ch.preview || '');
+        const time = ch.lastActivity ? this.relTime(ch.lastActivity) : '';
+        html += `
+          <div class="ch-history-item" data-addr="${addr}" onclick="pulse._openChannelFromHistory('${addr}')">
+            <img src="${pic}" class="ch-hist-avatar" alt="" onerror="this.src='image1.jpeg'">
+            <div class="ch-hist-body">
+              <div class="ch-hist-top">
+                <span class="ch-hist-name">${name}</span>
+                <span class="ch-hist-time">${time}</span>
+              </div>
+              <div class="ch-hist-preview">${prev}</div>
+            </div>
+            ${ch.postCount > 0 ? `<span class="ch-hist-count">${ch.postCount > 99 ? '99+' : ch.postCount}</span>` : ''}
+          </div>`;
+      });
+      html += `</div>`;
+    }
+
+    feed.innerHTML = html;
+
+    /* Wire the new channel input */
+    const inp = this.g('ch-new-input');
+    const go  = this.g('ch-new-go');
+    if (inp && go) {
+      go.onclick = () => this._openChannelFromInput();
+      inp.onkeydown = e => { if (e.key === 'Enter') this._openChannelFromInput(); };
+    }
+
+    /* Lazy-load profile pics for channel list */
+    history.forEach(ch => {
+      if (!ch.label || ch.picUrl === 'image1.jpeg') {
+        this.fetchOtherProfile(ch.address).then(() => {
+          const prof = this.state.profCache[ch.address];
+          if (prof?.username || prof?.picUrl !== 'image1.jpeg') {
+            this.cache.saveChannel({ ...ch, label: prof.username, picUrl: prof.picUrl });
+          }
+        });
+      }
+    });
+  }
+
+  async _openChannelFromHistory(address) {
+    this.g('custom-input').value = address;
+    await this.goCustom();
+  }
+
+  _openChannelFromInput() {
+    const val = this.g('ch-new-input')?.value.trim().toLowerCase();
+    if (!val) return;
+    if (!ethers.utils.isAddress(val)) { utils.toast('Invalid address'); return; }
+    this.g('custom-input').value = val;
+    this.goCustom();
+  }
+
+  /* ── Settings page ──────────────────────────────────────────────────── */
+  _getSettings() {
+    try { return JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}'); }
+    catch { return {}; }
+  }
+  _saveSettings(s) {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
+    this.state.settings = s;
+  }
+
+  _settingsHTML() {
+    const s = this._getSettings();
+    return `
+    <div class="settings-view">
+      <!-- API -->
+      <div class="settings-section">
+        <div class="settings-section-title">API Configuration</div>
+        <div class="settings-row" style="flex-direction:column;align-items:flex-start">
+          <div class="settings-row-label">
+            <strong>Primary API URL</strong>
+            <span>PulseScan transaction API endpoint</span>
+          </div>
+          <input class="settings-input" id="set-api-primary"
+            value="${utils.safe(s.apiUrl || 'https://api.scan.pulsechain.com/api')}"
+            placeholder="https://api.scan.pulsechain.com/api">
+        </div>
+        <div class="settings-row" style="flex-direction:column;align-items:flex-start;margin-top:12px">
+          <div class="settings-row-label">
+            <strong>Backup API URL</strong>
+            <span>Fallback if primary fails (optional)</span>
+          </div>
+          <input class="settings-input" id="set-api-backup"
+            value="${utils.safe(s.backupApiUrl || '')}"
+            placeholder="https://…">
+        </div>
+        <div class="settings-row" style="margin-top:12px">
+          <button class="settings-btn primary" id="set-test-api">Test Connection</button>
+          <button class="settings-btn" id="set-save-api">Save API Settings</button>
+        </div>
+      </div>
+
+      <!-- Cache -->
+      <div class="settings-section">
+        <div class="settings-section-title">Cache &amp; Storage</div>
+        <div class="settings-row">
+          <div class="settings-row-label">
+            <strong>Post cache age</strong>
+            <span>Posts older than this are pruned daily</span>
+          </div>
+          <select class="settings-btn" id="set-prune-age" style="padding:9px 12px">
+            ${[3,7,14,30].map(d => `<option value="${d}" ${(s.pruneAgeDays||7)==d?'selected':''}>${d} days</option>`).join('')}
+          </select>
+        </div>
+        <div class="settings-row">
+          <div class="settings-row-label">
+            <strong>Clear post cache</strong>
+            <span>Removes all cached posts from IndexedDB</span>
+          </div>
+          <button class="settings-btn danger" id="set-clear-posts">Clear posts</button>
+        </div>
+        <div class="settings-row">
+          <div class="settings-row-label">
+            <strong>Clear channel history</strong>
+            <span>Removes saved channel list (rebuilt from chain on next visit)</span>
+          </div>
+          <button class="settings-btn danger" id="set-clear-channels">Clear channels</button>
+        </div>
+      </div>
+
+      <!-- About -->
+      <div class="settings-section">
+        <div class="settings-section-title">About</div>
+        <div class="settings-about-logo">
+          <img src="image1.jpeg" alt="Pulse Underground">
+          <div>
+            <strong>Pulse Underground</strong>
+            <span>On-chain social on PulseChain</span>
+          </div>
+        </div>
+        <div style="font-size:14px;color:var(--muted);line-height:1.8">
+          Chain ID: <strong style="color:var(--text)">369 (PulseChain)</strong><br>
+          Main channel: <code style="color:var(--primary-lt);font-size:12px">${MAIN_CHANNEL}</code><br>
+          Storage: IndexedDB + localStorage<br>
+          No server, no backend, no ads.
+        </div>
+        <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+          <a href="https://github.com/HyperLightCoder/Pulse-Underground" target="_blank"
+            class="settings-btn" style="text-decoration:none;display:inline-block">GitHub ↗</a>
+          <a href="https://pulsechain.com" target="_blank"
+            class="settings-btn" style="text-decoration:none;display:inline-block">PulseChain ↗</a>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  _wireSettingsListeners() {
+    const g = id => document.getElementById(id);
+    /* Save API */
+    g('set-save-api')?.addEventListener('click', () => {
+      const s = this._getSettings();
+      s.apiUrl      = g('set-api-primary').value.trim() || 'https://api.scan.pulsechain.com/api';
+      s.backupApiUrl = g('set-api-backup').value.trim();
+      this._saveSettings(s);
+      utils.toast('API settings saved ✓');
+    });
+    /* Test API */
+    g('set-test-api')?.addEventListener('click', async () => {
+      const url = g('set-api-primary').value.trim() || 'https://api.scan.pulsechain.com/api';
+      utils.toast('Testing connection…', 4000);
+      try {
+        const res = await fetch(`${url}?module=account&action=txlist&address=${MAIN_CHANNEL}&offset=1&page=1`);
+        const data = await res.json();
+        utils.toast(data.status === '1' || Array.isArray(data.result)
+          ? '✓ API connection successful!' : '⚠ API responded but returned no data');
+      } catch (err) { utils.toast('✗ Connection failed: ' + err.message); }
+    });
+    /* Prune age */
+    g('set-prune-age')?.addEventListener('change', () => {
+      const s = this._getSettings();
+      s.pruneAgeDays = parseInt(g('set-prune-age').value, 10);
+      this._saveSettings(s);
+      utils.toast('Prune age saved ✓');
+    });
+    /* Clear posts */
+    g('set-clear-posts')?.addEventListener('click', async () => {
+      await this.cache.clearAllPosts();
+      localStorage.removeItem(PRUNE_KEY);
+      this.state.posts = [];
+      utils.toast('Post cache cleared ✓');
+    });
+    /* Clear channels */
+    g('set-clear-channels')?.addEventListener('click', async () => {
+      await this.cache.clearChannels();
+      this.state.channelHistory = [];
+      localStorage.removeItem(CHANNELS_KEY);
+      utils.toast('Channel history cleared ✓');
+    });
   }
 
   setNav(desktopId, mobileKey) {
@@ -1698,20 +2196,21 @@ class PulseUnderground {
     const { mode, channel, signerAddr } = this.state;
     const map = {
       main:          `Main: ${this.trunc(MAIN_CHANNEL)}`,
-      inbox:         `From/to: ${this.trunc(signerAddr || '')}`,
       notifications: `To: ${this.trunc(signerAddr || '')}`,
       self:          `My channel: ${this.trunc(signerAddr || '')}`,
       custom:        `Channel: ${this.trunc(channel)}`,
       wave:          `Wave: ${this.trunc(WAVE_ADDRESS)}`,
+      channels:      'Your channel history',
+      explore:       'Discover on PulseChain',
+      bookmarks:     'Saved posts',
+      settings:      'App configuration',
     };
     this.g('ch-label').textContent = map[mode] || '';
   }
 
-  /* ── Channel profile banner ─────────────────────────────────────────── */
   showChannelBanner(address) {
     const banner = this.g('channel-banner');
     banner.style.display = 'block';
-
     if (address === WAVE_ADDRESS) {
       banner.className = 'wave-banner';
       this.renderBanner({ username:'Wave on Pulse', picUrl:'image1.jpeg',
@@ -1719,13 +2218,11 @@ class PulseUnderground {
       return;
     }
     banner.className = '';
-
     if (address === this.state.signerAddr) {
       this.renderBanner(this.state.profile, address); return;
     }
     const cached = this.state.profCache[address];
     if (cached) { this.renderBanner(cached, address); return; }
-
     this.renderBanner({ username:'', picUrl:'image1.jpeg', bio:'Loading profile…' }, address);
     this.fetchOtherProfile(address).then(() => {
       const loaded = this.state.profCache[address];
@@ -1740,7 +2237,6 @@ class PulseUnderground {
     this.g('cb-address').textContent = address || '';
   }
 
-  /* ── Notification badge ─────────────────────────────────────────────── */
   async checkNotifBadge() {
     if (!this.state.signerAddr) return;
     const lastCheck = parseInt(localStorage.getItem(LAST_CHECK_KEY) || '0', 10);
@@ -1772,14 +2268,12 @@ class PulseUnderground {
   }
   clearNotifBadge() { this.setNotifBadge(0); }
 
-  /* ── Wallet ─────────────────────────────────────────────────────────── */
   _registerWalletListeners() {
     if (this._walletReg) return;
     this._walletReg = true;
     window.ethereum.on('accountsChanged', accounts => {
-      if (accounts.length === 0) {
-        this.disconnect();
-      } else if (accounts[0].toLowerCase() !== this.state.signerAddr) {
+      if (accounts.length === 0) this.disconnect();
+      else if (accounts[0].toLowerCase() !== this.state.signerAddr) {
         utils.toast('Account changed — reconnecting…');
         this.disconnect();
         setTimeout(() => this.connect(), 500);
@@ -1814,10 +2308,7 @@ class PulseUnderground {
     try {
       const prov = new ethers.providers.Web3Provider(window.ethereum);
       if ((await prov.getNetwork()).chainId !== PULSE_CHAIN_ID) {
-        await window.ethereum.request({
-          method: 'wallet_switchEthereumChain',
-          params: [{ chainId: '0x171' }],
-        });
+        await window.ethereum.request({ method:'wallet_switchEthereumChain', params:[{ chainId:'0x171' }] });
       }
       await prov.send('eth_requestAccounts', []);
       this.signer = prov.getSigner();
@@ -1831,28 +2322,69 @@ class PulseUnderground {
 
   async afterConnect() {
     const addr = this.state.signerAddr;
-    /* Show account pill, hide connect button */
     this.g('account-pill').style.display = 'flex';
     this.g('connect-btn').style.display  = 'none';
     this.g('ap-addr').textContent        = this.trunc(addr);
     this.g('ch-self').style.display      = 'block';
     const cached = await this.cache.getProfile(addr);
     if (cached) this.applyProfile(cached);
-    await this.fetchMyProfile();
+    /* Load profile + reactions in parallel */
+    await Promise.all([
+      this.fetchMyProfile(),
+      this.fetchMyReactions(),
+    ]);
     this.checkNotifBadge();
+    /* Background: rebuild channel history if not scanned recently */
+    const lastScan = parseInt(localStorage.getItem(CHANNELS_KEY) || '0', 10);
+    if (Date.now() - lastScan > 86_400_000) {
+      setTimeout(() => this.rebuildChannelHistory(), 3000);
+    }
     this.renderFeed();
+  }
+
+  /* Load likes, bookmarks, follows from user's own self-sends */
+  async fetchMyReactions() {
+    if (!this.state.signerAddr) return;
+    this.state.likes.clear();
+    this.state.bookmarks.clear();
+    this.state.following.clear();
+    try {
+      /* Scan pages 1-4 (200 self-send txs) — reactions are self-sends */
+      for (let page = 1; page <= 4; page++) {
+        let raw;
+        try { raw = await this.apiFetch(this.state.signerAddr, page); }
+        catch { break; }
+        raw.forEach(tx => {
+          const from = tx.from?.toLowerCase();
+          const to   = tx.to?.toLowerCase();
+          if (from !== this.state.signerAddr || to !== this.state.signerAddr) return;
+          if (!tx.input || tx.input === '0x') return;
+          try {
+            const text = ethers.utils.toUtf8String(tx.input).trim();
+            if (text.startsWith(LIKE_PREFIX)) {
+              this.state.likes.add(text.slice(LIKE_PREFIX.length).trim().toLowerCase());
+            } else if (text.startsWith(BOOKMARK_PREFIX)) {
+              this.state.bookmarks.add(text.slice(BOOKMARK_PREFIX.length).trim().toLowerCase());
+            } else if (text.startsWith(FOLLOW_PREFIX)) {
+              this.state.following.add(text.slice(FOLLOW_PREFIX.length).trim().toLowerCase());
+            } else if (text.startsWith(UNFOLLOW_PREFIX)) {
+              this.state.following.delete(text.slice(UNFOLLOW_PREFIX.length).trim().toLowerCase());
+            }
+          } catch { /* skip */ }
+        });
+        if (raw.length < 50) break;
+      }
+    } catch (err) { console.warn('Reactions fetch error', err); }
   }
 
   disconnect() {
     this.signer = null;
     this.state.signerAddr = null;
     this.state.profile    = { username:'', picUrl:'image1.jpeg', bio:'' };
-    /* Hide account pill, show connect button */
     this.g('account-pill').style.display = 'none';
     this.g('connect-btn').style.display  = 'block';
     this.g('compose-avatar').src         = 'image1.jpeg';
     this.g('ch-self').style.display      = 'none';
-    /* Reset account pill fields */
     this.g('ap-avatar').src          = 'image1.jpeg';
     this.g('ap-name').textContent    = 'My Wallet';
     this.g('ap-addr').textContent    = '';
@@ -1862,7 +2394,6 @@ class PulseUnderground {
     utils.toast('Wallet disconnected');
   }
 
-  /* ── Profile ─────────────────────────────────────────────────────────── */
   async fetchMyProfile() {
     if (!this.state.signerAddr) return;
     try {
@@ -1885,7 +2416,6 @@ class PulseUnderground {
   async fetchOtherProfile(address) {
     if (!address || address in this.state.profCache) return;
     this.state.profCache[address] = null;
-
     const work = async () => {
       this._profInFlight++;
       try {
@@ -1914,7 +2444,6 @@ class PulseUnderground {
         this._drainProfileQueue();
       }
     };
-
     if (this._profInFlight < 3) work();
     else this._profQueue.push(work);
   }
@@ -1930,9 +2459,8 @@ class PulseUnderground {
       picUrl:   data.picUrl || data.profilePicUrl || 'image1.jpeg',
       bio:      data.bio    || '',
     };
-    this.g('compose-avatar').src = this.state.profile.picUrl;
+    this.g('compose-avatar').src       = this.state.profile.picUrl;
     this.g('modal-compose-avatar').src = this.state.profile.picUrl;
-    /* Sync profile to account pill */
     this.g('ap-avatar').src       = this.state.profile.picUrl || 'image1.jpeg';
     this.g('ap-name').textContent = this.state.profile.username || this.trunc(this.state.signerAddr || '');
   }
@@ -1969,7 +2497,6 @@ class PulseUnderground {
     const username = this.g('pe-name').value.trim();
     let   picUrl   = this.g('pe-pic').value.trim();
     const bio      = this.g('pe-bio').value.trim();
-
     if (picUrl && !picUrl.startsWith('https://')) {
       utils.toast('Profile picture must be an https:// URL'); return;
     }
@@ -1983,7 +2510,6 @@ class PulseUnderground {
       if (!ok) { picUrl = ''; utils.toast('Image could not load — using default'); }
     }
     picUrl = picUrl || 'image1.jpeg';
-
     const data = { username, picUrl, bio };
     this.applyProfile(data);
     await this.cache.saveProfile({ address: this.state.signerAddr, ...data });
@@ -1995,16 +2521,13 @@ class PulseUnderground {
     }
   }
 
-  /* ── NFT profile pic ─────────────────────────────────────────────────── */
   async fetchNFTImage() {
     const contractAddr = this.g('nft-contract').value.trim().toLowerCase();
     const tokenIdRaw   = this.g('nft-token-id').value.trim();
     const status       = this.g('nft-status');
-
     if (!ethers.utils.isAddress(contractAddr)) { status.textContent = '✗ Invalid contract'; return; }
     if (!tokenIdRaw || isNaN(tokenIdRaw))       { status.textContent = '✗ Invalid token ID'; return; }
     if (!this.signer)                            { status.textContent = '✗ Connect wallet first'; return; }
-
     status.textContent = '⟳ Fetching…';
     try {
       const contract = new ethers.Contract(contractAddr, ERC721_ABI, this.signer.provider);
@@ -2012,11 +2535,9 @@ class PulseUnderground {
       try { owner = (await contract.ownerOf(tokenIdRaw)).toLowerCase(); }
       catch { status.textContent = '✗ Token not found'; return; }
       if (owner !== this.state.signerAddr) { status.textContent = "✗ You don't own this token"; return; }
-
       let tokenUri;
       try { tokenUri = await contract.tokenURI(tokenIdRaw); }
       catch { status.textContent = '✗ tokenURI() failed'; return; }
-
       let imageUrl = null;
       if (tokenUri.startsWith('data:application/json;base64,')) {
         try {
@@ -2037,14 +2558,28 @@ class PulseUnderground {
     } catch (err) { status.textContent = '✗ ' + (err.message || err); }
   }
 
-  /* ── Fetch pipeline ─────────────────────────────────────────────────── */
   async apiFetch(address, page) {
-    const url = `https://api.scan.pulsechain.com/api?module=account&action=txlist`
-              + `&address=${address}&offset=50&page=${page}&sort=desc`;
-    const res  = await fetch(url);
-    if (!res.ok) throw new Error(`API ${res.status}`);
-    const data = await res.json();
-    return (data.status === '1' && Array.isArray(data.result)) ? data.result : [];
+    const s       = this._getSettings();
+    const primary = s.apiUrl      || 'https://api.scan.pulsechain.com/api';
+    const backup  = s.backupApiUrl || '';
+    const qs = `?module=account&action=txlist&address=${address}&offset=50&page=${page}&sort=desc`;
+
+    const tryFetch = async url => {
+      const res = await fetch(url + qs);
+      if (!res.ok) throw new Error(`API ${res.status}`);
+      const data = await res.json();
+      return (data.status === '1' && Array.isArray(data.result)) ? data.result : [];
+    };
+
+    try {
+      return await tryFetch(primary);
+    } catch (err) {
+      if (backup) {
+        try { return await tryFetch(backup); }
+        catch { /* fall through */ }
+      }
+      throw err;
+    }
   }
 
   queryAddr() {
@@ -2071,11 +2606,9 @@ class PulseUnderground {
         let raw;
         try { raw = await this.fetchOnePage(this.state.nextPage); }
         catch (err) { utils.toast('Fetch error — ' + err.message); break; }
-
         this.state.nextPage++;
         pages++;
         this.state.hasMore = raw.length === 50;
-
         const parsed = this.parseTxs(raw);
         if (parsed.length > 0) {
           const known  = new Set(this.state.posts.map(p => p.txHash));
@@ -2099,21 +2632,16 @@ class PulseUnderground {
 
   parseTxs(txs) {
     const { mode, channel, signerAddr } = this.state;
-    /* Cache lastCheck for this batch — avoids repeated localStorage reads */
     const lastCheck = parseInt(localStorage.getItem(LAST_CHECK_KEY) || '0', 10);
-
     return txs.reduce((acc, tx) => {
       if (!tx.input || tx.input === '0x') return acc;
       const from = tx.from?.toLowerCase();
       const to   = tx.to?.toLowerCase();
-
       let raw;
       try { raw = ethers.utils.toUtf8String(tx.input).trim(); }
       catch { return acc; }
       if (!raw) return acc;
-
       if (raw.startsWith(PROFILE_PREFIX) && from === to) return acc;
-
       let direction = null;
       if (mode === 'inbox') {
         if (from !== signerAddr && to !== signerAddr) return acc;
@@ -2127,12 +2655,10 @@ class PulseUnderground {
       } else {
         if (to !== channel) return acc;
       }
-
       const m        = raw.match(/^REPLY_TO:(0x[a-f0-9]{64})\n\n/i);
       const parentTx = m ? m[1].toLowerCase() : null;
       const display  = m ? raw.slice(m[0].length).trim() : raw;
       if (!display) return acc;
-
       acc.push({
         content: raw, display, parentTx, direction,
         reporter: from, to: to ?? null,
@@ -2145,7 +2671,6 @@ class PulseUnderground {
     }, []);
   }
 
-  /* ── Polling ─────────────────────────────────────────────────────────── */
   startPolling()  { this.pollTimer = setInterval(() => this.pollNew(), POLL_MS); }
   stopPolling()   { clearInterval(this.pollTimer); }
 
@@ -2157,9 +2682,7 @@ class PulseUnderground {
       const inFeed    = new Set(this.state.posts.map(p => p.txHash));
       const inPending = new Set(this.state.pending.map(p => p.txHash));
       const fresh = this.parseTxs(raw).filter(p =>
-        new Date(p.timestamp) > latestTs &&
-        !inFeed.has(p.txHash) &&
-        !inPending.has(p.txHash)
+        new Date(p.timestamp) > latestTs && !inFeed.has(p.txHash) && !inPending.has(p.txHash)
       );
       if (fresh.length) {
         this.state.pending = [...fresh, ...this.state.pending];
@@ -2182,15 +2705,15 @@ class PulseUnderground {
 
   async refreshFeed() {
     const btn = this.g('refresh-btn');
-    btn.textContent       = '↻ Refreshing…';
-    this.state.posts      = [];
-    this.state.pending    = [];
-    this.state.nextPage   = 1;
-    this.state.hasMore    = true;
+    btn.textContent  = '↻';
+    this.state.posts = [];
+    this.state.pending   = [];
+    this.state.nextPage  = 1;
+    this.state.hasMore   = true;
     this.g('new-banner').style.display = 'none';
     await this.fetchPosts(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    btn.textContent = '↺ Refresh';
+    btn.textContent = '↺';
   }
 
   async resetAndFetch() {
@@ -2209,7 +2732,6 @@ class PulseUnderground {
     if (this.state.mode !== 'notifications') this.startPolling();
   }
 
-  /* ── Cache ───────────────────────────────────────────────────────────── */
   async loadCached() {
     const { mode, channel, signerAddr } = this.state;
     const posts = await this.cache.getPosts(p => {
@@ -2223,14 +2745,11 @@ class PulseUnderground {
     this.renderFeed();
   }
 
-  /* ── Render ──────────────────────────────────────────────────────────── */
   renderFeed() {
     const feed = this.g('feed');
     const term = this.state.searchTerm;
-
     let list = this.state.posts;
     if (term) {
-      /* Support #tag search filtering */
       if (term.startsWith('#')) {
         const tag = term.slice(1).toLowerCase();
         list = list.filter(p => p.display.toLowerCase().includes('#' + tag));
@@ -2240,35 +2759,26 @@ class PulseUnderground {
           p.reporter.toLowerCase().includes(term));
       }
     }
-
     if (!list.length) {
       const msgs = {
         notifications: 'No new notifications',
-        inbox:  'No messages yet',
-        self:   'No posts to your channel yet',
-        wave:   'No Wave transmissions yet',
+        inbox: 'No messages yet',
+        self:  'No posts to your channel yet',
+        wave:  'No Wave transmissions yet',
       };
       feed.innerHTML = `
         <div class="empty-state">
           <span class="empty-icon">📡</span>
-          <h3>${this.state.loading
-            ? 'Scanning the chain…'
-            : (msgs[this.state.mode] || 'Nothing here yet')}</h3>
-          <p style="font-size:14px;margin-top:6px;color:var(--muted)">${this.state.loading
-            ? `Checked ${this.state.nextPage - 1} page(s) so far`
-            : 'Be the first to post in this channel'}</p>
+          <h3>${this.state.loading ? 'Scanning the chain…' : (msgs[this.state.mode] || 'Nothing here yet')}</h3>
+          <p style="font-size:14px;margin-top:6px;color:var(--muted)">${this.state.loading ? `Checked ${this.state.nextPage - 1} page(s) so far` : 'Be the first to post in this channel'}</p>
         </div>`;
       return;
     }
-
-    /* Pre-build reply count map for O(n) instead of O(n²) per post */
     const replyMap = new Map();
     this.state.posts.forEach(p => {
       if (p.parentTx) replyMap.set(p.parentTx, (replyMap.get(p.parentTx) || 0) + 1);
     });
-
     const frag = document.createDocumentFragment();
-    /* Rebuild postMap for O(1) lookup in onFeedClick */
     this._postMap.clear();
     list.forEach(post => {
       this._postMap.set(post.txHash, post);
@@ -2318,10 +2828,8 @@ class PulseUnderground {
       ? `<span class="reply-badge">↳ Replying to ${this.trunc(post.parentTx)}</span>`
       : '';
 
-    /* Reply count via pre-built map */
     const rc = replyMap ? (replyMap.get(post.txHash) || 0) : 0;
-    const rcLabel = rc > 0 ? ` ${rc}` : '';
-
+    const rcLabel = rc > 0 ? String(rc) : '';
     const fullDate = new Date(post.timestamp).toLocaleString();
     const relT     = this.relTime(post.timestamp);
 
@@ -2329,45 +2837,52 @@ class PulseUnderground {
       <div class="post-hdr">
         <img src="${utils.safe(picUrl)}" class="post-avatar" alt=""
           loading="lazy" onerror="this.src='image1.jpeg'">
-        <div class="post-meta">
-          <div class="post-name-row">
+        <div class="post-col">
+          <div class="post-meta-row">
             <span class="post-name">${displayName}</span>
             <span class="post-dot">·</span>
             <span class="post-handle" data-addr="${utils.safe(post.reporter)}"
               title="Click to copy address">@${this.trunc(post.reporter)}</span>
+            <span class="post-time-dot">·</span>
+            <a href="https://otter.pulsechain.com/tx/${utils.safe(post.txHash)}"
+              target="_blank" class="post-time" title="${utils.safe(fullDate)}"
+              onclick="event.stopPropagation()">${utils.safe(relT)}</a>
             ${dirBadge}
           </div>
-          <div class="post-time" title="${utils.safe(fullDate)}">${relT}</div>
+          ${toLabel}${replyBadge}
+          ${imgHtml ? `<div class="post-images">${imgHtml}</div>` : ''}
+          <div class="post-body">${bodyHtml}</div>
+          ${needsMore ? `<button class="read-more-btn" data-action="expand">Show more ↓</button>` : ''}
+          <div class="post-actions">
+            <button class="act-btn act-reply" data-action="reply" title="Reply">
+              <span class="act-icon">💬</span><span class="act-count">${rcLabel}</span>
+            </button>
+            <button class="act-btn act-repost" title="Repost">
+              <span class="act-icon">🔁</span>
+            </button>
+            <button class="act-btn act-like" title="Like">
+              <span class="act-icon">🤍</span>
+            </button>
+            <button class="act-btn act-share" data-action="share" title="Copy link">
+              <span class="act-icon">🔗</span>
+            </button>
+            <a href="https://otter.pulsechain.com/tx/${utils.safe(post.txHash)}"
+              target="_blank" class="otter-link"
+              onclick="event.stopPropagation()">
+              <span class="act-icon" title="View on OtterScan">🦦</span>
+            </a>
+          </div>
         </div>
-      </div>
-      ${toLabel}${replyBadge}
-      ${imgHtml ? `<div class="post-images">${imgHtml}</div>` : ''}
-      <div class="post-body">${bodyHtml}</div>
-      ${needsMore ? `<button class="read-more-btn" data-action="expand">Show more ↓</button>` : ''}
-      <div class="post-actions">
-        <button class="act-btn" data-action="reply" title="Reply (keyboard shortcut)">
-          💬${rcLabel}
-        </button>
-        <button class="act-btn share" data-action="share" title="Copy link">
-          🔗
-        </button>
-        <a href="https://otter.pulsechain.com/tx/${post.txHash}"
-          target="_blank" class="otter-link"
-          onclick="event.stopPropagation()">OtterScan ↗</a>
       </div>`;
   }
 
-  /* ── Publish ─────────────────────────────────────────────────────────── */
   async publish(content, parentTx = null, toAddress = null) {
     if (!this.signer)     { utils.toast('Connect wallet first'); return false; }
     if (!content?.trim()) { utils.toast('Message cannot be empty'); return false; }
-
     let body = content.trim();
     if (parentTx) body = `${REPLY_PREFIX}${parentTx}\n\n${body}`;
-
     const to = toAddress || this.state.channel;
     utils.loading(true, 'Publishing to chain…');
-
     try {
       const bytes   = ethers.utils.toUtf8Bytes(body);
       const data    = ethers.utils.hexlify(bytes);
@@ -2377,7 +2892,6 @@ class PulseUnderground {
       const tx      = await this.signer.sendTransaction({ ...txReq, gasLimit: gas });
       const receipt = await tx.wait();
       const hash    = receipt.transactionHash.toLowerCase();
-
       if (!body.startsWith(PROFILE_PREFIX)) {
         const post = {
           content: body, display: content.trim(),
@@ -2405,16 +2919,14 @@ class PulseUnderground {
     if (!text) return false;
     const ok = await this.publish(text);
     if (ok) {
-      this.g('compose-text').value    = '';
+      this.g('compose-text').value = '';
       this.g('compose-text').style.height = '';
-      this.g('char-count').textContent = '';
-      this.g('char-count').className   = 'char-count';
+      utils.updateCharCount(this.g('compose-text'), null);
       this._clearDraft();
     }
     return ok;
   }
 
-  /* ── Reply ───────────────────────────────────────────────────────────── */
   openReplyModal(post) {
     this.state.replyTarget = post;
     const preview = post.display.length > 120 ? post.display.slice(0, 120) + '…' : post.display;
@@ -2433,7 +2945,6 @@ class PulseUnderground {
     if (ok) { this.closeModal('reply-modal'); this.g('reply-input').value = ''; }
   }
 
-  /* ── Thread ──────────────────────────────────────────────────────────── */
   openThread(post) {
     this.state.threadPost = post;
     const origEl = document.createElement('div');
@@ -2443,9 +2954,9 @@ class PulseUnderground {
     origEl.style.cssText  = 'border:none;cursor:default';
     this.g('thread-orig').replaceChildren(origEl);
     this.renderThreadReplies(post);
-    this.g('thread-reply-input').value    = '';
+    this.g('thread-reply-input').value        = '';
     this.g('thread-reply-input').style.height = '';
-    this.g('thread-count').textContent   = '';
+    this.g('thread-count').textContent        = '';
     this.g('thread-modal').classList.add('open');
     this.fetchThreadReplies(post);
   }
@@ -2465,8 +2976,7 @@ class PulseUnderground {
         rc.appendChild(el);
       });
     } else {
-      rc.innerHTML = `<p style="color:var(--muted);font-size:14px;padding:20px 0;text-align:center">
-        No replies yet — be the first!</p>`;
+      rc.innerHTML = `<p style="color:var(--muted);font-size:14px;padding:20px 0;text-align:center">No replies yet — be the first!</p>`;
     }
   }
 
@@ -2477,13 +2987,11 @@ class PulseUnderground {
     const scanAddr   = post.to || this.state.channel;
     const known      = new Set(this.state.posts.map(p => p.txHash));
     const newFound   = [];
-
     try {
       for (let page = 1; page <= 5; page++) {
         let raw;
         try { raw = await this.apiFetch(scanAddr, page); }
         catch { break; }
-
         raw.forEach(tx => {
           if (!tx.input || tx.input === '0x') return;
           try {
@@ -2498,9 +3006,7 @@ class PulseUnderground {
             newFound.push({
               content: text, display, parentTx: targetHash, direction: null,
               reporter: tx.from?.toLowerCase(), to: tx.to?.toLowerCase() ?? null,
-              timestamp: tx.timeStamp
-                ? new Date(Number(tx.timeStamp) * 1000).toISOString()
-                : new Date().toISOString(),
+              timestamp: tx.timeStamp ? new Date(Number(tx.timeStamp) * 1000).toISOString() : new Date().toISOString(),
               txHash: hash, channel: scanAddr, mode: post.mode,
             });
           } catch { /* skip */ }
@@ -2510,7 +3016,6 @@ class PulseUnderground {
     } finally {
       loading.style.display = 'none';
     }
-
     if (newFound.length > 0) {
       this.state.posts = [...this.state.posts, ...newFound]
         .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
@@ -2535,19 +3040,17 @@ class PulseUnderground {
 
   closeModal(id) {
     this.g(id).classList.remove('open');
-    /* Sync fullscreen compose back to main textarea so content isn't lost */
     if (id === 'compose-modal') {
       const modalText = this.g('modal-compose-text').value;
       if (modalText.trim()) {
         this.g('compose-text').value = modalText;
         utils.autoGrow(this.g('compose-text'));
-        utils.updateCharCount(this.g('compose-text'), this.g('char-count'));
+        utils.updateCharCount(this.g('compose-text'), null);
         this._saveDraft();
       }
     }
   }
 
-  /* ── Scroll ──────────────────────────────────────────────────────────── */
   onScroll() {
     if (this.state.mode === 'notifications') return;
     if (this.state.hasMore && !this.state.loading) {
@@ -2556,7 +3059,6 @@ class PulseUnderground {
     }
   }
 
-  /* ── Helpers ─────────────────────────────────────────────────────────── */
   trunc = a => (a && a.length > 10) ? `${a.slice(0,6)}...${a.slice(-4)}` : (a || '');
 
   relTime = ts => {
@@ -2568,7 +3070,6 @@ class PulseUnderground {
   };
 }
 
-/* ── Boot ─────────────────────────────────────────────────────────────── */
 const pulse = new PulseUnderground();
 pulse.init().catch(err => {
   console.error('Init error:', err);
